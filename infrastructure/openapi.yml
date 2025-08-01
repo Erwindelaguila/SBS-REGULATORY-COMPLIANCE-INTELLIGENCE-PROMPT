@@ -1,11 +1,70 @@
 openapi: 3.0.1
 info:
   title: Regulatory Compliance Prompt API
-  description: API to manage regulatory compliance prompts
+  description: "OpenAPI contract for Regulatory Compliance Prompt API"
   version: 1.0.0
-
+  contact: {}
 tags:
   - name: Suptech
-
 paths:
   /regulatory-compliance/prompt:
+    post:
+      operationId: promptRegulatoryCompliance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  description: The question to ask the AI integration
+                filesKeys:
+                  type: array
+                  items:
+                    type: string
+                  description: List of keys of supervisory records to be used as context for the question
+              required:
+                - question
+                - filesKeys
+        required: true
+      responses:
+        '200':
+          description: AI response to the question
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    description: The AI's response to the question
+                  filesKeys:
+                    type: array
+                    items:
+                      type: string
+                    description: List of files used in the response
+        '400':
+          description: Bad request, e.g., missing required fields or invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+   
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+      required:
+        - message
