@@ -1,0 +1,11 @@
+openapi: 3.0.1
+info:
+  title: Regulatory Compliance Prompt API
+  description: API to manage regulatory compliance prompts
+  version: 1.0.0
+
+tags:
+  - name: Suptech
+
+paths:
+  /regulatory-compliance/prompt:
