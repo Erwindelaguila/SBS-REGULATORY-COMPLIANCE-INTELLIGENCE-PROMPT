@@ -1,0 +1,68 @@
+
+# More information about the configuration file can be found here:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+version = 0.1
+
+[default.global.parameters]
+stack_name = "suptech-regulatory-compliance-prompt"
+
+[default.build.parameters]
+cached = true
+parallel = true
+beta_features = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "suptech-regulatory-compliance-prompt"
+region = "us-east-1"
+profile = "default"
+parameter_overrides = [
+    "PromptsTableName=system-prompts",
+    "WarrantyAnalysisTableName=preferred-warranty-analysis",
+    "LetterAnalysisTableName=letter-analysis",
+    "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "RecordsBucketName=supervisory-records",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis",
+    "ProcessedRecordsBucketName=processed-supervisory-records",
+    "WarrantyReportsBucketName=warranty-analysis-reports",
+    "SupervisoryRecordsTableName=supervisory-records",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
+    "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
+    "StageName=develop",
+    "KafkaBrokers=34.236.156.4:9092",
+    "WarrantyRRTableName=processed-warranty-regulatory-reports",
+    "WarrantyITTableName=processed-warranty-internal-tables",
+    "LetterRRTableName=processed-bank-guarantee-regulatory-reports",
+    "LetterITTableName=processed-bank-guarantee-internal-tables"
+]
+image_repositories = []
+
+[default.package.parameters]
+resolve_s3 = true
+
+[default.sync.parameters]
+watch = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+parameter_overrides = [
+    "PromptsTableName=system-prompts",
+    "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "RecordsBucketName=supervisory-records",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis",
+    "SupervisoryRecordsTableName=supervisory-records",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
+    "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
+    "StageName=develop",
+    "KafkaBrokers=34.236.156.4:9092",
+]
+
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"

@@ -1,0 +1,230 @@
+import { PDFDocument, rgb } from "pdf-lib";
+import { Logger } from "pino";
+import { PageNotFoundError, ParagraphNotFoundError } from "../domain/errors/highlight-pdf.error";
+import { PdfProcessor } from "../domain/ports/pdf-processor";
+
+// Importar pdfjs-dist de forma compatible con Node.js
+import { getDocument } from "pdfjs-dist/legacy/build/pdf";
+import { TextContent, TextItem } from "pdfjs-dist/types/src/display/api";
+import { findOriginalIndexes } from "../common/search-string";
+
+// // Configurar para no usar worker en Node.js
+// if (typeof pdfjsLib.GlobalWorkerOptions !== "undefined") {
+//   pdfjsLib.GlobalWorkerOptions.workerSrc = "";
+//   pdfjsLib.GlobalWorkerOptions.workerPort = null;
+// }
+
+type HighLightCoordinate = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export class PdfProcessorAdapter implements PdfProcessor {
+  constructor(private readonly logger: Logger) {}
+
+  processTextContent(textContent: TextContent) {
+    const lines: Record<number, TextItem[]> = {};
+
+    // Agrupar por líneas
+    textContent.items.forEach((item) => {
+      const textItem = item as TextItem;
+
+      const y = Math.round(textItem.transform[5]);
+      if (!lines[y]) {
+        lines[y] = [];
+      }
+      lines[y].push(textItem);
+    });
+
+    // Ordenar líneas verticalmente
+    const lineKeys = Object.keys(lines)
+      .map((key) => Number.parseFloat(key))
+      .sort((a, b) => b - a);
+
+    // Ordenar cada línea horizontalmente
+    lineKeys.forEach((y) => {
+      lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
+    });
+
+    // Obtener texto ordenado
+    const sortedText = lineKeys.map((y) => lines[y]); // Ordenar líneas de arriba a abajo
+    return sortedText;
+  }
+
+  async highlightParagraph(pdfBuffer: Buffer, paragraph: string, pageNumber: number): Promise<Buffer> {
+    try {
+      this.logger.debug({ paragraph, pageNumber }, "Starting PDF highlight process");
+
+      // Cargar el PDF con pdf-lib
+      const pdfDoc = await PDFDocument.load(pdfBuffer);
+      const pages = pdfDoc.getPages();
+
+      // Validar que la página existe
+      if (pageNumber > pages.length || pageNumber < 1) {
+        throw new PageNotFoundError(`Page ${pageNumber} not found. PDF has ${pages.length} pages`);
+      }
+
+      // Cargar con pdfjs para obtener texto y coordenadas
+      const uint8Array = new Uint8Array(pdfBuffer);
+      const pdfjsDoc = await getDocument({
+        data: uint8Array,
+        verbosity: 0,
+      }).promise;
+
+      // Obtener la página específica (pdfjs usa índice 1-based)
+      const pdfjsPage = await pdfjsDoc.getPage(pageNumber);
+      const sortedText = this.processTextContent(await pdfjsPage.getTextContent());
+
+      // Buscar el párrafo en la página
+      const highlights = this.findMatches(sortedText, paragraph);
+
+      if (highlights.length === 0) {
+        throw new ParagraphNotFoundError(
+          `Paragraph not found in page ${pageNumber}: "${paragraph.substring(0, 50)}..."`,
+        );
+      }
+
+      // Aplicar los highlights a la página
+      const page = pages[pageNumber - 1];
+      for (const highlight of highlights) {
+        page.drawRectangle({
+          x: Math.max(0, highlight.x),
+          y: Math.max(0, highlight.y),
+          width: Math.min(page.getWidth() - highlight.x, highlight.width),
+          height: highlight.height,
+          color: rgb(1, 0.92, 0.23), // Amarillo
+          opacity: 0.35,
+          borderWidth: 0,
+        });
+      }
+
+      // Guardar el PDF modificado
+      const pdfBytes = await pdfDoc.save();
+      const buffer = Buffer.from(pdfBytes);
+
+      this.logger.debug({ highlightCount: highlights.length }, "PDF highlighted successfully");
+
+      return buffer;
+    } catch (error) {
+      if (error instanceof PageNotFoundError || error instanceof ParagraphNotFoundError) {
+        throw error;
+      }
+      this.logger.error({ error }, "Error processing PDF");
+      throw new Error(`Failed to process PDF: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  }
+
+  findTextChunks(
+    textContent: Array<Array<{ item: TextItem; normalizedItem: string }>>,
+    normalizedFullText: string,
+    searchString: string,
+  ): Array<Array<TextItem>> {
+    const { startIndex, endIndex } = findOriginalIndexes(normalizedFullText, searchString.toLowerCase());
+
+    if (startIndex === -1) return [];
+    let currentPosition = 0;
+    const matchingChunks: Array<Array<TextItem>> = [];
+
+    textContent.forEach((line) => {
+      const lineMatches: Array<TextItem> = [];
+      line.forEach((item) => {
+        const itemLength = item.normalizedItem.length;
+        const itemStart = currentPosition;
+        const itemEnd = currentPosition + itemLength;
+
+        // Verifica si hay superposición entre la búsqueda y el chunk actual
+        if (!(endIndex <= itemStart || startIndex >= itemEnd)) {
+          lineMatches.push(item.item);
+        }
+        currentPosition = itemEnd;
+      });
+      matchingChunks.push(lineMatches);
+      ++currentPosition;
+    });
+
+    return matchingChunks;
+  }
+
+  private findMatches(textContent: Array<Array<TextItem>>, searchText: string): Array<HighLightCoordinate> {
+    // this.logger.debug({ textContent, searchText }, "Text content and search text");
+
+    // Construir texto completo de la página
+    let normalizedPage = "";
+
+    const normalizedTextContent: Array<Array<{ item: TextItem; normalizedItem: string }>> = [];
+
+    textContent.forEach((line) => {
+      const normalizedLine: Array<{ item: TextItem; normalizedItem: string }> = [];
+      line.forEach((item) => {
+        const normalizedItem = this.normalizeText(item.str);
+        normalizedLine.push({ item, normalizedItem });
+        normalizedPage += normalizedItem;
+      });
+
+      normalizedPage += " ";
+      normalizedTextContent.push(normalizedLine);
+    });
+
+    const normalizedSearch = this.normalizeText(searchText).replace(/\s+/g, " ");
+    const textChunks = this.findTextChunks(normalizedTextContent, normalizedPage, normalizedSearch);
+
+    this.logger.info({ textChunks }, "Chunks");
+    this.logger.info({ normalizedPage }, "Normalized page");
+    this.logger.info({ normalizedSearch }, "Normalized search");
+
+    if (textChunks.length === 0) {
+      const error = new ParagraphNotFoundError("Paragraph not found");
+      this.logger.error(error, "Paragraph not found");
+      throw error;
+    }
+
+    let highlights: Array<HighLightCoordinate> = [];
+
+    if (textChunks.length > 0) {
+      highlights = textChunks
+        .map((line) => this.createHighlightForLine(line))
+        .filter((highlight) => highlight !== null);
+    }
+
+    this.logger.debug(`Found ${highlights.length} matches`);
+    return highlights;
+  }
+
+  private normalizeText(text: string): string {
+    if (text == " ") {
+      return text;
+    }
+
+    return text
+      .trim()
+      .toLowerCase()
+      .normalize("NFD") // Normalize unicode
+      .replace(/[\u0300-\u036f]/g, " ") // Accents and bullets
+      .replace(/[^A-Za-z0-9\s]/g, " "); // Remove special characters
+  }
+
+  private createHighlightForLine(items: Array<any>): HighLightCoordinate | null {
+    if (items.length === 0) return null;
+
+    const minX = Math.min(...items.map((item) => item.transform[4]));
+    const maxX = Math.max(
+      ...items.map((item) => {
+        const x = item.transform[4];
+        const width = item.width || item.str.length * 6;
+        return x + width;
+      }),
+    );
+
+    const avgY = items.reduce((sum, item) => sum + item.transform[5], 0) / items.length;
+    const maxHeight = Math.max(...items.map((item) => item.height || 12));
+
+    return {
+      x: minX - 2,
+      y: avgY - 2,
+      width: maxX - minX + 4,
+      height: maxHeight + 4,
+    };
+  }
+}

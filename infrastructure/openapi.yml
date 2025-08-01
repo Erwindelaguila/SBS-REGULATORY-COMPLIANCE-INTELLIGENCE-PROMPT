@@ -1,0 +1,131 @@
+openapi: 3.0.1
+info:
+  title: Regulatory Compliance Intelligence API
+  description: "OpenAPI contract for Regulatory Compliance Intelligence API"
+  version: 1.0.0
+  contact: {}
+tags:
+  - name: Suptech
+
+x-amazon-apigateway-request-validators:
+  full:
+    validateRequestBody: true
+    validateRequestParameters: true
+  body:
+    validateRequestBody: true
+    validateRequestParameters: false
+  parameters:
+    validateRequestParameters: true
+    validateRequestBody: false
+
+paths:
+  /regulatory-compliance-intelligence/documents-analysis-sheet/{uuid}:
+    get:
+      operationId: documentAnalysisSheet
+      x-amazon-apigateway-request-validator: "full"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetDocumentsAnalysisSheetFunctionArn}/invocations
+            - GetDocumentsAnalysisSheetFunctionArn:
+                Fn::GetAtt: [GetDocumentsAnalysisSheetFunction, Arn]
+        type: aws_proxy
+      parameters:
+        - name: uuid
+          schema:
+            type: string
+          in: path
+          required: true
+          description: UUID of the document to analyze
+      responses:
+        "200":
+          $ref: "#/components/responses/DocumentAnalysisSheetResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+
+  /regulatory-compliance-intelligence/pdf/highlight/{messageId}/{recordKey}:
+    get:
+      operationId: pdf
+      x-amazon-apigateway-request-validator: "full"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DocumentHighlightFunctionArn}/invocations
+            - DocumentHighlightFunctionArn:
+                Fn::GetAtt: [DocumentHighlightFunction, Arn]
+        type: aws_proxy
+      parameters:
+        - name: messageId
+          schema:
+            type: string
+          in: path
+          required: true
+          description: UUID of the message to analyze
+        - name: recordKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Key of the record to analyze
+        - name: index
+          schema:
+            type: number
+          in: query
+          required: false
+          description: Row of the record to analyze
+      responses:
+        "200":
+          $ref: "#/components/responses/DocumentHighlightResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+
+components:
+  requestBodies:
+    DocumentHighlightRequest:
+      description: Document Highlight Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              paragraph:
+                type: string
+              pageNumber:
+                type: number
+
+  responses:
+    DocumentAnalysisSheetResponse:
+      description: Document Analysis Sheet Response
+      content:
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
+
+    DocumentHighlightResponse:
+      description: Document Highlight Response
+      content:
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+
+    ErrorResponse:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+      required:
+        - message

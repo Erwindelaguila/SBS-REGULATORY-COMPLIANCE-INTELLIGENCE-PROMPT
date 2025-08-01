@@ -1,0 +1,63 @@
+
+# More information about the configuration file can be found here:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+version = 0.1
+
+[qa.global.parameters]
+stack_name = "suptech-regulatory-compliance-prompt"
+
+[qa.build.parameters]
+cached = true
+parallel = true
+beta_features = true
+
+[qa.validate.parameters]
+lint = true
+
+[qa.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "suptech-regulatory-compliance-prompt"
+region = "us-east-1"
+profile = "protecso-qa"
+parameter_overrides = [
+    "PromptsTableName=system-prompts",
+    "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "RecordsBucketName=supervisory-records-qa",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis-qa",
+    "ProcessedRecordsBucketName=processed-supervisory-records-qa",
+    "SupervisoryRecordsTableName=supervisory-records",
+    "SupervisoryRecordsMetadataTableName=supervisory-records-metadata",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/058264428218/interaction-websocket-queue",
+    "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:058264428218:table/supervisory-records/stream/2025-08-20T06:07:26.305",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:058264428218:layer:pdfjs-dist-layer:1",
+    "StageName=qa",
+    "KafkaBrokers=98.82.186.188:9092",
+]
+image_repositories = []
+
+[qa.package.parameters]
+resolve_s3 = true
+
+[qa.sync.parameters]
+watch = true
+
+[qa.local_start_api.parameters]
+warm_containers = "EAGER"
+parameter_overrides = [
+    "PromptsTableName=system-prompts",
+    "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "RecordsBucketName=supervisory-records-qa",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis-qa",
+    "ProcessedRecordsBucketName=processed-supervisory-records-qa",
+    "SupervisoryRecordsTableName=supervisory-records",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/058264428218/interaction-websocket-queue",
+    "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:058264428218:table/supervisory-records/stream/2025-08-20T06:07:26.305",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:058264428218:layer:pdfjs-dist-layer:1",
+    "StageName=qa",
+    "KafkaBrokers=34.236.156.4:9092",
+]
+
+[qa.local_start_lambda.parameters]
+warm_containers = "EAGER"
