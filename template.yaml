@@ -66,9 +66,13 @@ Resources:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
         Cors:
-          AllowMethods: "'*'"
-          AllowHeaders: "'*'"
-          AllowOrigin: "'*'"
+          AllowMethods: 
+            - "*"
+          AllowHeaders: 
+            - "*"
+          AllowOrigins: 
+            - "*"
+      Role: !GetAtt RegulatoryCompliancePromptFunctionRole.Arn
       Environment:
         Variables:
           SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
@@ -82,3 +86,21 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - app.ts
+
+  RegulatoryCompliancePromptFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        
