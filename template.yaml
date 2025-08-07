@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 60
 
 Parameters:
   PromptsTableName:
@@ -22,20 +22,50 @@ Parameters:
     Default: bucket
 
 Resources:
+
+  RegulatoryCompliancePromptsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref PromptsTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: version
+          AttributeType: N
+        - AttributeName: type
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: version
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: type-index
+          KeySchema:
+            - AttributeName: type
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
   RegulatoryCompliancePromptFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/regulatory-compliance-prompt/
       Handler: app.handler
       Runtime: nodejs22.x
+      MemorySize: 256
+      Timeout: 60
       Architectures:
         - x86_64
-      Events:
-        RegulatoryCompliancePrompt:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /regulatory-compliance/prompt
-            Method: post
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: RESPONSE_STREAM
       Environment:
         Variables:
           SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
@@ -50,5 +80,4 @@ Resources:
         EntryPoints:
           - app.ts
       
- 
 
