@@ -1,5 +1,5 @@
-import { BedrockRuntimeClient, ContentBlock, ConverseStreamCommand, ConverseStreamOutput } from "@aws-sdk/client-bedrock-runtime";
-import { AIChatClient } from "../domain/ports/ai-chat.client";
+import { BedrockRuntimeClient, ContentBlock, ConverseStreamCommand, ConverseStreamOutput, DocumentFormat } from "@aws-sdk/client-bedrock-runtime";
+import { AIChatClient, FileData } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
 import { Readable } from "stream";
 
@@ -16,22 +16,43 @@ export class BedrockAIChatClient implements AIChatClient {
     }
   }
 
+  private parseContentTypeToFormat(contentType: string): DocumentFormat {
+    switch (contentType) {
+      case "application/pdf":
+        return "pdf";
+      case "application/msword":
+        return "doc";
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return "docx";
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        return "xlsx";
+      case "application/vnd.ms-excel":
+        return "xls";
+      default:
+        return "txt";
+    }
+  }
+
+  private parseDocumentName(key: string): string {
+    return key.replace(/[^a-zA-Z0-9]/g, '');
+  }
+
   async getChatResponse(
     systemPrompt: string,
     // conversation: Message[], // TODO: pass the conversation history
     userPrompt: string,
-    filesBytes: Uint8Array[],
+    filesData: FileData[],
   ): Promise<Readable> {
     try {
-      const files: ContentBlock[] = filesBytes.map((fileBytes, index) => ({
+      const files = filesData.map((fileData): ContentBlock => ({
         document: {
-          format: "pdf", 
-          name: `file${index + 1}`, 
+          name: this.parseDocumentName(fileData.key),
           source: {
-            bytes: fileBytes,
+            bytes: fileData.bytes,
           },
-        }
-      })) 
+          format: this.parseContentTypeToFormat(fileData.contentType),
+        },
+      }))
       const converseCommand = new ConverseStreamCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],
