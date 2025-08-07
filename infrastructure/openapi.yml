@@ -19,7 +19,7 @@ paths:
                 question:
                   type: string
                   description: The question to ask the AI integration
-                recordsIds:
+                recordsKeys:
                   type: array
                   items:
                     type: string
