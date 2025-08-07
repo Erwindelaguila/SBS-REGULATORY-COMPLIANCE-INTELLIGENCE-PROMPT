@@ -70,6 +70,11 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
     return {
       statusCode: 200,
       body: JSON.stringify(result),
+      headers: {
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      }
     };
   } catch (error) {
     // TODO: handle send error responses
@@ -81,11 +86,19 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
       body: JSON.stringify({
         message: "Internal Server Error",
       }),
+      headers: {
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      }
     };
   }
 };
 
-export const handler = middy<APIGatewayProxyEvent, APIGatewayProxyResult>()
+export const handler = middy<
+  APIGatewayProxyEvent, 
+  APIGatewayProxyResult
+>({ streamifyResponse: true })
   .use(httpHeaderNormalizer())
   .use(httpJsonBodyParser())
   .handler(lambdaHandler);
