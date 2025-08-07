@@ -11,9 +11,9 @@ export class BedrockAIChatClient implements AIChatClient {
 
   async getChatResponse(
     systemPrompt: string,
-    // filesBytes: Uint8Array[],
     // conversation: Message[], // TODO: pass the conversation history
-    userPrompt: string
+    userPrompt: string,
+    filesBytes: Uint8Array[],
   ): Promise<AIChatResponse> {
     try {
       const converseCommand = new ConverseCommand({
@@ -22,7 +22,23 @@ export class BedrockAIChatClient implements AIChatClient {
         messages: [
           {
             role:"user", 
-            content: [{ text: userPrompt }]
+            content: [
+              { 
+                text: userPrompt 
+              },
+              {
+                document: {
+                  format: "pdf", // TODO: complete with object attributes
+                  name: "InformeInvestigacion", // TODO: complete with object attributes
+                  source: {
+                    bytes: filesBytes[0] // TODO: map filesBytes to the correct format
+                  },
+                  citations: {
+                    enabled: true
+                  }
+                }
+              }
+            ]
           }
         ]
       })
@@ -33,7 +49,7 @@ export class BedrockAIChatClient implements AIChatClient {
           : "";
       return {
         response: responseText as string,
-        fileKeys: ["file1", "file2"]
+        fileKeys: ["informe-investigacion.pdf"]
       }
     } catch (error) { 
       // TODO: Handle specific Bedrock errors

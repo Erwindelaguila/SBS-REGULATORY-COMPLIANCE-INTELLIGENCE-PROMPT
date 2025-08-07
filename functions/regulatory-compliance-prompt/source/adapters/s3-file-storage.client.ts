@@ -20,7 +20,8 @@ export class S3FileStorageClient implements FileStorageClient {
         // TODO throw error: not found
         const fileInBytes = await response.Body?.transformToByteArray();
         // TODO throw error: fileInBytes is undefined
-        results.push(fileInBytes as Uint8Array); // TODO: ensure is not undefined
+        results.push(fileInBytes as Uint8Array); 
+        // TODO: ensure fileInBytes is not undefined
       }
       return results;
     } catch (error) {
@@ -29,7 +30,6 @@ export class S3FileStorageClient implements FileStorageClient {
         console.error("Failed to get files by key:", error);
       }
       throw error;
-      
     }
   }
 }

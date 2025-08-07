@@ -27,15 +27,16 @@ export class PromptRegulatoryComplianceCommandHandler {
         throw new Error("No system prompts found");
       }
       const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
-
+      */
+     
       // Get files by keys
-      const filesBytes = await this.fileStorageClient.getFilesByKey(command.recordKeys); */
+      const filesBytes = await this.fileStorageClient.getFilesByKey(command.recordKeys); 
 
       // Get AI chat response
       const aiResponse = await this.aiChatClient.getChatResponse(
-        "You are an expert in finance", 
-        // filesBytes, 
-        command.question
+        "You are an expert in finance",
+        command.question,
+        filesBytes,
       );
 
       return {
