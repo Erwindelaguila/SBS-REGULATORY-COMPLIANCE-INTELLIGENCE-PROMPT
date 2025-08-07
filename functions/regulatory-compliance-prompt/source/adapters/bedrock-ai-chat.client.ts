@@ -1,4 +1,4 @@
-import { BedrockRuntimeClient, ConverseStreamCommand, ConverseStreamOutput } from "@aws-sdk/client-bedrock-runtime";
+import { BedrockRuntimeClient, ContentBlock, ConverseStreamCommand, ConverseStreamOutput } from "@aws-sdk/client-bedrock-runtime";
 import { AIChatClient } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
 import { Readable } from "stream";
@@ -23,6 +23,15 @@ export class BedrockAIChatClient implements AIChatClient {
     filesBytes: Uint8Array[],
   ): Promise<Readable> {
     try {
+      const files: ContentBlock[] = filesBytes.map((fileBytes, index) => ({
+        document: {
+          format: "pdf", 
+          name: `file${index + 1}`, 
+          source: {
+            bytes: fileBytes,
+          },
+        }
+      })) 
       const converseCommand = new ConverseStreamCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],
@@ -33,15 +42,7 @@ export class BedrockAIChatClient implements AIChatClient {
               { 
                 text: userPrompt 
               },
-              {
-                document: {
-                  format: "pdf", // TODO: complete with object attributes
-                  name: "InformeInvestigacion", // TODO: complete with object attributes
-                  source: {
-                    bytes: filesBytes[0] // TODO: map filesBytes to the correct format
-                  },
-                }
-              }
+              ...files
             ]
           }
         ]
