@@ -22,7 +22,6 @@ Parameters:
     Default: bucket
 
 Resources:
-
   RegulatoryCompliancePromptsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -66,6 +65,10 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
+        Cors:
+          AllowMethods: "'*'"
+          AllowHeaders: "'*'"
+          AllowOrigin: "'*'"
       Environment:
         Variables:
           SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
@@ -79,5 +82,3 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - app.ts
-      
-
