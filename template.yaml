@@ -8,12 +8,18 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
 
 Parameters:
   PromptsTableName:
     Type: String
     Default: table
+  BedrockModelId:
+    Type: String
+    Default: model
+  S3BucketName:
+    Type: String
+    Default: bucket
 
 Resources:
   RegulatoryCompliancePromptFunction:
@@ -29,10 +35,12 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /regulatory-compliance/prompt
-            Method: get
+            Method: post
       Environment:
         Variables:
-          PROMPS_TABLE_NAME: !Ref PromptsTableName
+          SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          S3_BUCKET_NAME: !Ref S3BucketName
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
