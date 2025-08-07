@@ -1,6 +1,7 @@
-import { BedrockRuntimeClient, ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
-import { AIChatClient, AIChatResponse } from "../domain/ports/ai-chat.client";
+import { BedrockRuntimeClient, ConverseStreamCommand, ConverseStreamOutput } from "@aws-sdk/client-bedrock-runtime";
+import { AIChatClient } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
+import { Readable } from "stream";
 
 export class BedrockAIChatClient implements AIChatClient {
   constructor(
@@ -9,14 +10,20 @@ export class BedrockAIChatClient implements AIChatClient {
     private readonly logger: Logger,
   ) {}
 
+  private async* streamToAsyncIterator(bedrockStream: AsyncIterable<ConverseStreamOutput>) {
+    for await (const chunk of bedrockStream) {
+      yield chunk.contentBlockDelta?.delta?.text || "";
+    }
+  }
+
   async getChatResponse(
     systemPrompt: string,
     // conversation: Message[], // TODO: pass the conversation history
     userPrompt: string,
     filesBytes: Uint8Array[],
-  ): Promise<AIChatResponse> {
+  ): Promise<Readable> {
     try {
-      const converseCommand = new ConverseCommand({
+      const converseCommand = new ConverseStreamCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],
         messages: [
@@ -43,14 +50,12 @@ export class BedrockAIChatClient implements AIChatClient {
         ]
       })
       const response = await this.bedrockRuntimeClient.send(converseCommand);
-      const responseText =
-        response.output?.message?.content && response.output.message.content.length > 0
-          ? response.output.message.content[0].text
-          : "";
-      return {
-        response: responseText as string,
-        fileKeys: ["informe-investigacion.pdf"]
+      if (!response.stream) {
+        throw new Error("No response stream received from Bedrock AI");
       }
+      const readable = Readable.from(this.streamToAsyncIterator(response.stream));
+      return readable;
+
     } catch (error) { 
       // TODO: Handle specific Bedrock errors
       if (error instanceof Error) {

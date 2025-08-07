@@ -3,9 +3,10 @@ import { AIChatClient } from "../ports/ai-chat.client";
 import { FileStorageClient } from "../ports/file-storage.client";
 import { SystemPromptsRepository } from "../ports/system-prompts.repository";
 import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
+import { Readable } from "stream";
 
 export interface PromptRegComplCommandHandlerOutput {
-  answer: string;
+  result: Readable;
   fileKeys: string[];
 }
 
@@ -40,8 +41,8 @@ export class PromptRegulatoryComplianceCommandHandler {
       );
 
       return {
-        answer: aiResponse.response,
-        fileKeys: aiResponse.fileKeys,
+        result: aiResponse,
+        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
       };
     } catch (err) {
       // TODO: Handle specific errors and their codes
