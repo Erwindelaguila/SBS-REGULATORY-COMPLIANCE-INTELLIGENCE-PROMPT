@@ -1,3 +1,4 @@
+import { Readable } from "stream";
 import { PromptRegulatoryComplianceCommandHandler } from "../domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceCommand } from "../domain/commands/prompt-regulatory-compliance.command";
 
@@ -7,7 +8,7 @@ type PromptRegComplInput = {
 }
 
 type PromptRegComplOutPut = {
-  answer: string;
+  result: Readable;
   fileKeys: string[];
 }
 
