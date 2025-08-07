@@ -4,11 +4,17 @@ export interface AIChatClient {
   getChatResponse(
     systemPrompt: string, 
     prompt: string,
-    filesBytes?: Uint8Array[], 
+    fileData: FileData[], 
   ): Promise<Readable>;
 }
 
 export type AIChatResponse = {
   response: string;
   fileKeys: string[];
+}
+
+export type FileData = {
+  key: string;
+  bytes: Uint8Array;
+  contentType: string;
 }

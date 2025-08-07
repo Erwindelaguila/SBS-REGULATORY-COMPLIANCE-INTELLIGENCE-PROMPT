@@ -2,15 +2,21 @@ import { Logger } from "pino";
 import { FileStorageClient } from "../domain/ports/file-storage.client";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
+type FileData = {
+  key: string;
+  bytes: Uint8Array;
+  contentType: string;
+}
+
 export class S3FileStorageClient implements FileStorageClient {
   constructor(
     private readonly s3Client: S3Client,
     private readonly bucketName: string,
     private readonly logger: Logger
   ) {}
-  async getFilesByKey(keys: string[]): Promise<Uint8Array[]> {
+  async getFilesByKey(keys: string[]): Promise<FileData[]> {
     try {
-      const results: Uint8Array[] = [];
+      const results =  [];
       for (const key of keys) {
         const command = new GetObjectCommand({
           Bucket: this.bucketName,
@@ -19,8 +25,13 @@ export class S3FileStorageClient implements FileStorageClient {
         const response = await this.s3Client.send(command);
         // TODO throw error: not found
         const fileInBytes = await response.Body?.transformToByteArray();
+        const contentType = response.ContentType
         // TODO throw error: fileInBytes is undefined
-        results.push(fileInBytes as Uint8Array); 
+        results.push({
+          key,
+          bytes: fileInBytes!,
+          contentType: contentType!
+        }); 
         // TODO: ensure fileInBytes is not undefined
       }
       return results;
