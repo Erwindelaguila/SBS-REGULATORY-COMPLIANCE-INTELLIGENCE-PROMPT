@@ -25,7 +25,7 @@ const logger = pino({});
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.BUCKET_NAME!, logger);
+const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_BUCKET_NAME!, logger);
 
 const systemPromptsRepository = new DynSystemPromptsRepositoryImpl(
   dynamoDBDocumentClient,
@@ -53,8 +53,8 @@ const promptRegulatoryComplianceEntrypoint = new PromptRegulatoryComplianceEntry
 );
 
 export const handler = awslambda.streamifyResponse(
-  async (event: LambdaFunctionURLEvent, responseStream: awslambda.HttpResponseStream, context: Context) => {
-    const body = JSON.stringify(event.body!) as any;
+  async (event: LambdaFunctionURLEvent, responseStream: awslambda.HttpResponseStream, _: Context) => {
+    const body = JSON.parse(event.body!) as any;
     try {
       const promptRegComplOutPut = await promptRegulatoryComplianceEntrypoint.handleRequest({
         question: body.question as string,

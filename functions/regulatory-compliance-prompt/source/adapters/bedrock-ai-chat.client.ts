@@ -40,9 +40,6 @@ export class BedrockAIChatClient implements AIChatClient {
                   source: {
                     bytes: filesBytes[0] // TODO: map filesBytes to the correct format
                   },
-                  citations: {
-                    enabled: true
-                  }
                 }
               }
             ]
