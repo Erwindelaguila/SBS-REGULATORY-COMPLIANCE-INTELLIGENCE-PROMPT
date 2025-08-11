@@ -8,6 +8,7 @@ export interface AIChatClient {
 }
 
 export type FileData = {
+  recordId: string,
   key: string;
   bytes: Uint8Array;
   contentType: string;
