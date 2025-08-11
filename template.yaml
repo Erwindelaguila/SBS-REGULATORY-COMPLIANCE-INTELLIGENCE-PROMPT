@@ -20,6 +20,9 @@ Parameters:
   S3BucketName:
     Type: String
     Default: bucket
+  SupervisoryRecordsTableName:
+    Type: String
+    Default: records-table
 
 Resources:
   RegulatoryCompliancePromptsTable:
@@ -51,6 +54,62 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+
+  SupervisoryRecordsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref SupervisoryRecordsTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: hash
+          AttributeType: S
+        - AttributeName: supervisedEntityId
+          AttributeType: S
+        - AttributeName: parentId
+          AttributeType: S
+        - AttributeName: key
+          AttributeType: S
+        - AttributeName: contentUrl
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: supervisedEntityId-parentId-index
+          KeySchema:
+            - AttributeName: supervisedEntityId
+              KeyType: HASH
+            - AttributeName: parentId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: hash-index
+          KeySchema:
+            - AttributeName: hash
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: parentId-index
+          KeySchema:
+            - AttributeName: parentId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
 
   RegulatoryCompliancePromptFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -87,6 +146,41 @@ Resources:
         EntryPoints:
           - app.ts
 
+  MetadataInsertionPromptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/metadata-insertion-prompt/
+      Handler: app.handler
+      Runtime: nodejs22.x
+      MemorySize: 256
+      Timeout: 60
+      Architectures:
+        - x86_64
+      Role: !GetAtt MetadataInsertionPromptFunctionRole.Arn
+      Environment:
+        Variables:
+          SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
+          S3_BUCKET_NAME: !Ref S3BucketName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+      Events:
+        DynamoDBTrigger:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt SupervisoryRecordsTable.StreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -103,4 +197,20 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
-        
+  
+  MetadataInsertionPromptFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
