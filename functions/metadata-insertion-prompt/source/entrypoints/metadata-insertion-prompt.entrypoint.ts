@@ -1,9 +1,9 @@
+import { DynamoDBRecord } from "aws-lambda";
 import { MetadataInsertionPromptCommandHandler } from "../domain/command-handlers/metadata-insertion-prompt.command-handler";
 import { MetadataInsertionPromptCommand } from "../domain/commands/metadata-insertion-prompt.command";
 
 type MetadataInsertionPromptInput = {
-  recordId: string;
-  fileKey: string;
+  insertRecords: DynamoDBRecord[]
   systemPrompt: string;
   userPrompt: string;
 };
@@ -15,8 +15,7 @@ export class MetadataInsertionPromptEntryPoint {
 
   public async handleRequest (metadataInsInput: MetadataInsertionPromptInput): Promise<void> {
     const command = MetadataInsertionPromptCommand.createCommand(
-      metadataInsInput.recordId,
-      metadataInsInput.fileKey,
+      metadataInsInput.insertRecords,
       metadataInsInput.systemPrompt,
       metadataInsInput.userPrompt
     );
