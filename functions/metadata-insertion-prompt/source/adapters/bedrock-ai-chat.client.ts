@@ -61,8 +61,11 @@ export class BedrockAIChatClient implements AIChatClient {
         ]
       })
       const response = await this.bedrockRuntimeClient.send(converseCommand);
+      this.logger.debug({ response }, "Bedrock response");
       const responseText = response.output?.message?.content?.[0]?.text;
-      return JSON.parse(responseText ?? "{}"); 
+      const parsedResponse = JSON.parse(JSON.stringify(responseText) ?? "{}"); 
+      this.logger.debug({ parsedResponse }, "Parsed response from Bedrock to JSON");
+      return parsedResponse
     } catch (err) {
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to generate metadata");

@@ -17,7 +17,7 @@ export class MetadataInsertionPromptCommandHandler {
     try {
       const filesPromises = command.insertRecords.map(record => {
         if (record.dynamodb?.NewImage) {
-          const fileKey = record.dynamodb.NewImage.fileKey.S as string;
+          const fileKey = record.dynamodb.NewImage.key.S as string;
           const recordId = record.dynamodb.NewImage.id.S as string;
           return this.fileStorageClient.getFileByKey(fileKey, recordId);
         }
@@ -46,8 +46,8 @@ export class MetadataInsertionPromptCommandHandler {
 
       // relate each metadata with each recordId
       const metadataMap = newMetadatas.reduce((acc, item) => {
-        item.recordsId.forEach(recordId => {
-          acc[recordId] = item.metadata;
+        item.recordsId.forEach((recordId) => {
+          acc[recordId] = item.metadata[0];
         });
         return acc;
       }, {} as Record<string, any>);
@@ -56,7 +56,7 @@ export class MetadataInsertionPromptCommandHandler {
         this.supervisoryRecordsRepository.updateMetadata(recordId, metadata)
       );
 
-      await Promise.all(updatePromises);
+      await Promise.allSettled(updatePromises);
 
       this.logger.debug(`Updated metadata for records: ${Object.keys(metadataMap).join(", ")}`);
     } catch (error) {
