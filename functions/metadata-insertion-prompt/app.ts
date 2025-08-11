@@ -41,9 +41,21 @@ const metadataInsertionPromptEntrypoint = new MetadataInsertionPromptEntryPoint(
   metadataInsertionPromptCommandHandler,
 );
 
-const SYSTEM_PROMPT = 'You are a helpful assistant.';
+const SYSTEM_PROMPT = 'Debes responder únicamente con JSON válido. Sin texto explicativo, sin formato markdown, sin comentarios adicionales - solo JSON puro. Tu respuesta debe ser siempre un arreglo de objetos, nunca un objeto único o estructura anidada. Cada objeto en el arreglo debe contener pares clave-valor con valores concisos y precisos.';
 
-const USER_PROMPT = 'Please provide the necessary metadata.';
+const USER_PROMPT = `
+  De cada archivo/documento proporcionado, identifica palabras o términos clave y genera un objeto clave-valor con estos datos. Los campos más importantes a identificar son "sender", "receiver", "subject", pero si identificas campos adicionales relevantes, inclúyelos también. Para cada clave, los valores no deben ser extensos - solo valores precisos y concisos. Retorna un arreglo con los objetos generados para cada archivo.
+
+  Campos requeridos (cuando estén disponibles):
+  - sender: Quién envió/creó el documento
+  - receiver: Quién recibió/es el destinatario del documento
+  - subject: Tema principal o título del documento
+
+  Campos adicionales que puedes incluir:
+  - date, document_type, priority, reference_number, organization, department, status, etc.
+
+  Mantén todos los valores concisos y factuales.
+`;
 
 export const handler = async (event: DynamoDBStreamEvent) => {
   try {
