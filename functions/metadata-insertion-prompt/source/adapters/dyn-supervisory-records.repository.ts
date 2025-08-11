@@ -12,10 +12,11 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
 
   async updateMetadata(recordId: string, metadata: Record<string, any>): Promise<void> {
     try {
+      this.logger.debug(`Updating metadata for record ${recordId} and metadata ${JSON.stringify(metadata)}`);
       const params: UpdateCommandInput = {
         TableName: this.tableName,
         Key: {
-          pk: recordId
+          id: recordId
         },
         UpdateExpression: "SET metadata = :metadata",
         ExpressionAttributeValues: {
@@ -24,11 +25,13 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
         ReturnValues: "ALL_NEW"
       };
       const result = await this.dynamoDBDocumentClient.send(new UpdateCommand(params));
-      this.logger.info({ result }, "Successfully updated metadata");
+      this.logger.debug({ result }, "Successfully updated metadata");
     } catch (err) {
       if (err instanceof ConditionalCheckFailedException) {
         this.logger.error({ err }, "Failed to update metadata");
       }
+      this.logger.error({ err }, `Error updating metadata for record ${recordId}`);
+      throw err;
     }
   }
 }

@@ -25,8 +25,9 @@ export class S3FileStorageClient implements FileStorageClient {
       };
     } catch (err) {
       if (err instanceof Error) {
-        this.logger.error("Failed to get file by key:", err);
+        this.logger.error(`Failed to get file by key: ${key}`, err);
       }
+      this.logger.error(err)
       throw err;
     }
   }
