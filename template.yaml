@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  suptech-supervisory-records
+  suptech-supervisory-prompts
 
   Sample SAM Template for suptech-supervisory-records
 
@@ -22,7 +22,10 @@ Parameters:
     Default: bucket
   SupervisoryRecordsTableName:
     Type: String
-    Default: records-table
+    Default: table
+  SupervisoryRecordsStreamArn:
+    Type: String
+    Default: stream
 
 Resources:
   RegulatoryCompliancePromptsTable:
@@ -34,6 +37,8 @@ Resources:
           AttributeType: S
         - AttributeName: version
           AttributeType: N
+        - AttributeName: application
+          AttributeType: S
         - AttributeName: type
           AttributeType: S
       KeySchema:
@@ -42,74 +47,20 @@ Resources:
         - AttributeName: version
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: type-index
+        - IndexName: application-type-index
           KeySchema:
+            - AttributeName: application
+              KeyType: HASH
             - AttributeName: type
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-
-  SupervisoryRecordsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref SupervisoryRecordsTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: hash
-          AttributeType: S
-        - AttributeName: supervisedEntityId
-          AttributeType: S
-        - AttributeName: parentId
-          AttributeType: S
-        - AttributeName: key
-          AttributeType: S
-        - AttributeName: contentUrl
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-        - IndexName: supervisedEntityId-parentId-index
-          KeySchema:
-            - AttributeName: supervisedEntityId
-              KeyType: HASH
-            - AttributeName: parentId
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: hash-index
-          KeySchema:
-            - AttributeName: hash
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: parentId-index
-          KeySchema:
-            - AttributeName: parentId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
   RegulatoryCompliancePromptFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -166,7 +117,7 @@ Resources:
         DynamoDBTrigger:
           Type: DynamoDB
           Properties:
-            Stream: !GetAtt SupervisoryRecordsTable.StreamArn
+            Stream: !Ref SupervisoryRecordsStreamArn
             StartingPosition: LATEST
             BatchSize: 10
             FilterCriteria:
