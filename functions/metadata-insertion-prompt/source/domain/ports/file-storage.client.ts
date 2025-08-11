@@ -1,8 +1,9 @@
 export interface FileStorageClient {
-  getFileByKey(key: string): Promise<FileData>
+  getFileByKey(key: string, recordId: string): Promise<RecordFileData>
 }
 
-export type FileData = {
+export type RecordFileData = {
+  recordId: string;
   key: string;
   bytes: Uint8Array;
   contentType: string;
