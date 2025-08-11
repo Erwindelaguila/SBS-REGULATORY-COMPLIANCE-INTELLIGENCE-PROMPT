@@ -1,5 +1,5 @@
 import { BedrockRuntimeClient, ContentBlock, ConverseCommand, DocumentFormat } from "@aws-sdk/client-bedrock-runtime";
-import { AIChatClient, FileData } from "../domain/ports/ai-chat.client";
+import { AIChatClient, FileData, FileMetadata } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
 
 export class BedrockAIChatClient implements AIChatClient {
@@ -26,46 +26,64 @@ export class BedrockAIChatClient implements AIChatClient {
     }
   }
 
-  private parseDocumentName(key: string): string {
-    return key.replace(/[^a-zA-Z0-9]/g, '');
+  private removeExtension(fileName: string): string {
+    const index = fileName.lastIndexOf(".");
+    if (index === -1) {
+      return fileName;
+    }
+    return fileName.substring(0, index);
   }
 
-  async generateMetadata(
-    systemPrompt: string, 
-    userPrompt: string, 
-    filesData: FileData[]
-  ): Promise<Record<string, any>> {
+  private removeHyphens(str: string): string {
+    return str.replace(/-/g, "");
+  }
+
+  private addUuidHyphens(str: string): string {
+    return str
+      .split(/(.{8})(.{4})(.{4})(.{4})(.{12})/g)!
+      .filter(Boolean)
+      .join("-");
+  }
+
+  async generateMetadata(systemPrompt: string, userPrompt: string, filesData: FileData[]): Promise<FileMetadata[]> {
     try {
-      const files = filesData.map((fileData): ContentBlock => ({
-        document: {
-          name: this.parseDocumentName(fileData.key),
-          source: {
-            bytes: fileData.bytes,
+      const files = filesData.map(
+        (fileData): ContentBlock => ({
+          document: {
+            name: this.removeHyphens(fileData.recordId),
+            source: {
+              bytes: fileData.bytes,
+            },
+            format: this.parseContentTypeToFormat(fileData.contentType),
           },
-          format: this.parseContentTypeToFormat(fileData.contentType),
-        },
-      }))
+        }),
+      );
       const converseCommand = new ConverseCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],
         messages: [
           {
-            role:"user", 
+            role: "user",
             content: [
-              { 
-                text: userPrompt 
+              {
+                text: userPrompt,
               },
-              ...files
-            ]
-          }
-        ]
-      })
+              ...files,
+            ],
+          },
+        ],
+      });
       const response = await this.bedrockRuntimeClient.send(converseCommand);
       this.logger.debug({ response }, "Bedrock response");
+
       const responseText = response.output?.message?.content?.[0]?.text;
-      const parsedResponse = JSON.parse(JSON.stringify(responseText) ?? "{}"); 
+      const parsedResponse: Array<any> = JSON.parse(responseText!);
       this.logger.debug({ parsedResponse }, "Parsed response from Bedrock to JSON");
-      return parsedResponse
+
+      return parsedResponse.map((response) => ({
+        recordId: this.addUuidHyphens(this.removeExtension(response.recordId)),
+        metadata: response.metadata,
+      }));
     } catch (err) {
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to generate metadata");

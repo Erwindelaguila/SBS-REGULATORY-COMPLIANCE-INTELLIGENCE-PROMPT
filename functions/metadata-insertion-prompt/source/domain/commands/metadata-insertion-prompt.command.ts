@@ -1,17 +1,21 @@
-import { DynamoDBRecord } from "aws-lambda";
+export type MetadataInsertionPromptCommandRecord = {
+  recordId: string;
+  key: string;
+  metadata: Record<string, any>;
+};
 
 export class MetadataInsertionPromptCommand {
-  private constructor (
-    public readonly insertRecords: DynamoDBRecord[],
+  private constructor(
+    public readonly records: MetadataInsertionPromptCommandRecord[],
     public readonly systemPrompt: string,
     public readonly userPrompt: string,
   ) {}
 
-  static createCommand (
-    insertRecords: DynamoDBRecord[],
+  static createCommand(
+    records: MetadataInsertionPromptCommandRecord[],
     systemPrompt: string,
     userPrompt: string,
   ): MetadataInsertionPromptCommand {
-    return new MetadataInsertionPromptCommand(insertRecords, systemPrompt, userPrompt);
+    return new MetadataInsertionPromptCommand(records, systemPrompt, userPrompt);
   }
-} 
+}
