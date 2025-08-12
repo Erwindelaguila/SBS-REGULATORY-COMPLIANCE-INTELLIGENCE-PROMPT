@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  suptech-supervisory-records
+  suptech-supervisory-prompts
 
   Sample SAM Template for suptech-supervisory-records
 
@@ -20,6 +20,12 @@ Parameters:
   S3BucketName:
     Type: String
     Default: bucket
+  SupervisoryRecordsTableName:
+    Type: String
+    Default: table
+  SupervisoryRecordsStreamArn:
+    Type: String
+    Default: stream
 
 Resources:
   RegulatoryCompliancePromptsTable:
@@ -31,6 +37,8 @@ Resources:
           AttributeType: S
         - AttributeName: version
           AttributeType: N
+        - AttributeName: application
+          AttributeType: S
         - AttributeName: type
           AttributeType: S
       KeySchema:
@@ -39,10 +47,12 @@ Resources:
         - AttributeName: version
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: type-index
+        - IndexName: application-type-index
           KeySchema:
-            - AttributeName: type
+            - AttributeName: application
               KeyType: HASH
+            - AttributeName: type
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
@@ -87,6 +97,41 @@ Resources:
         EntryPoints:
           - app.ts
 
+  MetadataInsertionPromptFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/metadata-insertion-prompt/
+      Handler: app.handler
+      Runtime: nodejs22.x
+      MemorySize: 256
+      Timeout: 60
+      Architectures:
+        - x86_64
+      Role: !GetAtt MetadataInsertionPromptFunctionRole.Arn
+      Environment:
+        Variables:
+          SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
+          S3_BUCKET_NAME: !Ref S3BucketName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+      Events:
+        DynamoDBTrigger:
+          Type: DynamoDB
+          Properties:
+            Stream: !Ref SupervisoryRecordsStreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -103,4 +148,20 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
-        
+  
+  MetadataInsertionPromptFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess

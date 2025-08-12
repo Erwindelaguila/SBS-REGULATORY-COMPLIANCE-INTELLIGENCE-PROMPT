@@ -21,8 +21,9 @@ resolve_s3 = true
 s3_prefix = "suptech-regulatory-compliance-prompt"
 region = "us-east-1"
 profile = "protecso"
-parameter_overrides = "PromptsTableName=\"system-prompts\" BedrockModelId=\"us.anthropic.claude-sonnet-4-20250514-v1:0\" S3BucketName=\"supervisory-records\""
+parameter_overrides = "PromptsTableName=\"system-prompts\" BedrockModelId=\"us.anthropic.claude-sonnet-4-20250514-v1:0\" S3BucketName=\"supervisory-records\" SupervisoryRecordsTableName=\"supervisory-records\" SupervisoryRecordsStreamArn=\"arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417\""
 image_repositories = []
+disable_rollback = true
 
 [default.package.parameters]
 resolve_s3 = true

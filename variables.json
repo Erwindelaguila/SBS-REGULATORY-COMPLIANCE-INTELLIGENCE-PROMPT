@@ -3,5 +3,11 @@
     "SYSTEM_PROMPTS_TABLE_NAME": "system-prompts",
     "BEDROCK_MODEL_ID": "us.anthropic.claude-3-haiku-20240307-v1:0",
     "S3_BUCKET_NAME": "supervisory-files-file-storage"
+  },
+  "MetadataInsertionPromptFunction": {
+    "SYSTEM_PROMPTS_TABLE_NAME": "system-prompts",
+    "BEDROCK_MODEL_ID": "us.anthropic.claude-3-haiku-20240307-v1:0",
+    "S3_BUCKET_NAME": "supervisory-files-file-storage",
+    "SUPERVISORY_RECORDS_TABLE_NAME": "supervisory-records"
   }
 }
