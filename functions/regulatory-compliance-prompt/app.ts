@@ -66,7 +66,7 @@ export const handler = awslambda.streamifyResponse(
         responseStream.write(chunk);
       }
 
-      logger.info("Finish writing response");
+      logger.debug("Finish writing response");
       responseStream.end();
     } catch (error) {
       // TODO: handle send error responses
