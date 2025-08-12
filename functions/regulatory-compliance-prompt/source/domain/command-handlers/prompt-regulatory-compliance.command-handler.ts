@@ -42,12 +42,13 @@ export class PromptRegulatoryComplianceCommandHandler {
 
       - Por cada archivo cargado genera resumen acerca del contenido del archivo y clasifica que tipo de documento es, solo si, el archivo contiene el texto solicitado por el usuario para la busqueda
 
-      - Una sola tabla de resultados de busqueda para todos los arhivos cargados, con los siguientes campos: Archivo | Remitente | Destinatario | Asunto | Resultado.
+      - Una sola tabla de resultados de busqueda para todos los arhivos cargados, con los siguientes campos: Archivo | Remitente | Destinatario | Asunto | Página | Resultado.
           - Archivo: nombre del archivo
           - Remitente: nombre del remitente o 'No encontrado en el archivo'
           - Destinatario: nombre del destinatario o 'No encontrado en el archivo' 
           - Asunto: texto del asunto o 'No encontrado en el archivo' 
-          - Resultado: Parrafos que contiene el texto buscado por el usuario
+          - Página: página dónde se encontró el resultado
+          - Resultado: Párrafos que contiene el texto buscado por el usuario
 
       No generes texto fuera de esta estructura, no inventes datos que no estén presentes en los archivos y mantén el formato de encabezados, viñetas y tablas de forma consistente.
 

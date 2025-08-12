@@ -1,4 +1,10 @@
-import { BedrockRuntimeClient, ContentBlock, ConverseStreamCommand, ConverseStreamOutput, DocumentFormat } from "@aws-sdk/client-bedrock-runtime";
+import {
+  BedrockRuntimeClient,
+  ContentBlock,
+  ConverseStreamCommand,
+  ConverseStreamOutput,
+  DocumentFormat,
+} from "@aws-sdk/client-bedrock-runtime";
 import { AIChatClient, FileData } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
 import { Readable } from "stream";
@@ -10,7 +16,7 @@ export class BedrockAIChatClient implements AIChatClient {
     private readonly logger: Logger,
   ) {}
 
-  private async* streamToAsyncIterator(bedrockStream: AsyncIterable<ConverseStreamOutput>) {
+  private async *streamToAsyncIterator(bedrockStream: AsyncIterable<ConverseStreamOutput>) {
     for await (const chunk of bedrockStream) {
       yield chunk.contentBlockDelta?.delta?.text || "";
     }
@@ -34,7 +40,15 @@ export class BedrockAIChatClient implements AIChatClient {
   }
 
   private parseDocumentName(key: string): string {
-    return key.replace(/[^a-zA-Z0-9]/g, '');
+    return key.replace(/[^a-zA-Z0-9\s\-()[\]]|\s{2,}/g, "");
+  }
+
+  private removeExtension(fileName: string): string {
+    const index = fileName.lastIndexOf(".");
+    if (index === -1) {
+      return fileName;
+    }
+    return fileName.substring(0, index);
   }
 
   async getChatResponse(
@@ -44,38 +58,39 @@ export class BedrockAIChatClient implements AIChatClient {
     filesData: FileData[],
   ): Promise<Readable> {
     try {
-      const files = filesData.map((fileData): ContentBlock => ({
-        document: {
-          name: this.parseDocumentName(fileData.key),
-          source: {
-            bytes: fileData.bytes,
+      const files = filesData.map(
+        (fileData): ContentBlock => ({
+          document: {
+            name: this.parseDocumentName(this.removeExtension(fileData.key)),
+            source: {
+              bytes: fileData.bytes,
+            },
+            format: this.parseContentTypeToFormat(fileData.contentType),
           },
-          format: this.parseContentTypeToFormat(fileData.contentType),
-        },
-      }))
+        }),
+      );
       const converseCommand = new ConverseStreamCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],
         messages: [
           {
-            role:"user", 
+            role: "user",
             content: [
-              { 
-                text: userPrompt 
+              {
+                text: userPrompt,
               },
-              ...files
-            ]
-          }
-        ]
-      })
+              ...files,
+            ],
+          },
+        ],
+      });
       const response = await this.bedrockRuntimeClient.send(converseCommand);
       if (!response.stream) {
         throw new Error("No response stream received from Bedrock AI");
       }
       const readable = Readable.from(this.streamToAsyncIterator(response.stream));
       return readable;
-
-    } catch (error) { 
+    } catch (error) {
       // TODO: Handle specific Bedrock errors
       if (error instanceof Error) {
         this.logger.error({ error }, "Failed to get chat response from Bedrock AI");
@@ -83,5 +98,4 @@ export class BedrockAIChatClient implements AIChatClient {
       throw error;
     }
   }
-
 }
