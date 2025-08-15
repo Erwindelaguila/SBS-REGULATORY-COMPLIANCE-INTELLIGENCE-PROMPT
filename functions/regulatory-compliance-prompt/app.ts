@@ -10,6 +10,7 @@ import { DynSystemPromptsRepositoryImpl } from "./source/adapters/dyn-system-pro
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { PromptRegulatoryComplianceCommandHandler } from "./source/domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/prompt-regulatory-compliance.entrypoint";
+import { markdownToCSV } from "./source/utils";
 
 /**
  *
@@ -66,7 +67,7 @@ export const handler = awslambda.streamifyResponse(
       let fullResponse = '';
 
       for await (const chunk of promptRegComplOutPut.result) {
-        logger.debug({ chunk }, "Chunk");
+        // logger.debug({ chunk }, "Chunk");
         fullResponse += chunk;
         responseStream.write(chunk);
       }
@@ -81,7 +82,9 @@ export const handler = awslambda.streamifyResponse(
 
       if (match && match[1]) {
           const markdownTable = match[1].trim();
-          logger.debug(markdownTable);
+          logger.debug({ markdownTable });
+          const csvTableContent = markdownToCSV(markdownTable);
+          logger.debug({ csvTableContent });
       }
 
     } catch (error) {
