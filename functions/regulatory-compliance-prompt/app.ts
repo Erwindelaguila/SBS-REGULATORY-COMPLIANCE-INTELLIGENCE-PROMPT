@@ -21,7 +21,9 @@ import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/promp
  *
  */
 
-const logger = pino({});
+const logger = pino({
+    level: "debug"
+});
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
@@ -61,13 +63,27 @@ export const handler = awslambda.streamifyResponse(
         recordKeys: body.recordKeys as string[],
       });
 
+      let fullResponse = '';
+
       for await (const chunk of promptRegComplOutPut.result) {
         logger.debug({ chunk }, "Chunk");
+        fullResponse += chunk;
         responseStream.write(chunk);
       }
 
       logger.debug("Finish writing response");
       responseStream.end();
+
+      logger.debug({ fullResponse }, "Full response");
+
+      const markdownTableRegex = /(\|.*\|(?:\s*\n\|--.*--\|)?(?:\s*\n\|.*\|)*\s*)$/;
+      const match = fullResponse.match(markdownTableRegex);
+
+      if (match && match[1]) {
+          const markdownTable = match[1].trim();
+          logger.debug(markdownTable);
+      }
+
     } catch (error) {
       // TODO: handle send error responses
       if (error instanceof Error) {
