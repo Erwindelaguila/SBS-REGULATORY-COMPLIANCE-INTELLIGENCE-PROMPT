@@ -1,15 +1,37 @@
-export function markdownToCSV(markdownTable: string): string {
-  const lines = markdownTable.trim().split("\n");
+export function markdownTableToCsv(markdownTable: string): string {
+  const lines = markdownTable.trim().split('\n');
+  const csvRows: string[] = [];
 
-  const dataRows = lines.filter(line => !/^(\|[-\s]*)+$/.test(line));
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
 
-  const parsedRows = dataRows.map(line =>
-    line
-      .split("|")
-      .slice(1, -1)
-      .map(cell => `"${cell.trim()}"`)
-      .join(",")
-  );
+    if (line.includes('---')) {
+      continue;
+    }
 
-  return parsedRows.join("\n");
+    if (!line || !line.includes('|')) {
+      continue;
+    }
+
+    const cells = line
+      .split('|')
+      .map((cell) => cell.trim())
+      .filter((cell) => cell !== '');
+
+    const escapedCells = cells.map((cell) => {
+      let cleanCell = cell.replace(/\*\*(.*?)\*\*/g, '$1')
+      cleanCell = cleanCell.replace(/\*(.*?)\*/g, '$1'); 
+      cleanCell = cleanCell.replace(/`(.*?)`/g, '$1'); 
+
+      if (cleanCell.includes(',') || cleanCell.includes('"') || cleanCell.includes('\n')) {
+        cleanCell = `"${cleanCell.replace(/"/g, '""')}"`;
+      }
+
+      return cleanCell;
+    });
+
+    csvRows.push(escapedCells.join(','));
+  }
+
+  return csvRows.join('\n');
 }
