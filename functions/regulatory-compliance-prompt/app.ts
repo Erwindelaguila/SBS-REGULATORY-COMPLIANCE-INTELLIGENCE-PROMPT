@@ -10,7 +10,7 @@ import { DynSystemPromptsRepositoryImpl } from "./source/adapters/dyn-system-pro
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { PromptRegulatoryComplianceCommandHandler } from "./source/domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/prompt-regulatory-compliance.entrypoint";
-import { markdownToCSV } from "./source/utils";
+import { markdownTableToCsv } from "./source/utils";
 
 /**
  *
@@ -81,10 +81,22 @@ export const handler = awslambda.streamifyResponse(
       const match = fullResponse.match(markdownTableRegex);
 
       if (match && match[1]) {
-          const markdownTable = match[1].trim();
-          logger.debug({ markdownTable });
-          const csvTableContent = markdownToCSV(markdownTable);
-          logger.debug({ csvTableContent });
+        const markdownTable = match[1].trim();
+        logger.debug({ markdownTable });
+        const csvTableContent = markdownTableToCsv(markdownTable);
+        logger.debug({ csvTableContent });
+        /* 
+        const fileName = `csv-result-${crypto.randomUUID()}.csv`
+        const uploadCsvResponse = await s3Client.send(new PutObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME!,
+          Key: fileName,
+          Body: csvTableContent,
+          ContentType: "text/csv",
+          ContentDisposition: `attachment; filename=${fileName}`
+        }))
+        logger.debug({ uploadCsvResponse });
+        */
+
       }
 
     } catch (error) {
