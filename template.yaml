@@ -9,6 +9,11 @@ Description: >
 Globals:
   Function:
     Timeout: 60
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
 
 Parameters:
   PromptsTableName:
@@ -17,7 +22,10 @@ Parameters:
   BedrockModelId:
     Type: String
     Default: model
-  S3BucketName:
+  DocumentsBucketName:
+    Type: String
+    Default: bucket
+  CsvBucketName:
     Type: String
     Default: bucket
   SupervisoryRecordsTableName:
@@ -26,8 +34,34 @@ Parameters:
   SupervisoryRecordsStreamArn:
     Type: String
     Default: stream
+  StageName:
+    Type: String
+    Default: develop
+  SaveCSVFlag:
+    Type: String
+    Default: "false"
 
 Resources:
+  CsvBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref CsvBucketName
+
+  RegulatoryComplianceIntelligenceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref StageName
+      OpenApiVersion: 3.0.1
+      DefinitionBody: # an OpenApi definition
+        Fn::Transform:
+          Name: "AWS::Include"
+          Parameters:
+            Location: "infrastructure/openapi.yml"
+      EndpointConfiguration:
+        Type: REGIONAL
+      BinaryMediaTypes:
+        - '*/*'
+
   RegulatoryCompliancePromptsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -62,6 +96,36 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
+  GetDocumentsAnalysisSheetFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functions/get-documents-analysis-sheet/
+      Handler: app.handler
+      Runtime: nodejs22.x
+      MemorySize: 256
+      Timeout: 60
+      Architectures:
+        - x86_64
+      Role: !GetAtt GetDocumentsAnalysisSheetFunctionRole.Arn
+      Environment:
+        Variables:
+          S3_CSV_BUCKET_NAME: !Ref CsvBucketName
+      Events:
+        GetDocumentAnalysisSheetApi:
+          Type: Api
+          Properties:
+            Path: /regulatory-compliance-intelligence/documents-analysis-sheet/{uuid}
+            Method: GET
+            RestApiId: !Ref RegulatoryComplianceIntelligenceApi
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   RegulatoryCompliancePromptFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -76,18 +140,20 @@ Resources:
         AuthType: NONE
         InvokeMode: RESPONSE_STREAM
         Cors:
-          AllowMethods: 
+          AllowMethods:
             - "*"
-          AllowHeaders: 
+          AllowHeaders:
             - "*"
-          AllowOrigins: 
+          AllowOrigins:
             - "*"
       Role: !GetAtt RegulatoryCompliancePromptFunctionRole.Arn
       Environment:
         Variables:
           SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
-          S3_BUCKET_NAME: !Ref S3BucketName
+          S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
+          S3_CSV_BUCKET_NAME: !Ref CsvBucketName
+          SAVE_CSV_FLAG: !Ref SaveCSVFlag
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
@@ -100,7 +166,7 @@ Resources:
   MetadataInsertionPromptFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/metadata-insertion-prompt/
+      CodeUri: functions/metadata-insertion/
       Handler: app.handler
       Runtime: nodejs22.x
       MemorySize: 256
@@ -111,7 +177,7 @@ Resources:
       Environment:
         Variables:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
-          S3_BUCKET_NAME: !Ref S3BucketName
+          S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
       Events:
         DynamoDBTrigger:
@@ -148,8 +214,25 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
-  
+
   MetadataInsertionPromptFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+
+  GetDocumentsAnalysisSheetFunctionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:

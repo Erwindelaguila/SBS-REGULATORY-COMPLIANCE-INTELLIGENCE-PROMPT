@@ -1,5 +1,5 @@
 {
-  "name": "hello_world",
+  "name": "get-document-analysis-sheet",
   "version": "1.0.0",
   "description": "hello world sample for NodeJS",
   "main": "app.js",
@@ -14,11 +14,7 @@
     "test": "npm run compile && npm run unit"
   },
   "dependencies": {
-    "@aws-sdk/client-bedrock-runtime": "^3.862.0",
-    "@aws-sdk/client-dynamodb": "^3.859.0",
     "@aws-sdk/client-s3": "^3.859.0",
-    "@aws-sdk/lib-dynamodb": "^3.859.0",
-    "@aws-sdk/util-dynamodb": "^3.864.0",
     "@middy/core": "^6.4.1",
     "@middy/http-header-normalizer": "^6.4.1",
     "@middy/http-json-body-parser": "^6.4.1",

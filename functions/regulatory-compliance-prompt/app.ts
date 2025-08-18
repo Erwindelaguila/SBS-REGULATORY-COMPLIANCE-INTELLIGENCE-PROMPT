@@ -10,7 +10,6 @@ import { DynSystemPromptsRepositoryImpl } from "./source/adapters/dyn-system-pro
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { PromptRegulatoryComplianceCommandHandler } from "./source/domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/prompt-regulatory-compliance.entrypoint";
-import { markdownTableToCsv } from "./source/utils";
 
 /**
  *
@@ -23,12 +22,17 @@ import { markdownTableToCsv } from "./source/utils";
  */
 
 const logger = pino({
-    level: "debug"
+  level: "debug",
 });
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_BUCKET_NAME!, logger);
+const documentsFileStorageClient = new S3FileStorageClient(
+  new S3Client({}),
+  process.env.S3_DOCUMENTS_BUCKET_NAME!,
+  logger,
+);
+const csvFileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_CSV_BUCKET_NAME!, logger);
 
 const systemPromptsRepository = new DynSystemPromptsRepositoryImpl(
   dynamoDBDocumentClient,
@@ -45,9 +49,11 @@ const aiChatClient = new BedrockAIChatClient(
 );
 
 const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComplianceCommandHandler(
-  fileStorageClient,
+  documentsFileStorageClient,
+  csvFileStorageClient,
   systemPromptsRepository,
   aiChatClient,
+  process.env.SAVE_CSV_FLAG === "true",
   logger,
 );
 
@@ -64,7 +70,7 @@ export const handler = awslambda.streamifyResponse(
         recordKeys: body.recordKeys as string[],
       });
 
-      let fullResponse = '';
+      let fullResponse = "";
 
       for await (const chunk of promptRegComplOutPut.result) {
         // logger.debug({ chunk }, "Chunk");
@@ -76,29 +82,6 @@ export const handler = awslambda.streamifyResponse(
       responseStream.end();
 
       logger.debug({ fullResponse }, "Full response");
-
-      const markdownTableRegex = /(\|.*\|(?:\s*\n\|--.*--\|)?(?:\s*\n\|.*\|)*\s*)$/;
-      const match = fullResponse.match(markdownTableRegex);
-
-      if (match && match[1]) {
-        const markdownTable = match[1].trim();
-        logger.debug({ markdownTable });
-        const csvTableContent = markdownTableToCsv(markdownTable);
-        logger.debug({ csvTableContent });
-        /* 
-        const fileName = `csv-result-${crypto.randomUUID()}.csv`
-        const uploadCsvResponse = await s3Client.send(new PutObjectCommand({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: fileName,
-          Body: csvTableContent,
-          ContentType: "text/csv",
-          ContentDisposition: `attachment; filename=${fileName}`
-        }))
-        logger.debug({ uploadCsvResponse });
-        */
-
-      }
-
     } catch (error) {
       // TODO: handle send error responses
       if (error instanceof Error) {
