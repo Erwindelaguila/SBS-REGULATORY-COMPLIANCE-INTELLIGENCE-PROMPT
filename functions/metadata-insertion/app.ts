@@ -16,7 +16,7 @@ const logger = pino({
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_BUCKET_NAME!, logger);
+const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_DOCUMENTS_BUCKET_NAME!, logger);
 
 const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
   dynamoDBDocumentClient,
