@@ -21,11 +21,18 @@ import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/promp
  *
  */
 
-const logger = pino({});
+const logger = pino({
+  level: "debug",
+});
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_BUCKET_NAME!, logger);
+const documentsFileStorageClient = new S3FileStorageClient(
+  new S3Client({}),
+  process.env.S3_DOCUMENTS_BUCKET_NAME!,
+  logger,
+);
+const csvFileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_CSV_BUCKET_NAME!, logger);
 
 const systemPromptsRepository = new DynSystemPromptsRepositoryImpl(
   dynamoDBDocumentClient,
@@ -42,9 +49,11 @@ const aiChatClient = new BedrockAIChatClient(
 );
 
 const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComplianceCommandHandler(
-  fileStorageClient,
+  documentsFileStorageClient,
+  csvFileStorageClient,
   systemPromptsRepository,
   aiChatClient,
+  process.env.SAVE_CSV_FLAG === "true",
   logger,
 );
 
@@ -61,13 +70,18 @@ export const handler = awslambda.streamifyResponse(
         recordKeys: body.recordKeys as string[],
       });
 
+      let fullResponse = "";
+
       for await (const chunk of promptRegComplOutPut.result) {
-        logger.debug({ chunk }, "Chunk");
+        // logger.debug({ chunk }, "Chunk");
+        fullResponse += chunk;
         responseStream.write(chunk);
       }
 
       logger.debug("Finish writing response");
       responseStream.end();
+
+      logger.debug({ fullResponse }, "Full response");
     } catch (error) {
       // TODO: handle send error responses
       if (error instanceof Error) {
