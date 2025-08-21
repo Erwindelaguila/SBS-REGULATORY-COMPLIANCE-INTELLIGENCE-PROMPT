@@ -1,0 +1,6 @@
+export const ErrorCodes = {
+  ERROR_DA_GE_001: "ERROR_DA_GE_001",
+  ERROR_DA_GE_002: "ERROR_DA_GE_002",
+  ERROR_DA_GE_003: "ERROR_DA_GE_003",
+  ERROR_DA_GE_004: "ERROR_DA_GE_004",
+};
