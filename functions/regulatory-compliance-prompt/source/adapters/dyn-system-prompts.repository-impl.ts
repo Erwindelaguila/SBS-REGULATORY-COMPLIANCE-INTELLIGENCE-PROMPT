@@ -7,20 +7,26 @@ export class DynSystemPromptsRepositoryImpl implements SystemPromptsRepository {
   constructor(
     private readonly dynamoDBDocumentClient: DynamoDBDocumentClient,
     private readonly tableName: string,
-    private readonly logger: Logger
-  ) {
-
-  }
-  async getSystemPrompt(): Promise<SystemPrompt[]> {
+    private readonly logger: Logger,
+  ) {}
+  
+  async getSystemPrompt(application: string, type: string): Promise<SystemPrompt[]> {
     try {
-      const queryResult = await this.dynamoDBDocumentClient.send(new QueryCommand({
-        TableName: this.tableName,
-        IndexName: "type-index",
-        KeyConditionExpression: "type = :type",
-        ExpressionAttributeValues: {
-          ":type": "SYSTEM_PROMPT"
-        }
-      }))
+      const queryResult = await this.dynamoDBDocumentClient.send(
+        new QueryCommand({
+          TableName: this.tableName,
+          IndexName: "application-type-index",
+          KeyConditionExpression: " #application = :application AND #type = :type",
+          ExpressionAttributeValues: {
+            ":type": type,
+            ":application": application,
+          },
+          ExpressionAttributeNames: {
+            "#application": "application",
+            "#type": "type",
+          },
+        }),
+      );
       return (queryResult?.Items ?? []) as SystemPrompt[];
     } catch (err) {
       // TODO: Handle specific DynamoDB errors

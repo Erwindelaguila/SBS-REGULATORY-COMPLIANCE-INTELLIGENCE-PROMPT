@@ -1,5 +1,5 @@
 import { SystemPrompt } from "../models/supervisory-record.model";
 
 export interface SystemPromptsRepository {
-  getSystemPrompt(): Promise<SystemPrompt[]>;
+  getSystemPrompt(application: string, type: string): Promise<SystemPrompt[]>;
 }

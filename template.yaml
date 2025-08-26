@@ -34,6 +34,9 @@ Parameters:
   SupervisoryRecordsStreamArn:
     Type: String
     Default: stream
+  InteractionWebSocketQueueUrl:
+    Type: String
+    Default: queue
   StageName:
     Type: String
     Default: develop
@@ -60,7 +63,7 @@ Resources:
       EndpointConfiguration:
         Type: REGIONAL
       BinaryMediaTypes:
-        - '*/*'
+        - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
   RegulatoryCompliancePromptsTable:
     Type: AWS::DynamoDB::Table
@@ -179,6 +182,7 @@ Resources:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
           S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
+          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
       Events:
         DynamoDBTrigger:
           Type: DynamoDB
@@ -231,6 +235,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
 
   GetDocumentsAnalysisSheetFunctionRole:
     Type: AWS::IAM::Role

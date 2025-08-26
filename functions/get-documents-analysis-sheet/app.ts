@@ -1,5 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda";
 import pino from "pino";
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { GetAnalysisSheetCommandHandler } from "./source/domain/command-handlers/get-analysis-sheet.command-handler";
@@ -15,8 +15,10 @@ const fileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.
 const getAnalysisSheetCommandHandler = new GetAnalysisSheetCommandHandler(fileStorageClient, logger);
 const getAnalysisSheetEntrypoint = new GetAnalysisSheetEntryPoint(getAnalysisSheetCommandHandler);
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const uuid = event.pathParameters?.uuid as string;
+
+  logger.debug({ uuid }, "UUID");
 
   try {
     const result = await getAnalysisSheetEntrypoint.handleRequest({ uuid });
@@ -30,6 +32,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": `attachment; filename="${result.downloadName}"`,
         "Cache-Control": "no-store",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
       },
       isBase64Encoded: true,
       body: base64Result,
@@ -51,11 +56,21 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
           code: error.code,
           message: error.message,
         }),
+        headers: {
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
+        },
       };
     }
     return {
       statusCode: 500,
       body: JSON.stringify({}),
+      headers: {
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
     };
   }
 };

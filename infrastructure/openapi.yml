@@ -49,14 +49,11 @@ components:
     DocumentAnalysisSheetResponse:
       description: Document Analysis Sheet Response
       content:
-        multipart/form-data:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
           schema:
-            type: object
-            properties:
-              file:
-                type: string
-                format: binary
-
+            type: string
+            format: binary
+         
     ErrorResponse:
       description: Error
       content:

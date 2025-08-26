@@ -1,13 +1,19 @@
 export class PromptRegulatoryComplianceCommand {
-  private constructor (
+  private constructor(
+    public readonly messageId: string,
+    public readonly application: string,
+    public readonly type: string,
     public readonly question: string,
-    public readonly recordKeys: string[]
+    public readonly recordKeys: string[],
   ) {}
 
-  static createCommand (
+  static createCommand(
+    messageId: string,
+    application: string,
+    type: string,
     question: string,
-    recordKeys: string[]
+    recordKeys: string[],
   ): PromptRegulatoryComplianceCommand {
-    return new PromptRegulatoryComplianceCommand(question, recordKeys);
+    return new PromptRegulatoryComplianceCommand(messageId, application, type, question, recordKeys);
   }
 }
