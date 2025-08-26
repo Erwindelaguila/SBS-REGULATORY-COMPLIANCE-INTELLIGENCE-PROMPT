@@ -42,6 +42,7 @@ export class GetAnalysisSheetCommandHandler {
 
     let csvBuffer: Buffer<ArrayBufferLike> | undefined = undefined;
     try {
+      this.logger.debug({ key }, "Getting object from S3");
       csvBuffer = await this.fileStorageClient.getObjectByKey(key);
     } catch (error) {
       this.logger.error({ error, key }, "Error getting object from S3");
@@ -53,7 +54,7 @@ export class GetAnalysisSheetCommandHandler {
 
     let workBook: XLSX.WorkBook | undefined = undefined;
     try {
-      workBook = XLSX.read(csvBuffer, { type: "buffer" });
+      workBook = XLSX.read(csvBuffer, { type: "buffer", codepage: 65001 });
     } catch (error) {
       this.logger.error({ error, key }, "Error parsing CSV to XLSX");
       throw new ExtractCsvTextError("Error parsing CSV to XLSX");

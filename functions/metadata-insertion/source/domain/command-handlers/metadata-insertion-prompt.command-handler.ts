@@ -4,11 +4,16 @@ import { MetadataInsertionPromptCommand } from "../commands/metadata-insertion-p
 import { AIChatClient, FileMetadata } from "../ports/ai-chat.client";
 import { FileStorageClient, RecordFileData } from "../ports/file-storage.client";
 import { SupervisoryRecordsRepository } from "../ports/supervisory-records.repository";
+import { QueueClient, QueueMessage } from "../ports/queue.client";
+
+import { v4 as uuid } from "uuid";
+import { NotificationType } from "../model/notification-type";
 
 export class MetadataInsertionPromptCommandHandler {
   constructor(
     private readonly aiChatClient: AIChatClient,
     private readonly fileStorageClient: FileStorageClient,
+    private readonly queueClient: QueueClient,
     private readonly supervisoryRecordsRepository: SupervisoryRecordsRepository,
     private readonly logger: Logger,
   ) {}
@@ -37,15 +42,38 @@ export class MetadataInsertionPromptCommandHandler {
       }
 
       this.logger.debug({ filesMetadata }, "Files metadata");
-      await Promise.allSettled(
-        filesMetadata.map((fileMetadata) => {
+
+      const results = await Promise.allSettled(
+        filesMetadata.map(async (fileMetadata) => {
           const record = command.records.find((record) => record.recordId === fileMetadata.recordId)!;
-          return this.supervisoryRecordsRepository.updateMetadata(fileMetadata.recordId, {
+          await this.supervisoryRecordsRepository.updateMetadata(fileMetadata.recordId, {
             ...record.metadata,
             ...fileMetadata.metadata,
           });
+          return {
+            recordId: record.recordId,
+            parentId: record.parentId,
+            sessionId: record.sessionId,
+          };
         }),
       );
+
+      const successResults = results
+        .filter((result) => result.status === "fulfilled")
+        .map<QueueMessage>((result) => ({
+          id: uuid(),
+          message: {
+            sessionId: result.value.sessionId,
+            type: NotificationType.InsertMetadata,
+            data: {
+              recordId: result.value.recordId,
+              parentId: result.value.parentId,
+            },
+          },
+        }));
+
+      this.logger.info({ successResults }, "Successful results");
+      await this.queueClient.sendMessages(successResults);
 
       this.logger.debug(
         {

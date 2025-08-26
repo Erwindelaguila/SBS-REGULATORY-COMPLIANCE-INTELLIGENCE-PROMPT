@@ -65,14 +65,18 @@ export const handler = awslambda.streamifyResponse(
   async (event: LambdaFunctionURLEvent, responseStream: awslambda.HttpResponseStream, _: Context) => {
     const body = JSON.parse(event.body!) as any;
     try {
-      const promptRegComplOutPut = await promptRegulatoryComplianceEntrypoint.handleRequest({
+      const messageId = (body.sessionId as string).split(":")[1];
+      const promptRegComplOutput = await promptRegulatoryComplianceEntrypoint.handleRequest({
+        messageId,
+        application: body.application as string,
+        type: body.type as string,
         question: body.question as string,
         recordKeys: body.recordKeys as string[],
       });
 
       let fullResponse = "";
 
-      for await (const chunk of promptRegComplOutPut.result) {
+      for await (const chunk of promptRegComplOutput.result) {
         // logger.debug({ chunk }, "Chunk");
         fullResponse += chunk;
         responseStream.write(chunk);
