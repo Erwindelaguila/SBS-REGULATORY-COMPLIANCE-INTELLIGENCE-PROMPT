@@ -44,10 +44,46 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
 
+  /regulatory-compliance-intelligence/pdf/{uuid}:
+    get:
+      operationId: pdf
+      x-amazon-apigateway-request-validator: "full"
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        uri:
+          Fn::Sub:
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetPdfFunctionArn}/invocations
+            - GetPdfFunctionArn:
+                Fn::GetAtt: [GetPdfFunction, Arn]
+        type: aws_proxy
+      parameters:
+        - name: uuid
+          schema:
+            type: string
+          in: path
+          required: true
+          description: UUID of the document to analyze
+      responses:
+        "200":
+          $ref: "#/components/responses/GetPdfResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+
 components:
   responses:
     DocumentAnalysisSheetResponse:
       description: Document Analysis Sheet Response
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              file:
+                type: string
+                format: binary
+
+    GetPdfResponse:
+      description: Get Pdf Response
       content:
         multipart/form-data:
           schema:
