@@ -1,7 +1,9 @@
 export type MetadataInsertionPromptCommandRecord = {
   recordId: string;
+  parentId: string;
   key: string;
   metadata: Record<string, any>;
+  sessionId: string;
 };
 
 export class MetadataInsertionPromptCommand {

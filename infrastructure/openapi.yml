@@ -44,7 +44,7 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
 
-  /regulatory-compliance-intelligence/pdf/{uuid}:
+  /regulatory-compliance-intelligence/pdf/highlight/{messageId}/{recordKey}:
     get:
       operationId: pdf
       x-amazon-apigateway-request-validator: "full"
@@ -52,46 +52,65 @@ paths:
         httpMethod: POST
         uri:
           Fn::Sub:
-            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetPdfFunctionArn}/invocations
-            - GetPdfFunctionArn:
-                Fn::GetAtt: [GetPdfFunction, Arn]
+            - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DocumentHighlightFunctionArn}/invocations
+            - DocumentHighlightFunctionArn:
+                Fn::GetAtt: [DocumentHighlightFunction, Arn]
         type: aws_proxy
       parameters:
-        - name: uuid
+        - name: messageId
           schema:
             type: string
           in: path
           required: true
-          description: UUID of the document to analyze
+          description: UUID of the message to analyze
+        - name: recordKey
+          schema:
+            type: string
+          in: path
+          required: true
+          description: Key of the record to analyze
+        - name: index
+          schema:
+            type: number
+          in: query
+          required: false
+          description: Row of the record to analyze
       responses:
         "200":
-          $ref: "#/components/responses/GetPdfResponse"
+          $ref: "#/components/responses/DocumentHighlightResponse"
         "500":
           $ref: "#/components/responses/ErrorResponse"
 
 components:
+  requestBodies:
+    DocumentHighlightRequest:
+      description: Document Highlight Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              paragraph:
+                type: string
+              pageNumber:
+                type: number
+
   responses:
     DocumentAnalysisSheetResponse:
       description: Document Analysis Sheet Response
       content:
-        multipart/form-data:
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
           schema:
-            type: object
-            properties:
-              file:
-                type: string
-                format: binary
+            type: string
+            format: binary
 
-    GetPdfResponse:
-      description: Get Pdf Response
+    DocumentHighlightResponse:
+      description: Document Highlight Response
       content:
-        multipart/form-data:
+        application/pdf:
           schema:
-            type: object
-            properties:
-              file:
-                type: string
-                format: binary
+            type: string
+            format: binary
 
     ErrorResponse:
       description: Error

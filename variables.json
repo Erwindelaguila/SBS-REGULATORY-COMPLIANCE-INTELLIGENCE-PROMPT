@@ -11,7 +11,8 @@
     "SUPERVISORY_RECORDS_TABLE_NAME": "supervisory-records"
   },
   "DocumentHighlightFunction": {
-    "S3_DOCUMENTS_BUCKET_NAME": "supervisory-records",
+    "S3_RECORDS_BUCKET_NAME": "supervisory-records",
+    "S3_CSV_ANALYSIS_BUCKET_NAME": "supervisory-records-csv-analysis",
     "SUPERVISORY_RECORDS_TABLE_NAME": "supervisory-records"
   }
 }

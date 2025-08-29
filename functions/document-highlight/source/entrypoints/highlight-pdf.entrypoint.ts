@@ -2,9 +2,9 @@ import { HighlightPdfCommandHandler } from "../domain/command-handlers/highlight
 import { HighlightPdfCommand } from "../domain/commands/highlight-pdf.command";
 
 type HighlightPdfInput = {
-  uuid: string;
-  paragraph: string;
-  pageNumber: number;
+  recordKey: string;
+  messageId: string;
+  index: number;
 };
 
 type HighlightPdfOutput = {
@@ -17,16 +17,16 @@ export class HighlightPdfEntryPoint {
 
   async handleRequest(highlightPdfInput: HighlightPdfInput): Promise<HighlightPdfOutput> {
     const highlightPdfCommand = HighlightPdfCommand.createCommand({
-      uuid: highlightPdfInput.uuid,
-      paragraph: highlightPdfInput.paragraph,
-      pageNumber: highlightPdfInput.pageNumber
+      recordKey: highlightPdfInput.recordKey,
+      messageId: highlightPdfInput.messageId,
+      index: highlightPdfInput.index,
     });
-    
+
     const result = await this.highlightPdfCommandHandler.execute(highlightPdfCommand);
-    
+
     return {
       downloadName: result.downloadName,
-      buffer: result.buffer
+      buffer: result.buffer,
     };
   }
 }

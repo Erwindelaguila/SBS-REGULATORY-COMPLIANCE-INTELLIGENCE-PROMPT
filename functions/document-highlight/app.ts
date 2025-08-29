@@ -1,92 +1,71 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S3Client } from "@aws-sdk/client-s3";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
+
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda";
 import pino from "pino";
-import { DynSupervisoryRecordsRepository } from "./source/adapters/dyn-supervisory-records.repository";
+
 import { PdfProcessorAdapter } from "./source/adapters/pdf-processor.adapter";
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { HighlightPdfCommandHandler } from "./source/domain/command-handlers/highlight-pdf.command-handler";
-import { HighlightPdfErrorCodes, HighlightPdfError } from "./source/domain/errors/highlight-pdf.error";
+import { HighlightPdfError, HighlightPdfErrorCodes } from "./source/domain/errors/highlight-pdf.error";
 import { HighlightPdfEntryPoint } from "./source/entrypoints/highlight-pdf.entrypoint";
 
 const logger = pino({
   level: "debug",
 });
 
-// Initialize AWS clients
-const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const s3Client = new S3Client({});
 
-// Initialize adapters
-const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
-  dynamoDBDocumentClient,
-  process.env.SUPERVISORY_RECORDS_TABLE_NAME!,
-  logger
-);
-
-const fileStorageClient = new S3FileStorageClient(
+const csvAnalysisFileStorageClient = new S3FileStorageClient(
   s3Client,
-  process.env.S3_DOCUMENTS_BUCKET_NAME!,
-  logger
+  process.env.S3_CSV_ANALYSIS_BUCKET_NAME!,
+  logger,
 );
+const recordsFileStorageClient = new S3FileStorageClient(s3Client, process.env.S3_RECORDS_BUCKET_NAME!, logger);
 
 const pdfProcessor = new PdfProcessorAdapter(logger);
 
 // Initialize command handler
 const highlightPdfCommandHandler = new HighlightPdfCommandHandler(
-  supervisoryRecordsRepository,
-  fileStorageClient,
+  csvAnalysisFileStorageClient,
+  recordsFileStorageClient,
   pdfProcessor,
-  logger
+  logger,
 );
 
 // Initialize entrypoint
 const highlightPdfEntrypoint = new HighlightPdfEntryPoint(highlightPdfCommandHandler);
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
-  const uuid = event.pathParameters?.uuid as string;
-  
-  // Parse request body for paragraph and page number
-  let paragraph: string;
-  let pageNumber: number;
-  
-  try {
-    const body = event.body ? JSON.parse(event.body) : {};
-    paragraph = body.paragraph;
-    pageNumber = body.pageNumber;
-    
-    if (!paragraph || !pageNumber) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          error: "Missing required parameters: paragraph and pageNumber"
-        }),
-      };
-    }
-  } catch (parseError) {
-    logger.error({ parseError }, "Error parsing request body");
+export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  logger.debug({ event }, "Event");
+
+  const index = event.queryStringParameters?.index ? Number.parseInt(event.queryStringParameters?.index) : 0;
+  const messageId = event.pathParameters?.messageId;
+  let recordKey = event.pathParameters?.recordKey;
+
+  if (!(messageId && recordKey)) {
     return {
       statusCode: 400,
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
       },
       body: JSON.stringify({
-        error: "Invalid request body"
+        error: "Missing required parameters: messageId and recordK",
       }),
     };
   }
 
+  recordKey = decodeURIComponent(recordKey);
+
   try {
-    const result = await highlightPdfEntrypoint.handleRequest({ 
-      uuid, 
-      paragraph, 
-      pageNumber 
+    const result = await highlightPdfEntrypoint.handleRequest({
+      messageId,
+      recordKey,
+      index,
     });
-    
+
     const base64Result = result.buffer.toString("base64");
 
     logger.debug({ downloadName: result.downloadName }, "PDF highlighted successfully");
@@ -97,16 +76,19 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${result.downloadName}"`,
         "Cache-Control": "no-store",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
       },
       isBase64Encoded: true,
       body: base64Result,
     };
   } catch (error) {
-    logger.error({ error, uuid, paragraph, pageNumber }, "Error processing highlight PDF request");
-    
+    logger.error({ error }, "Error processing highlight PDF request");
+
     if (error instanceof HighlightPdfError) {
       let statusCode = 500;
-      
+
       switch (error.code) {
         case HighlightPdfErrorCodes.ERROR_HP_002: // Record not found
           statusCode = 404;
@@ -129,11 +111,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         default:
           statusCode = 500;
       }
-      
+
       return {
         statusCode,
         headers: {
           "Content-Type": "application/json",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "*",
         },
         body: JSON.stringify({
           code: error.code,
@@ -141,14 +126,17 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         }),
       };
     }
-    
+
     return {
       statusCode: 500,
       headers: {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
       },
       body: JSON.stringify({
-        error: "Internal server error"
+        error: "Internal server error",
       }),
     };
   }
