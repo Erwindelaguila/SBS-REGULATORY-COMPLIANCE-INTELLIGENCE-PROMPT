@@ -11,6 +11,8 @@ export class S3FileStorageClient implements FileStorageClient {
   ) {}
   async getObjectByKey(key: string): Promise<Buffer> {
     try {
+      this.logger.debug({ key, bucket: this.bucketName }, "Getting object from S3");
+
       const object = await this.s3Client.send(
         new GetObjectCommand({
           Bucket: this.bucketName,

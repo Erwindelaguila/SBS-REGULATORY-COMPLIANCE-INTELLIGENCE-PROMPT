@@ -22,10 +22,10 @@ Parameters:
   BedrockModelId:
     Type: String
     Default: model
-  DocumentsBucketName:
+  RecordsBucketName:
     Type: String
     Default: bucket
-  CsvBucketName:
+  CsvAnalysisBucketName:
     Type: String
     Default: bucket
   SupervisoryRecordsTableName:
@@ -34,18 +34,24 @@ Parameters:
   SupervisoryRecordsStreamArn:
     Type: String
     Default: stream
+  InteractionWebSocketQueueUrl:
+    Type: String
+    Default: queue
   StageName:
     Type: String
     Default: develop
   SaveCSVFlag:
     Type: String
     Default: "false"
+  PdfJsLayer:
+    Type: String
+    Default: layer
 
 Resources:
   CsvBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref CsvBucketName
+      BucketName: !Ref CsvAnalysisBucketName
 
   RegulatoryComplianceIntelligenceApi:
     Type: AWS::Serverless::Api
@@ -60,7 +66,8 @@ Resources:
       EndpointConfiguration:
         Type: REGIONAL
       BinaryMediaTypes:
-        - '*/*'
+        - "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        - "application/pdf"
 
   RegulatoryCompliancePromptsTable:
     Type: AWS::DynamoDB::Table
@@ -96,6 +103,7 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
+
   GetDocumentsAnalysisSheetFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -109,7 +117,7 @@ Resources:
       Role: !GetAtt GetDocumentsAnalysisSheetFunctionRole.Arn
       Environment:
         Variables:
-          S3_CSV_BUCKET_NAME: !Ref CsvBucketName
+          S3_CSV_BUCKET_NAME: !Ref CsvAnalysisBucketName
       Events:
         GetDocumentAnalysisSheetApi:
           Type: Api
@@ -139,21 +147,26 @@ Resources:
       Role: !GetAtt DocumentHighlightFunctionRole.Arn
       Environment:
         Variables:
-          S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
+          S3_RECORDS_BUCKET_NAME: !Ref RecordsBucketName
+          S3_CSV_ANALYSIS_BUCKET_NAME: !Ref CsvAnalysisBucketName
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
       Events:
         DocumentHighlightApi:
           Type: Api
           Properties:
-            Path: /regulatory-compliance-intelligence/documents/{uuid}/highlight
-            Method: POST
+            Path: /regulatory-compliance-intelligence/pdf/highlight/{messageId}/{recordKey}
+            Method: GET
             RestApiId: !Ref RegulatoryComplianceIntelligenceApi
+      Layers:
+        - !Ref PdfJsLayer
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
       BuildProperties:
         Minify: true
         Target: "es2020"
         Sourcemap: true
+        External:
+          - pdfjs-dist
         EntryPoints:
           - app.ts
 
@@ -182,8 +195,8 @@ Resources:
         Variables:
           SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
-          S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
-          S3_CSV_BUCKET_NAME: !Ref CsvBucketName
+          S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
+          S3_CSV_BUCKET_NAME: !Ref CsvAnalysisBucketName
           SAVE_CSV_FLAG: !Ref SaveCSVFlag
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
@@ -208,8 +221,9 @@ Resources:
       Environment:
         Variables:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
-          S3_DOCUMENTS_BUCKET_NAME: !Ref DocumentsBucketName
+          S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
+          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
       Events:
         DynamoDBTrigger:
           Type: DynamoDB
@@ -278,6 +292,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
 
   GetDocumentsAnalysisSheetFunctionRole:
     Type: AWS::IAM::Role

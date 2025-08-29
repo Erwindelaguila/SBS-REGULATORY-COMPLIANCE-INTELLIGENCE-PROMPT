@@ -26,6 +26,8 @@ export class MetadataInsertionPromptEntryPoint {
           recordId: jsonRecord.id,
           key: jsonRecord.key,
           metadata: jsonRecord.metadata,
+          sessionId: jsonRecord.sessionId,
+          parentId: jsonRecord.parentId,
         };
       })
       .filter((record) => record !== null);

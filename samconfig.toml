@@ -24,10 +24,12 @@ profile = "protecso-dev"
 parameter_overrides = [
     "PromptsTableName=system-prompts",
     "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "DocumentsBucketName=supervisory-records",
-    "CsvBucketName=supervisory-records-csv-analysis",
+    "RecordsBucketName=supervisory-records",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis",
     "SupervisoryRecordsTableName=supervisory-records",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
     "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
     "StageName=develop"
 ]
 image_repositories = []
@@ -40,6 +42,17 @@ watch = true
 
 [default.local_start_api.parameters]
 warm_containers = "EAGER"
+parameter_overrides = [
+    "PromptsTableName=system-prompts",
+    "BedrockModelId=us.anthropic.claude-sonnet-4-20250514-v1:0",
+    "RecordsBucketName=supervisory-records",
+    "CsvAnalysisBucketName=supervisory-records-csv-analysis",
+    "SupervisoryRecordsTableName=supervisory-records",
+    "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
+    "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
+    "PdfJsLayer=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
+    "StageName=develop"
+]
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"
