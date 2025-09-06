@@ -39,7 +39,7 @@ export class PromptRegulatoryComplianceCommandHandler {
         const value = Buffer.from(chunk).toString();
         temporalConcatenatedChunks += value;
 
-        console.log({ value, temporalConcatenatedChunks }, "Chunk");
+        // console.log({ value, temporalConcatenatedChunks }, "Chunk");
 
         const firstNumeralIndex = temporalConcatenatedChunks.indexOf("#");
         if (firstNumeralIndex === -1) {
