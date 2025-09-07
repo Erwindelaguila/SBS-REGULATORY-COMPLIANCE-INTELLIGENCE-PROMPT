@@ -2,6 +2,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from "aws-lambda";
 import pino from "pino";
+import pinoPretty from "pino-pretty";
 
 import { PdfProcessorAdapter } from "./source/adapters/pdf-processor.adapter";
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
@@ -9,9 +10,17 @@ import { HighlightPdfCommandHandler } from "./source/domain/command-handlers/hig
 import { HighlightPdfError, HighlightPdfErrorCodes } from "./source/domain/errors/highlight-pdf.error";
 import { HighlightPdfEntryPoint } from "./source/entrypoints/highlight-pdf.entrypoint";
 
-const logger = pino({
-  level: "debug",
+const pinoPrettyStream = pinoPretty({
+  colorize: true,
+  singleLine: true,
 });
+
+const logger = pino(
+  {
+    level: "debug",
+  },
+  pinoPrettyStream,
+);
 
 const s3Client = new S3Client({});
 
@@ -36,8 +45,6 @@ const highlightPdfCommandHandler = new HighlightPdfCommandHandler(
 const highlightPdfEntrypoint = new HighlightPdfEntryPoint(highlightPdfCommandHandler);
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  logger.debug({ event }, "Event");
-
   const index = event.queryStringParameters?.index ? Number.parseInt(event.queryStringParameters?.index) : 0;
   const messageId = event.pathParameters?.messageId;
   let recordKey = event.pathParameters?.recordKey;

@@ -60,8 +60,6 @@ export class HighlightPdfCommandHandler {
       throw new PdfProcessingError("Error parsing CSV to XLSX");
     }
 
-    this.logger.debug({ pdfHighlights }, "PDF highlights");
-
     let pdfBuffer: Buffer;
     const pdfHighlight = pdfHighlights[index];
 

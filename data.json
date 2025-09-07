@@ -1,1986 +1,1536 @@
-[
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 198.65, 747.82],
-      "fontName": "g_d0_f3",
-      "hasEOL": true
-    },
-    {
-      "str": "“",
-      "dir": "ltr",
-      "width": 4.980000000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 198.65, 747.82],
-      "fontName": "g_d0_f3",
-      "hasEOL": false
-    },
-    {
-      "str": "AÑO DE LA UNIDAD, LA PAZ Y EL DESARROLLO",
-      "dir": "ltr",
-      "width": 235.71336000000005,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 203.81, 747.82],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "”",
-      "dir": "ltr",
-      "width": 4.980000000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 439.9, 747.82],
-      "fontName": "g_d0_f3",
-      "hasEOL": false
-    }
+{
+  "level": 20,
+  "time": 1757271182630,
+  "pid": 21,
+  "hostname": "23991808c24a",
+  "sortedText": [
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 85.104, 514.51],
+        "fontName": "g_d0_f4",
+        "hasEOL": true
+      },
+      {
+        "str": "VI.",
+        "dir": "ltr",
+        "width": 11.007000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 85.104, 514.51],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 3.153000000000006,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 96.11099999999999, 514.51],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      },
+      {
+        "str": "EXCEPCIONES SOLICITADAS:",
+        "dir": "ltr",
+        "width": 131.50800000000004,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 99.264, 514.51],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 87.624, 495.07],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "Toda validación operativa a nivel de sistemas para su registro en el KHIPU",
+        "dir": "ltr",
+        "width": 298.38599999999985,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 87.624, 495.07],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 484.03],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 484.03],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 484.03],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Opinión de Informe de Gerencia de Riesgos, por no ser una nueva exp",
+        "dir": "ltr",
+        "width": 280.4399999999996,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 484.03],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "osición, se trata de un",
+        "dir": "ltr",
+        "width": 87.24599999999995,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 437.26, 484.03],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 156.5, 473.71],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "proceso de regularización.",
+        "dir": "ltr",
+        "width": 105.56999999999995,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 473.71],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 462.79],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 462.79],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 462.79],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Exposición a RDS apetito/tolerancia.",
+        "dir": "ltr",
+        "width": 145.9889999999998,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 462.79],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 451.87],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 451.87],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 451.87],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Pdt´s mensuales con declaraciones en 0.",
+        "dir": "ltr",
+        "width": 164.45699999999994,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 451.87],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 440.83],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 440.83],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 440.83],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Emisión de Fianza Solidaria por el monto de S/.6’570,168.00 por la clasificación de tipo de",
+        "dir": "ltr",
+        "width": 367.68599999999947,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 440.83],
+        "fontName": "g_d0_f6",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 156.5, 430.51],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "crédito: Mediana Empresa, según nivel de endeudamiento actual.",
+        "dir": "ltr",
+        "width": 261.4319999999997,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 430.51],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 419.57],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 419.57],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 419.57],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Otorgamiento de crédito indirecto (CARTA FIANZA) con comisión TEM. 0.0830%",
+        "dir": "ltr",
+        "width": 323.4689999999999,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 419.57],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 138.5, 408.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 138.5, 408.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.860000000000014,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 142.64, 408.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Otorgamiento de crédito",
+        "dir": "ltr",
+        "width": 96.56999999999994,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 156.5, 408.53],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.580000000000126,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 253.06999999999988, 408.53],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "indirecto sin póliza todo riesgo.",
+        "dir": "ltr",
+        "width": 123.45299999999979,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 255.65, 408.53],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 85.104, 383.93],
+        "fontName": "g_d0_f4",
+        "hasEOL": true
+      },
+      {
+        "str": "VII.",
+        "dir": "ltr",
+        "width": 13.536000000000003,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 85.104, 383.93],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 0.6240000000000094,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 98.63999999999999, 383.93],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      },
+      {
+        "str": "CONCLUSIONES",
+        "dir": "ltr",
+        "width": 72.36000000000003,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 99.264, 383.93],
+        "fontName": "g_d0_f4",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 357.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 357.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 16.379999999999995,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 357.53],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Considerando la situación de la operación afianzada y el contexto, los riesgos potenciales ya se",
+        "dir": "ltr",
+        "width": 401.0939999999996,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 123.02, 357.53],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 346.25],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "encuentran vigentes por ello las medidas a aplicarse y que estos riesgos justifican la formulación de",
+        "dir": "ltr",
+        "width": 403.44299999999964,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 346.25],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 335.09],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "la ampliación de la adenda, sin romper el proceso de eva",
+        "dir": "ltr",
+        "width": 235.80899999999977,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 335.09],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "luación financiera de la propuesta. Por lo",
+        "dir": "ltr",
+        "width": 167.76899999999975,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 356.71, 335.09],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 323.93],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "descrito, concluimos:",
+        "dir": "ltr",
+        "width": 84.01500000000003,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 323.93],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 312.17],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 312.17],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 312.17],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "La propuesta de crédito promotor desembolsada por S/.2.9 MM está basada en un flujo de caja real",
+        "dir": "ltr",
+        "width": 403.56899999999973,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 312.17],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 301.01],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "(desembolso de BFH y saldo de precio a cobrar) y existente que garantiza la devolución del cré",
+        "dir": "ltr",
+        "width": 386.40599999999966,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 301.01],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "dito,",
+        "dir": "ltr",
+        "width": 17.000999999999987,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 507.58, 301.01],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 289.85],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "convirtiéndose este hecho en un mitigador del riesgo de honramiento y/o ejecución del afianzamiento.",
+        "dir": "ltr",
+        "width": 403.79399999999964,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 289.85],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 278.09],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 278.09],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 278.09],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Para fines de la garantía se constituye garantía hipotecaria que cobertura la fianza solidaria frente al",
+        "dir": "ltr",
+        "width": 403.4159999999998,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 278.09],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 266.93],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "FMV y el crédito directo; con este tipo de c",
+        "dir": "ltr",
+        "width": 164.57399999999987,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 266.93],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "ontrato se traslada la responsabilidad directa de la obligación",
+        "dir": "ltr",
+        "width": 238.9499999999994,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 285.29, 266.93],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 255.74],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "del proyecto al promotor",
+        "dir": "ltr",
+        "width": 97.09199999999994,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 255.74],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 243.98],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 243.98],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 243.98],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Se asegurará el cumplimiento del 100% de las obras físicas del proyecto (actualmente se encuentra",
+        "dir": "ltr",
+        "width": 403.5689999999997,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 243.98],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 232.82],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "en un 62%). Se cuenta con un contrato de supervisión y contrato marco",
+        "dir": "ltr",
+        "width": 309.2669999999998,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 232.82],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": ". Bajo los documentos",
+        "dir": "ltr",
+        "width": 94.27499999999993,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 430.15, 232.82],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 221.54],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "contractuales se asegura que los flujos de ingresos por BFH, saldo precio y créditos complementarios",
+        "dir": "ltr",
+        "width": 403.61399999999975,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 221.54],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 210.38],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "de los beneficiarios pendientes sean canalizados a través de la cuenta recaudadora y garantía según",
+        "dir": "ltr",
+        "width": 403.7220000000002,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 210.38],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 199.22],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "corresponda, para el pago directo",
+        "dir": "ltr",
+        "width": 134.5679999999999,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 199.22],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.742000000000246,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 255.06799999999976, 199.22],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "del crédito promotor inmobiliario.",
+        "dir": "ltr",
+        "width": 130.419,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 257.81, 199.22],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 187.46],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 187.46],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 187.46],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "Optimizar el plazo de culminación de la obra física, producto del crédito promotor, se genera un plazo",
+        "dir": "ltr",
+        "width": 403.6500000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 187.46],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 176.3],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "razonable y prudencial para el saneamiento legal y traslado de dominio a los beneficiarios dentro del",
+        "dir": "ltr",
+        "width": 403.44299999999976,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 176.3],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 165.14],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "plazo de vigenc",
+        "dir": "ltr",
+        "width": 63.215999999999994,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 165.14],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "ia y la ampliación de la adenda (22.03.2024) y liberar la misma según procedimiento",
+        "dir": "ltr",
+        "width": 340.1819999999997,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 183.86, 165.14],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 153.98],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "del FMV.",
+        "dir": "ltr",
+        "width": 35.945999999999984,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 153.98],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 142.22],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 142.22],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 142.22],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "El análisis costo beneficio de la propuesta proyecta una reducción de 63% en la exposición ante el",
+        "dir": "ltr",
+        "width": 403.6409999999997,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 142.22],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 131.06],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "FMV para el mes de agosto del 2023 y en el mes de enero 2024 se",
+        "dir": "ltr",
+        "width": 291.8699999999996,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 131.06],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 4.580000000000041,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 412.36999999999995, 131.06],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "extinguiría toda obligación",
+        "dir": "ltr",
+        "width": 107.56799999999988,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 416.95, 131.06],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 119.9],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "contraída.",
+        "dir": "ltr",
+        "width": 40.13099999999995,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 119.9],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 102.5, 108.14],
+        "fontName": "g_d0_f5",
+        "hasEOL": true
+      },
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 4.140000000000001,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 102.5, 108.14],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 13.86,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 106.64, 108.14],
+        "fontName": "g_d0_f5",
+        "hasEOL": false
+      },
+      {
+        "str": "De no concluir con el cierre de obra, no se podrá realizar el saneamiento y traslación de dominio a",
+        "dir": "ltr",
+        "width": 403.4429999999997,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 108.14],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 96.984],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "cada familia dentro del plazo de vencimiento de la adenda (22/03/2024), En ese sentido, la caja se",
+        "dir": "ltr",
+        "width": 403.65899999999976,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 96.984],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [9, 0, 0, 9, 120.5, 85.68],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "vería obligada a h",
+        "dir": "ltr",
+        "width": 71.52299999999993,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 120.5, 85.68],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "onrar la fianza solidaria frente al FMV por el monto de S/ 6,570,168.",
+        "dir": "ltr",
+        "width": 270.324,
+        "height": 9,
+        "transform": [9, 0, 0, 9, 192.17, 85.68],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "SISTRA:",
+        "dir": "ltr",
+        "width": 31.146960000000004,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 85.104, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "31/03/2023 12:07:58",
+        "dir": "ltr",
+        "width": 73.42127999999992,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 116.3, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.328720000000203,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 189.7212799999998, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "-",
+        "dir": "ltr",
+        "width": 2.6773199999999995,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 192.05, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.122679999999974,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 194.72732000000002, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "Elaborado por: gayala",
+        "dir": "ltr",
+        "width": 78.21311999999998,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 196.85, 56.16],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 85.104, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "Esta",
+        "dir": "ltr",
+        "width": 16.10412,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 85.104, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.000879999999995,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 101.20812, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "Información",
+        "dir": "ltr",
+        "width": 41.78388000000001,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 106.20899999999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 4.984800000000007,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 147.99287999999996, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "es",
+        "dir": "ltr",
+        "width": 8.458079999999995,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 152.97767999999996, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.0812799999999925,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 161.43575999999996, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "Restringido,",
+        "dir": "ltr",
+        "width": 42.52356000000001,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 166.51703999999995, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.073239999999998,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 209.0405999999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "de",
+        "dir": "ltr",
+        "width": 8.908319999999994,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 214.1138399999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.000879999999995,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 223.02215999999987, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "uso",
+        "dir": "ltr",
+        "width": 12.976559999999989,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 228.02303999999987, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.000879999999995,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 240.99959999999984, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "exclusivo",
+        "dir": "ltr",
+        "width": 32.77907999999998,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 246.00047999999984, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.000880000000052,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 278.7795599999997, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "del",
+        "dir": "ltr",
+        "width": 10.661040000000046,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 283.78043999999977, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.049120000000016,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 294.4414799999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "(los)",
+        "dir": "ltr",
+        "width": 15.62976,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 299.4905999999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 4.992840000000001,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 315.1203599999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "destinatario(s),",
+        "dir": "ltr",
+        "width": 52.822800000000086,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 320.1131999999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.073239999999998,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 372.93599999999975, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "en",
+        "dir": "ltr",
+        "width": 8.908320000000023,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 378.00923999999975, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 4.8802800000000275,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 386.91755999999975, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "caso",
+        "dir": "ltr",
+        "width": 16.92420000000004,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 391.7978399999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.000880000000052,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 408.72203999999977, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "decida",
+        "dir": "ltr",
+        "width": 23.56524000000003,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 413.7229199999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.3718400000002475,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 437.2881599999998, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "reenviarla,",
+        "dir": "ltr",
+        "width": 37.281480000000016,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 442.66, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 5.0571599999999535,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 479.94147999999996, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "asumirá",
+        "dir": "ltr",
+        "width": 28.590240000000055,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 484.9986399999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 4.976760000000013,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 513.5888799999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "la",
+        "dir": "ltr",
+        "width": 6.255119999999999,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 518.5656399999999, 47.04],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ],
+    [
+      {
+        "str": "",
+        "dir": "ltr",
+        "width": 0,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 85.104, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": true
+      },
+      {
+        "str": "responsabilidad por el uso indebido de terceros",
+        "dir": "ltr",
+        "width": 168.02795999999987,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 85.104, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 249.76804000000027,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 253.1319599999997, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "-",
+        "dir": "ltr",
+        "width": 2.6773199999999995,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 502.9, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.242680000000007,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 505.57732, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "3",
+        "dir": "ltr",
+        "width": 4.4702399999999995,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 507.82, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": " ",
+        "dir": "ltr",
+        "width": 2.249759999999924,
+        "height": 0,
+        "transform": [8.04, 0, 0, 8.04, 512.29024, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      },
+      {
+        "str": "-",
+        "dir": "ltr",
+        "width": 2.6773199999999995,
+        "height": 8.04,
+        "transform": [8.04, 0, 0, 8.04, 514.54, 37.8],
+        "fontName": "g_d0_f2",
+        "hasEOL": false
+      }
+    ]
   ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 368.11, 710.62],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "Huancayo, lunes 15 de mayo del 2023",
-      "dir": "ltr",
-      "width": 170.42555999999988,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 368.11, 710.62],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "Carta N° 00214",
-      "dir": "ltr",
-      "width": 63.17099999999998,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 168.14, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "2023",
-      "dir": "ltr",
-      "width": 19.988999999999987,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 171.14, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 191.21, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "DCH",
-      "dir": "ltr",
-      "width": 19.458000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 194.21, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 213.65, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "CMACHYO",
-      "dir": "ltr",
-      "width": 46.359000000000016,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 216.65, 700.3],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 678.1],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "Señor(es):",
-      "dir": "ltr",
-      "width": 42.066000000000024,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 678.1],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 667.9],
-      "fontName": "g_d0_f6",
-      "hasEOL": true
-    },
-    {
-      "str": "JEFE DE ASESORIA LEGAL",
-      "dir": "ltr",
-      "width": 117.07200000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 667.9],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 657.58],
-      "fontName": "g_d0_f6",
-      "hasEOL": true
-    },
-    {
-      "str": "SUB JEFE DE ASESORIA LEGAL",
-      "dir": "ltr",
-      "width": 137.94299999999998,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 657.58],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 647.26],
-      "fontName": "g_d0_f6",
-      "hasEOL": true
-    },
-    {
-      "str": "OFICIAL DE",
-      "dir": "ltr",
-      "width": 50.022000000000006,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 647.26],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.538000000000011,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 154.922, 647.26],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    },
-    {
-      "str": "CUMPLIMIENTO NORMATIVO",
-      "dir": "ltr",
-      "width": 125.856,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 157.46, 647.26],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 636.82],
-      "fontName": "g_d0_f6",
-      "hasEOL": true
-    },
-    {
-      "str": "JEFE DE CONTRATOS Y RECUPERACIONES",
-      "dir": "ltr",
-      "width": 191.4030000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 636.82],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 626.5],
-      "fontName": "g_d0_f6",
-      "hasEOL": true
-    },
-    {
-      "str": "SUB JEFE DE CONTRATOS",
-      "dir": "ltr",
-      "width": 116.991,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 626.5],
-      "fontName": "g_d0_f6",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 595.42],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "PRESENTE",
-      "dir": "ltr",
-      "width": 48.36600000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 595.42],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": ".",
-      "dir": "ltr",
-      "width": 2.5020000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 153.26, 595.42],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 155.78, 595.42],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 564.31],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "Mediante el presente me dirijo a vuestro despacho para saludarlos cordialmente y la vez",
-      "dir": "ltr",
-      "width": 352.1609999999997,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 564.31],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.8789999999999623,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 457.06100000000004, 564.31],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "se solicita remitir su",
-      "dir": "ltr",
-      "width": 78.86699999999992,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 459.94, 564.31],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 553.99],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "opinión, alcances y acciones a realizar según cada casuística detallada en esta presenta carta dando atención",
-      "dir": "ltr",
-      "width": 433.4039999999999,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 553.99],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 543.79],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "al",
-      "dir": "ltr",
-      "width": 7.038000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 543.79],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 4.121999999999986,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 111.93800000000002, 543.79],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "MEMORANDUM N°00003",
-      "dir": "ltr",
-      "width": 107.05500000000004,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 116.06, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 223.25, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "2023",
-      "dir": "ltr",
-      "width": 20.124000000000006,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 226.13, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 246.29, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "SGN",
-      "dir": "ltr",
-      "width": 19.457999999999988,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 249.29, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 268.73, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "CMAC",
-      "dir": "ltr",
-      "width": 26.892000000000014,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 271.73, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "HYO,",
-      "dir": "ltr",
-      "width": 21.94200000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 298.61, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 4.117999999999995,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 320.552, 543.79],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "sobre las comisiones y cobro por estructuración de",
-      "dir": "ltr",
-      "width": 213.76799999999957,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 324.67, 543.79],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 533.23],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "proyectos AVN",
-      "dir": "ltr",
-      "width": 60.08400000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 533.23],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 165.02, 533.23],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "Techo Propio.",
-      "dir": "ltr",
-      "width": 55.96199999999996,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 168.02, 533.23],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 511.63],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "1.",
-      "dir": "ltr",
-      "width": 7.542000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 511.63],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 112.46, 511.63],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.5230000000000103,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 115.457, 511.63],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "ANTECEDENTES:",
-      "dir": "ltr",
-      "width": 76.43700000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 117.98, 511.63],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 122.3, 500.47],
-      "fontName": "g_d0_f8",
-      "hasEOL": true
-    },
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 4.140000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 122.3, 500.47],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 13.860000000000014,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 126.44, 500.47],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": "Memorándum N° 00003",
-      "dir": "ltr",
-      "width": 95.6249999999999,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 140.3, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 236.09, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "2023",
-      "dir": "ltr",
-      "width": 19.988999999999987,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 239.09, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 259.13, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "SGN",
-      "dir": "ltr",
-      "width": 19.457999999999988,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 262.01, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 281.45, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "CMACHYO",
-      "dir": "ltr",
-      "width": 45.962999999999944,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 284.45, 500.47],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 122.3, 488.71],
-      "fontName": "g_d0_f8",
-      "hasEOL": true
-    },
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 4.140000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 122.3, 488.71],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 13.860000000000014,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 126.44, 488.71],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": "Informe N° 00062",
-      "dir": "ltr",
-      "width": 70.71299999999997,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 140.3, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 211.13, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "2023",
-      "dir": "ltr",
-      "width": 20.124000000000006,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 214.01, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 234.17, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "DCH",
-      "dir": "ltr",
-      "width": 19.458000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 237.17, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 256.61, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "CMACHYO",
-      "dir": "ltr",
-      "width": 45.855,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 259.49, 488.71],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 122.3, 477.07],
-      "fontName": "g_d0_f8",
-      "hasEOL": true
-    },
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 4.140000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 122.3, 477.07],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 13.860000000000014,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 126.44, 477.07],
-      "fontName": "g_d0_f8",
-      "hasEOL": false
-    },
-    {
-      "str": "Informe N°00279",
-      "dir": "ltr",
-      "width": 68.19299999999994,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 140.3, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 208.61, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "2023",
-      "dir": "ltr",
-      "width": 19.988999999999987,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 211.61, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 231.65, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "DCH",
-      "dir": "ltr",
-      "width": 19.458000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 234.65, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 254.09, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "CMACHYO",
-      "dir": "ltr",
-      "width": 45.855,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 256.97, 477.07],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "2.",
-      "dir": "ltr",
-      "width": 7.533000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 5.066999999999993,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 112.433, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "MONTO DE COMISIÓN COBRADO",
-      "dir": "ltr",
-      "width": 145.2240000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 117.5, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.765999999999906,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 262.7240000000001, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "EN LA",
-      "dir": "ltr",
-      "width": 27.125999999999987,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 265.49, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.3940000000000055,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 292.616, 411.29],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "MODALIDAD “COMISIÓN DE ESTRUCTURACIÓN”",
-      "dir": "ltr",
-      "width": 213.95699999999982,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 295.01, 411.29],
-      "fontName": "g_d0_f3",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 137.3, 400.73],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "El porcentaje de comisión de estructuración que se debe cobrar por los AVN desembolsados por cada",
-      "dir": "ltr",
-      "width": 401.12999999999977,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 137.3, 400.73],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 119.06, 390.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "proyecto se debió establecer en el convenio marco entre la Caja Huancayo y el promotor inmobiliario; sin",
-      "dir": "ltr",
-      "width": 419.1299999999999,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 119.06, 390.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 119.06, 380.09],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "embargo, s",
-      "dir": "ltr",
-      "width": 45.00899999999996,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 119.06, 380.09],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "e presentan diversas casuísticas, detalladas en el cuadro N° 004:",
-      "dir": "ltr",
-      "width": 261.0809999999997,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 164.18, 380.09],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 290.93, 358.49],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "Cuadro N° 004",
-      "dir": "ltr",
-      "width": 61.721999999999966,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 290.93, 358.49],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 210.29, 348.05],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "Comisión de estructuración por AVN desembolsado",
-      "dir": "ltr",
-      "width": 223.01999999999987,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 210.29, 348.05],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 163.7, 335.69],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "COMISION DE ESTRUCTURACIÓN",
-      "dir": "ltr",
-      "width": 147.45600000000005,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 163.7, 335.69],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "CANTIDAD",
-      "dir": "ltr",
-      "width": 46.953,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 349.51, 330.53],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 53.997000000000014,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 396.46299999999997, 330.53],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "%",
-      "dir": "ltr",
-      "width": 8.001000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 450.46, 330.53],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 179.66, 325.37],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "SEGÚN DOCUMENTACIÓN",
-      "dir": "ltr",
-      "width": 115.43400000000007,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 179.66, 325.37],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 54.41599999999988,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 295.0940000000001, 325.37],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 309.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "CONVENIO MARCO A NIVEL NOTARIAL",
-      "dir": "ltr",
-      "width": 168.4080000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 309.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 48.00199999999984,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 319.38800000000015, 309.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "24",
-      "dir": "ltr",
-      "width": 11.05771999999998,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 367.39, 309.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 60.852280000000064,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 378.44771999999995, 309.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "36.92%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 439.3, 309.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 294.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "MINUTA DE CONVENIO MARCO",
-      "dir": "ltr",
-      "width": 135.98100000000005,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 294.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 80.42899999999992,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 286.96100000000007, 294.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "19",
-      "dir": "ltr",
-      "width": 11.05771999999998,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 367.39, 294.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 60.852280000000064,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 378.44771999999995, 294.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "29.23%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 439.3, 294.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "MINUTA DE CONVENIO MARCO",
-      "dir": "ltr",
-      "width": 135.98100000000005,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.9970000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 286.97, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.2829999999999586,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 289.96700000000004, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "WORD",
-      "dir": "ltr",
-      "width": 28.826999999999973,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 292.25, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 49.19300000000004,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 321.07699999999994, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "5",
-      "dir": "ltr",
-      "width": 5.537760000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 370.27, 279.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 65.89224000000002,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 375.80776, 279.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "7.69%",
-      "dir": "ltr",
-      "width": 25.613999999999994,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 441.7, 279.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 264.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "CARTA DE INGRESO AL FMV",
-      "dir": "ltr",
-      "width": 124.5420000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 264.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 94.74799999999982,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 275.52200000000016, 264.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "9",
-      "dir": "ltr",
-      "width": 5.537760000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 370.27, 264.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 63.49224000000004,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 375.80776, 264.17],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "13.85%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 439.3, 264.41],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 249.02],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "No presenta convenio",
-      "dir": "ltr",
-      "width": 87.59699999999998,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 249.02],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 131.69300000000013,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 238.57699999999986, 249.02],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "8",
-      "dir": "ltr",
-      "width": 5.537760000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 370.27, 248.78],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 63.49224000000004,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 375.80776, 248.78],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "12.31%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 439.3, 249.02],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.98, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "Total, general",
-      "dir": "ltr",
-      "width": 58.59899999999997,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 150.98, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 158.41100000000006,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 209.57899999999995, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "65",
-      "dir": "ltr",
-      "width": 10.044000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 367.99, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 58.71599999999995,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 378.03400000000005, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": "100.00%",
-      "dir": "ltr",
-      "width": 35.68499999999998,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 436.75, 232.94],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 175.7, 221.18],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "Fuente: Elaboración Propia",
-      "dir": "ltr",
-      "width": 104.15015999999993,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 175.7, 221.18],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 139.82, 197.06],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "I.",
-      "dir": "ltr",
-      "width": 5.022000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 139.82, 197.06],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 30.97799999999998,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 144.842, 197.06],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "24 proyectos inmobiliarios que tienen convenio marco a nivel notarial, representando un",
-      "dir": "ltr",
-      "width": 362.43899999999985,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 197.06],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 175.82, 186.62],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "36.92%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 186.62],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 139.82, 176.3],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "II.",
-      "dir": "ltr",
-      "width": 7.542000000000002,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 139.82, 176.3],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 28.45799999999997,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 147.36200000000002, 176.3],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "19 proyectos inmobiliarios que tienen convenio marco a nivel de minuta, representando un",
-      "dir": "ltr",
-      "width": 362.4029999999996,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 176.3],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 175.82, 165.98],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "29.23%",
-      "dir": "ltr",
-      "width": 30.536999999999978,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 165.98],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 139.82, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "III.",
-      "dir": "ltr",
-      "width": 10.062000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 139.82, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 25.93799999999996,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 149.88200000000003, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "5 proyectos inmobiliarios que tienen convenio marco a nivel de",
-      "dir": "ltr",
-      "width": 260.21699999999953,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 3.983000000000061,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 436.0369999999999, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "minuta, pero en formato",
-      "dir": "ltr",
-      "width": 98.60399999999986,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 440.02, 155.66],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 175.82, 145.22],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "Word, representando un 7.69%",
-      "dir": "ltr",
-      "width": 125.01,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 145.22],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 139.82, 134.9],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "IV.",
-      "dir": "ltr",
-      "width": 11.007000000000001,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 139.82, 134.9],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 24.992999999999967,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 150.82700000000003, 134.9],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "9 proyectos inmobiliarios que presentan en la carta de ingreso al FMV el porcentaje de",
-      "dir": "ltr",
-      "width": 362.43899999999985,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 134.9],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 175.82, 124.58],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "comisión por estructuración, representando un 13.85%",
-      "dir": "ltr",
-      "width": 218.51099999999977,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 124.58],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 139.82, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "V.",
-      "dir": "ltr",
-      "width": 8.502000000000015,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 139.82, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 27.497999999999962,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 148.32200000000003, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "8 proyectos inmobiliarios que no presentan convenio marco,",
-      "dir": "ltr",
-      "width": 239.95799999999969,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 175.82, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.731999999999971,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 415.778, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "representando un 12.31%",
-      "dir": "ltr",
-      "width": 103.53599999999994,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 418.51, 114.26],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [9, 0, 0, 9, 104.9, 90.384],
-      "fontName": "g_d0_f4",
-      "hasEOL": true
-    },
-    {
-      "str": "2.1",
-      "dir": "ltr",
-      "width": 12.537000000000003,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 104.9, 90.384],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    },
-    {
-      "str": ". Proyectos inmobiliarios con convenio marco a nivel notarial",
-      "dir": "ltr",
-      "width": 262.4489999999997,
-      "height": 9,
-      "transform": [9, 0, 0, 9, 117.5, 90.384],
-      "fontName": "g_d0_f4",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "SISTRA:",
-      "dir": "ltr",
-      "width": 31.372080000000008,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 104.9, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "15/05/2023 11:32:52",
-      "dir": "ltr",
-      "width": 73.54187999999992,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 136.34, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.32812000000024,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 209.88187999999977, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 2.6773199999999995,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 212.21, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.2426799999999787,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 214.88732000000002, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "Elabor",
-      "dir": "ltr",
-      "width": 23.187360000000005,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 217.13, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "ado por: ntenemas",
-      "dir": "ltr",
-      "width": 66.97320000000019,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 240.29, 58.68],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 104.9, 49.44],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "Esta Información es Restringido, de uso exclusivo del (los) destinatario(s), en caso decida reenviarla, asumirá la",
-      "dir": "ltr",
-      "width": 433.40423999999996,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 104.9, 49.44],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    }
-  ],
-  [
-    {
-      "str": "",
-      "dir": "ltr",
-      "width": 0,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 104.9, 38.04],
-      "fontName": "g_d0_f1",
-      "hasEOL": true
-    },
-    {
-      "str": "responsabilidad por el uso indebido de terceros",
-      "dir": "ltr",
-      "width": 168.02795999999992,
-      "height": 8.04,
-      "transform": [8.04, 0, 0, 8.04, 104.9, 38.04],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 248.33204000000035,
-      "height": 0,
-      "transform": [8.04, 0, 0, 8.04, 272.92795999999964, 38.04],
-      "fontName": "g_d0_f1",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 3.0477600000000007,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 521.26, 38.04],
-      "fontName": "g_d0_f2",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.2322399999999334,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 524.30776, 38.04],
-      "fontName": "g_d0_f2",
-      "hasEOL": false
-    },
-    {
-      "str": "1",
-      "dir": "ltr",
-      "width": 5.049720000000001,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 526.54, 38.04],
-      "fontName": "g_d0_f2",
-      "hasEOL": false
-    },
-    {
-      "str": " ",
-      "dir": "ltr",
-      "width": 2.2702800000000707,
-      "height": 0,
-      "transform": [9.96, 0, 0, 9.96, 531.5897199999999, 38.04],
-      "fontName": "g_d0_f2",
-      "hasEOL": false
-    },
-    {
-      "str": "-",
-      "dir": "ltr",
-      "width": 3.0477600000000007,
-      "height": 9.96,
-      "transform": [9.96, 0, 0, 9.96, 533.86, 38.04],
-      "fontName": "g_d0_f2",
-      "hasEOL": false
-    }
-  ]
-]
+  "msg": "Sorted text"
+}
