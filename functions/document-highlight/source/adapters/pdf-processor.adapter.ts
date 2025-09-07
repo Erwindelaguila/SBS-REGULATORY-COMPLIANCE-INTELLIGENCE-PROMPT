@@ -13,6 +13,13 @@ import { TextContent, TextItem } from "pdfjs-dist/types/src/display/api";
 //   pdfjsLib.GlobalWorkerOptions.workerPort = null;
 // }
 
+type HighLightCoordinate = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export class PdfProcessorAdapter implements PdfProcessor {
   constructor(private readonly logger: Logger) {}
 
@@ -30,16 +37,18 @@ export class PdfProcessorAdapter implements PdfProcessor {
       lines[y].push(textItem);
     });
 
-    const lineKeys = Object.keys(lines).map((key) => Number.parseFloat(key));
-    this.logger.debug({ lineKeys }, "Line keys");
+    // Ordenar líneas verticalmente
+    const lineKeys = Object.keys(lines)
+      .map((key) => Number.parseFloat(key))
+      .sort((a, b) => b - a);
 
     // Ordenar cada línea horizontalmente
     lineKeys.forEach((y) => {
       lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
     });
 
-    // Combinar todas las líneas ordenadas
-    const sortedText = lineKeys.sort((a, b) => b - a).map((y) => lines[y]); // Ordenar líneas de arriba a abajo
+    // Obtener texto ordenado
+    const sortedText = lineKeys.map((y) => lines[y]); // Ordenar líneas de arriba a abajo
     return sortedText;
   }
 
@@ -68,7 +77,7 @@ export class PdfProcessorAdapter implements PdfProcessor {
       const sortedText = this.processTextContent(await pdfjsPage.getTextContent());
 
       // Buscar el párrafo en la página
-      const highlights = this.findTextInPage(sortedText, paragraph  );
+      const highlights = this.findMatches(sortedText, paragraph);
 
       if (highlights.length === 0) {
         throw new ParagraphNotFoundError(
@@ -106,79 +115,88 @@ export class PdfProcessorAdapter implements PdfProcessor {
     }
   }
 
-  private findTextInPage(
-    textContent: Array<Array<TextItem>>,
-    searchText: string,
-  ): Array<{ x: number; y: number; width: number; height: number }> {
-    // Estrategia 1: Búsqueda exacta
-    const highlights = this.findMatches(textContent, searchText);
-    if (highlights.length > 0) {
-      this.logger.debug(`Found ${highlights.length} matches`);
-      return highlights;
-    }
-    return [];
-  }
-
-  private findMatches(
-    textContent: Array<Array<TextItem>>,
-    searchText: string,
-  ): Array<{ x: number; y: number; width: number; height: number }> {
-    const highlights: Array<any> = [];
-    const normalizedSearch = this.normalizeText(searchText);
-
+  private findMatches(textContent: Array<Array<TextItem>>, searchText: string): Array<HighLightCoordinate> {
     // Construir texto completo de la página
-    let pageText = "";
-    const itemMap: Array<any> = [];
+    let normalizedPage = "";
+    const itemMap: Array<{ item: TextItem; startIdx: number; endIdx: number; lineIdx: number; itemIdx: number }> = [];
 
-    textContent.forEach((line) => {
-      line.forEach((item) => {
-        const startIdx = pageText.length;
-        pageText += item.str;
+    textContent.forEach((line, lineIdx) => {
+      line.forEach((item, itemIdx) => {
+        const startIdx = normalizedPage.length;
+        normalizedPage += this.normalizeText(item.str);
         itemMap.push({
           item: item,
           startIdx: startIdx,
-          endIdx: pageText.length,
+          endIdx: normalizedPage.length,
+          lineIdx: lineIdx,
+          itemIdx: itemIdx,
         });
       });
-      pageText += " ";
+      normalizedPage += " ";
     });
 
-    const normalizedPage = this.normalizeText(pageText);
+    const normalizedSearch = this.normalizeText(searchText);
+
     // this.logger.debug({ pageText }, "Page text");
     // this.logger.debug({ normalizedPage }, "Normalized page");
     // this.logger.debug({ normalizedSearch }, "Normalized search");
 
-    // Buscar todas las ocurrencias
-    let searchIdx = 0;
-    while ((searchIdx = normalizedPage.indexOf(normalizedSearch, searchIdx)) !== -1) {
-      this.logger.debug({ searchIdx }, "Search index");
-      const endIdx = searchIdx + normalizedSearch.length;
-      const relevantItems: Array<any> = [];
+    const searchIdx = normalizedPage.indexOf(normalizedSearch);
+    const endIdx = searchIdx + normalizedSearch.length;
+    this.logger.debug({ searchIdx, endIdx }, "Search index and end index");
 
-      this.logger.debug({ searchIdx, endIdx }, "Search index and end index");
+    let startHighlight = false;
+    let endHighlight = false;
 
-      for (const mapping of itemMap) {
-        if (mapping.endIdx > searchIdx && mapping.startIdx < endIdx) {
-          this.logger.debug({ mapping, searchIdx, endIdx }, "Mapping and search index");
-          relevantItems.push(mapping.item);
+    const relevantItemIndexes = new Map<number, Array<number>>();
+
+    for (const mapping of itemMap) {
+      if (mapping.startIdx >= searchIdx && !endHighlight) {
+        if (mapping.endIdx <= endIdx) {
+          startHighlight = true;
+        } else {
+          // If last line is not complete, check if the search text is in the last line to highlight
+          startHighlight = this.normalizeText(mapping.item.str).includes(normalizedSearch);
+          endHighlight = !startHighlight;
         }
       }
 
-      if (relevantItems.length > 0) {
-        const lineGroups = this.groupByLines(relevantItems);
-        this.logger.debug({ lineGroups }, "Line groups");
-        this.logger.debug({ searchIdx }, "Search index");
-        for (const line of lineGroups) {
-          const highlight = this.createHighlightForLine(line);
-          if (highlight) {
-            highlights.push(highlight);
-          }
+      if (startHighlight) {
+        this.logger.debug(
+          {
+            mapping,
+            searchIdx,
+            endIdx,
+            startHighlight,
+            endHighlight,
+          },
+          "Mapping and search index",
+        );
+
+        if (!relevantItemIndexes.has(mapping.lineIdx)) {
+          relevantItemIndexes.set(mapping.lineIdx, [mapping.itemIdx]);
+        } else {
+          const lineIndexes = relevantItemIndexes.get(mapping.lineIdx)!;
+          lineIndexes.push(mapping.itemIdx);
+          relevantItemIndexes.set(mapping.lineIdx, lineIndexes);
         }
       }
-
-      searchIdx += normalizedSearch.length;
     }
 
+    let highlights: Array<HighLightCoordinate> = [];
+
+    // console.log("Relevant item indexes", relevantItemIndexes);
+
+    if (relevantItemIndexes.size > 0) {
+      highlights = Array.from(relevantItemIndexes.entries())
+        .map(([lineIdx, itemIndexes]) => {
+          const line = textContent[lineIdx].filter((_, itemIdx) => itemIndexes.includes(itemIdx));
+          return this.createHighlightForLine(line);
+        })
+        .filter((highlight) => highlight !== null);
+    }
+
+    this.logger.debug(`Found ${highlights.length} matches`);
     return highlights;
   }
 
@@ -190,42 +208,7 @@ export class PdfProcessorAdapter implements PdfProcessor {
       .trim();
   }
 
-  private groupByLines(items: Array<any>): Array<Array<any>> {
-    const lines: Array<Array<any>> = [];
-    let currentLine: Array<any> = [];
-    let lastY: number | null = null;
-
-    const sorted = [...items].sort((a, b) => {
-      const yDiff = Math.abs(a.transform[5] - b.transform[5]);
-      if (yDiff > 5) {
-        return b.transform[5] - a.transform[5];
-      }
-      return a.transform[4] - b.transform[4];
-    });
-
-    for (const item of sorted) {
-      const y = item.transform[5];
-
-      if (lastY === null || Math.abs(y - lastY) < 5) {
-        currentLine.push(item);
-        lastY = y;
-      } else {
-        if (currentLine.length > 0) {
-          lines.push(currentLine);
-        }
-        currentLine = [item];
-        lastY = y;
-      }
-    }
-
-    if (currentLine.length > 0) {
-      lines.push(currentLine);
-    }
-
-    return lines;
-  }
-
-  private createHighlightForLine(items: Array<any>): { x: number; y: number; width: number; height: number } | null {
+  private createHighlightForLine(items: Array<any>): HighLightCoordinate | null {
     if (items.length === 0) return null;
 
     const minX = Math.min(...items.map((item) => item.transform[4]));
