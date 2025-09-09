@@ -3,8 +3,8 @@ import { chunk } from "../../utils";
 import { MetadataInsertionPromptCommand } from "../commands/metadata-insertion-prompt.command";
 import { AIChatClient, FileMetadata } from "../ports/ai-chat.client";
 import { FileStorageClient, RecordFileData } from "../ports/file-storage.client";
-import { SupervisoryRecordsRepository } from "../ports/supervisory-records.repository";
 import { QueueClient, QueueMessage } from "../ports/queue.client";
+import { SupervisoryRecordsRepository } from "../ports/supervisory-records.repository";
 
 import { v4 as uuid } from "uuid";
 import { NotificationType } from "../model/notification-type";

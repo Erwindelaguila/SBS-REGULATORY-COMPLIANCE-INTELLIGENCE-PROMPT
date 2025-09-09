@@ -5,7 +5,6 @@ import { PromptRegulatoryComplianceCommand } from "../domain/commands/prompt-reg
 type PromptRegComplInput = {
   messageId: string;
   application: string;
-  type: string;
   question: string;
   recordKeys: string[];
 };
@@ -22,7 +21,6 @@ export class PromptRegulatoryComplianceEntrypoint {
     const command = PromptRegulatoryComplianceCommand.createCommand(
       promptRegComplInput.messageId,
       promptRegComplInput.application,
-      promptRegComplInput.type,
       promptRegComplInput.question,
       promptRegComplInput.recordKeys,
     );
