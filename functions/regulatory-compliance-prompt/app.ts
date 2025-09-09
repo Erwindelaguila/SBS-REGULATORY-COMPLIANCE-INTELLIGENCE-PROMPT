@@ -69,7 +69,6 @@ export const handler = awslambda.streamifyResponse(
       const promptRegComplOutput = await promptRegulatoryComplianceEntrypoint.handleRequest({
         messageId,
         application: body.application as string,
-        type: body.type as string,
         question: body.question as string,
         recordKeys: body.recordKeys as string[],
       });

@@ -1,3 +1,3 @@
 export const NotificationType = {
-  InsertMetadata: "suptech.regulatory-compliance-prompts.insert-metadata",
+  InsertMetadata: "regulatory-compliance-prompts.insert-metadata",
 }

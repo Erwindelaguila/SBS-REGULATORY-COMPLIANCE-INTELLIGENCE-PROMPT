@@ -143,7 +143,7 @@ export class PromptRegulatoryComplianceCommandHandler {
   async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
     try {
       // Get system prompts
-      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(command.application, command.type);
+      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(command.application, "default");
       if (systemPrompts.length === 0) {
         throw new Error("No system prompts found");
       }
