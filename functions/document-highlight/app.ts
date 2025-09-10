@@ -10,16 +10,16 @@ import { HighlightPdfCommandHandler } from "./source/domain/command-handlers/hig
 import { HighlightPdfError, HighlightPdfErrorCodes } from "./source/domain/errors/highlight-pdf.error";
 import { HighlightPdfEntryPoint } from "./source/entrypoints/highlight-pdf.entrypoint";
 
-const pinoPrettyStream = pinoPretty({
-  colorize: true,
-  singleLine: true,
-});
+// const pinoPrettyStream = pinoPretty({
+//   colorize: true,
+//   singleLine: true,
+// });
 
 const logger = pino(
   {
     level: "debug",
   },
-  pinoPrettyStream,
+  // pinoPrettyStream,
 );
 
 const s3Client = new S3Client({});

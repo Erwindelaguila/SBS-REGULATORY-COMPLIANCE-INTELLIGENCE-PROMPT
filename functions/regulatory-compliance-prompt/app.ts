@@ -64,6 +64,8 @@ const promptRegulatoryComplianceEntrypoint = new PromptRegulatoryComplianceEntry
 export const handler = awslambda.streamifyResponse(
   async (event: LambdaFunctionURLEvent, responseStream: awslambda.HttpResponseStream, _: Context) => {
     const body = JSON.parse(event.body!) as any;
+    logger.debug({ body }, "Body");
+
     try {
       const messageId = (body.sessionId as string).split(":")[1];
       const promptRegComplOutput = await promptRegulatoryComplianceEntrypoint.handleRequest({

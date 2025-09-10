@@ -6,6 +6,7 @@ import { PdfProcessor } from "../domain/ports/pdf-processor";
 // Importar pdfjs-dist de forma compatible con Node.js
 import { getDocument } from "pdfjs-dist/legacy/build/pdf";
 import { TextContent, TextItem } from "pdfjs-dist/types/src/display/api";
+import { findOriginalIndexes } from "../common/search-string";
 
 // // Configurar para no usar worker en Node.js
 // if (typeof pdfjsLib.GlobalWorkerOptions !== "undefined") {
@@ -115,84 +116,75 @@ export class PdfProcessorAdapter implements PdfProcessor {
     }
   }
 
-  private findMatches(textContent: Array<Array<TextItem>>, searchText: string): Array<HighLightCoordinate> {
-    // Construir texto completo de la página
-    let normalizedPage = "";
-    const itemMap: Array<{ item: TextItem; startIdx: number; endIdx: number; lineIdx: number; itemIdx: number }> = [];
+  findTextChunks(
+    textContent: Array<Array<{ item: TextItem; normalizedItem: string }>>,
+    normalizedFullText: string,
+    searchString: string,
+  ): Array<Array<TextItem>> {
+    const { startIndex, endIndex } = findOriginalIndexes(normalizedFullText, searchString.toLowerCase());
 
-    textContent.forEach((line, lineIdx) => {
-      line.forEach((item, itemIdx) => {
-        const startIdx = normalizedPage.length;
-        normalizedPage += this.normalizeText(item.str);
-        itemMap.push({
-          item: item,
-          startIdx: startIdx,
-          endIdx: normalizedPage.length,
-          lineIdx: lineIdx,
-          itemIdx: itemIdx,
-        });
+    if (startIndex === -1) return [];
+    let currentPosition = 0;
+    const matchingChunks: Array<Array<TextItem>> = [];
+
+    textContent.forEach((line) => {
+      const lineMatches: Array<TextItem> = [];
+      line.forEach((item) => {
+        const itemLength = item.normalizedItem.length;
+        const itemStart = currentPosition;
+        const itemEnd = currentPosition + itemLength;
+
+        // Verifica si hay superposición entre la búsqueda y el chunk actual
+        if (!(endIndex <= itemStart || startIndex >= itemEnd)) {
+          lineMatches.push(item.item);
+        }
+        currentPosition = itemEnd;
       });
-      normalizedPage += " ";
+      matchingChunks.push(lineMatches);
+      ++currentPosition;
     });
 
-    const normalizedSearch = this.normalizeText(searchText);
+    return matchingChunks;
+  }
 
-    // this.logger.debug({ pageText }, "Page text");
-    // this.logger.debug({ normalizedPage }, "Normalized page");
-    // this.logger.debug({ normalizedSearch }, "Normalized search");
+  private findMatches(textContent: Array<Array<TextItem>>, searchText: string): Array<HighLightCoordinate> {
+    // this.logger.debug({ textContent, searchText }, "Text content and search text");
 
-    const searchIdx = normalizedPage.indexOf(normalizedSearch);
-    const endIdx = searchIdx + normalizedSearch.length;
-    this.logger.debug({ searchIdx, endIdx }, "Search index and end index");
+    // Construir texto completo de la página
+    let normalizedPage = "";
 
-    let startHighlight = false;
-    let endHighlight = false;
+    const normalizedTextContent: Array<Array<{ item: TextItem; normalizedItem: string }>> = [];
 
-    const relevantItemIndexes = new Map<number, Array<number>>();
+    textContent.forEach((line) => {
+      const normalizedLine: Array<{ item: TextItem; normalizedItem: string }> = [];
+      line.forEach((item) => {
+        const normalizedItem = this.normalizeText(item.str);
+        normalizedLine.push({ item, normalizedItem });
+        normalizedPage += normalizedItem;
+      });
 
-    for (const mapping of itemMap) {
-      if (mapping.startIdx >= searchIdx && !endHighlight) {
-        if (mapping.endIdx <= endIdx) {
-          startHighlight = true;
-        } else {
-          // If last line is not complete, check if the search text is in the last line to highlight
-          startHighlight = this.normalizeText(mapping.item.str).includes(normalizedSearch);
-          endHighlight = !startHighlight;
-        }
-      }
+      normalizedPage += " ";
+      normalizedTextContent.push(normalizedLine);
+    });
 
-      if (startHighlight) {
-        this.logger.debug(
-          {
-            mapping,
-            searchIdx,
-            endIdx,
-            startHighlight,
-            endHighlight,
-          },
-          "Mapping and search index",
-        );
+    const normalizedSearch = this.normalizeText(searchText).replace(/\s+/g, " ");
+    const textChunks = this.findTextChunks(normalizedTextContent, normalizedPage, normalizedSearch);
 
-        if (!relevantItemIndexes.has(mapping.lineIdx)) {
-          relevantItemIndexes.set(mapping.lineIdx, [mapping.itemIdx]);
-        } else {
-          const lineIndexes = relevantItemIndexes.get(mapping.lineIdx)!;
-          lineIndexes.push(mapping.itemIdx);
-          relevantItemIndexes.set(mapping.lineIdx, lineIndexes);
-        }
-      }
+    this.logger.info({ textChunks }, "Chunks");
+    this.logger.info({ normalizedPage }, "Normalized page");
+    this.logger.info({ normalizedSearch }, "Normalized search");
+
+    if (textChunks.length === 0) {
+      const error = new ParagraphNotFoundError("Paragraph not found");
+      this.logger.error(error, "Paragraph not found");
+      throw error;
     }
 
     let highlights: Array<HighLightCoordinate> = [];
 
-    // console.log("Relevant item indexes", relevantItemIndexes);
-
-    if (relevantItemIndexes.size > 0) {
-      highlights = Array.from(relevantItemIndexes.entries())
-        .map(([lineIdx, itemIndexes]) => {
-          const line = textContent[lineIdx].filter((_, itemIdx) => itemIndexes.includes(itemIdx));
-          return this.createHighlightForLine(line);
-        })
+    if (textChunks.length > 0) {
+      highlights = textChunks
+        .map((line) => this.createHighlightForLine(line))
         .filter((highlight) => highlight !== null);
     }
 
@@ -201,11 +193,16 @@ export class PdfProcessorAdapter implements PdfProcessor {
   }
 
   private normalizeText(text: string): string {
+    if (text == " ") {
+      return text;
+    }
+
     return text
+      .trim()
       .toLowerCase()
-      .replace(/\s+/g, " ")
-      .replace(/[.,;:!?'"]/g, "")
-      .trim();
+      .normalize("NFD") // Normalize unicode
+      .replace(/[\u0300-\u036f]/g, " ") // Accents and bullets
+      .replace(/[^A-Za-z0-9\s]/g, " "); // Remove special characters
   }
 
   private createHighlightForLine(items: Array<any>): HighLightCoordinate | null {
