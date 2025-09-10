@@ -69,6 +69,18 @@ export class BedrockAIChatClient implements AIChatClient {
           },
         }),
       );
+
+      this.logger.debug(
+        {
+          files: files.map((file) => ({
+            name: file.document!.name,
+            format: file.document!.format,
+            bytes: file.document!.source!.bytes!.length,
+          })),
+        },
+        "Files to send to Bedrock",
+      );
+
       const converseCommand = new ConverseStreamCommand({
         modelId: this.modelId,
         system: [{ text: systemPrompt }],

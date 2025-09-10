@@ -5,8 +5,6 @@ import { SystemPromptsRepository } from "../ports/system-prompts.repository";
 import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
 import { PassThrough, Readable, Transform } from "stream";
 
-import { log } from "console";
-
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
   fileKeys: string[];
@@ -148,11 +146,20 @@ export class PromptRegulatoryComplianceCommandHandler {
         throw new Error("No system prompts found");
       }
       const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
-
-      log({ systemPrompt }, "System prompt");
+      this.logger.info({ systemPrompt }, "System prompt");
 
       // Get files by keys
       const filesData = await this.documentsFileStorageClient.getFilesByKey(command.recordKeys);
+      this.logger.info(
+        {
+          filesData: filesData.map((file) => ({
+            key: file.key,
+            bytes: file.bytes.length,
+            contentType: file.contentType,
+          })),
+        },
+        "Files data",
+      );
 
       // Get AI chat response
       const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
