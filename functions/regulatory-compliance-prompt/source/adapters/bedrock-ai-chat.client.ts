@@ -4,6 +4,7 @@ import {
   ConverseStreamCommand,
   ConverseStreamOutput,
   DocumentFormat,
+  ThrottlingException,
 } from "@aws-sdk/client-bedrock-runtime";
 import { AIChatClient, FileData } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
@@ -103,10 +104,12 @@ export class BedrockAIChatClient implements AIChatClient {
       const readable = Readable.from(this.streamToAsyncIterator(response.stream));
       return readable;
     } catch (error) {
-      // TODO: Handle specific Bedrock errors
-      if (error instanceof Error) {
-        this.logger.error({ error }, "Failed to get chat response from Bedrock AI");
+      this.logger.error({ error }, "Failed to get chat response from Bedrock AI");
+
+      if (error instanceof ThrottlingException) {
+        return Readable.from(["Max requests exceeded, try again later"]);
       }
+
       throw error;
     }
   }
