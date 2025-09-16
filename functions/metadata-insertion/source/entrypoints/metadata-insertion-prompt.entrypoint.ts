@@ -8,8 +8,6 @@ import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 type MetadataInsertionPromptInput = {
   insertRecords: DynamoDBRecord[];
-  systemPrompt: string;
-  userPrompt: string;
 };
 
 export class MetadataInsertionPromptEntryPoint {
@@ -17,7 +15,7 @@ export class MetadataInsertionPromptEntryPoint {
 
   public async handleRequest(metadataInsInput: MetadataInsertionPromptInput): Promise<void> {
     const records: MetadataInsertionPromptCommandRecord[] = metadataInsInput.insertRecords
-      .map((insertRecord) => {
+      .map<MetadataInsertionPromptCommandRecord | null>((insertRecord) => {
         if (insertRecord.dynamodb === undefined || insertRecord.dynamodb.NewImage === undefined) {
           return null;
         }
@@ -28,15 +26,13 @@ export class MetadataInsertionPromptEntryPoint {
           metadata: jsonRecord.metadata,
           sessionId: jsonRecord.sessionId,
           parentId: jsonRecord.parentId,
+          application: jsonRecord.application,
+          documentType: jsonRecord.documentType,
         };
       })
       .filter((record) => record !== null);
 
-    const command = MetadataInsertionPromptCommand.createCommand(
-      records,
-      metadataInsInput.systemPrompt,
-      metadataInsInput.userPrompt,
-    );
+    const command = MetadataInsertionPromptCommand.createCommand(records);
 
     await this.metadataInsertionPromptCommandHandler.handle(command);
   }

@@ -11,6 +11,7 @@ import { MetadataInsertionPromptCommandHandler } from "./source/domain/command-h
 import { MetadataInsertionPromptEntryPoint } from "./source/entrypoints/metadata-insertion-prompt.entrypoint";
 import { SqsQueueClient } from "./source/adapters/sqs-queue.client";
 import { SQS } from "@aws-sdk/client-sqs";
+import { DynSystemPromptsRepository } from "./source/adapters/dyn-system-prompts.repository";
 
 const logger = pino({
   level: "debug",
@@ -26,6 +27,12 @@ const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
   logger,
 );
 
+const systemPromptsRepository = new DynSystemPromptsRepository(
+  dynamoDBDocumentClient,
+  process.env.SYSTEM_PROMPTS_TABLE_NAME as string,
+  logger,
+);
+
 const aiChatClient = new BedrockAIChatClient(
   new BedrockRuntimeClient({
     region: "us-east-1",
@@ -38,35 +45,17 @@ const metadataInsertionPromptCommandHandler = new MetadataInsertionPromptCommand
   aiChatClient,
   fileStorageClient,
   queueClient,
+  systemPromptsRepository,
   supervisoryRecordsRepository,
   logger,
 );
 
 const metadataInsertionPromptEntrypoint = new MetadataInsertionPromptEntryPoint(metadataInsertionPromptCommandHandler);
 
-const SYSTEM_PROMPT =
-  'Debes responder únicamente con JSON válido. Sin texto explicativo, sin formato markdown, sin comentarios adicionales - solo JSON puro. Tu respuesta debe ser siempre un arreglo de objetos, nunca un objeto único o estructura anidada. Cada objeto en el arreglo debe de tener la siguiente estructura:  con la estructura {"metadata": {}, "recordId": ""}, donde la respuesta debe de ir en el campo "metadata" y el nombre del archivo en el "recordId". Cada campo dentro del metadata debe contener pares clave-valor con valores concisos y precisos. Sin backticks, solo raw JSON';
-
-const USER_PROMPT = `
-  De cada archivo/documento proporcionado, identifica palabras o términos clave y genera un objeto clave-valor con estos datos. Los campos más importantes a identificar son "sender", "receiver", "subject", pero si identificas campos adicionales relevantes, inclúyelos también. Para cada clave, los valores no deben ser extensos - solo valores precisos y concisos. Retorna un arreglo con los objetos generados para cada archivo.
-
-  Campos requeridos (cuando estén disponibles):
-  - sender: Quién envió/creó el documento
-  - receiver: Quién recibió/es el destinatario del documento
-  - subject: Tema principal o título del documento
-
-  Campos adicionales que puedes incluir:
-  - date, document_type, priority, reference_number, organization, department, status, etc.
-
-  Mantén todos los valores concisos y factuales.
-`;
-
 export const handler = async (event: DynamoDBStreamEvent) => {
   try {
     await metadataInsertionPromptEntrypoint.handleRequest({
       insertRecords: event.Records,
-      systemPrompt: SYSTEM_PROMPT,
-      userPrompt: USER_PROMPT,
     });
 
     return {
