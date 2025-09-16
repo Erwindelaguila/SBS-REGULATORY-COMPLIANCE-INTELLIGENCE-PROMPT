@@ -80,7 +80,7 @@ Resources:
           AttributeType: N
         - AttributeName: application
           AttributeType: S
-        - AttributeName: type
+        - AttributeName: documentType
           AttributeType: S
       KeySchema:
         - AttributeName: id
@@ -88,11 +88,11 @@ Resources:
         - AttributeName: version
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: application-type-index
+        - IndexName: application-documentType-index
           KeySchema:
             - AttributeName: application
               KeyType: HASH
-            - AttributeName: type
+            - AttributeName: documentType
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
@@ -224,6 +224,7 @@ Resources:
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           BEDROCK_MODEL_ID: !Ref BedrockModelId
           INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
+          SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
       Events:
         DynamoDBTrigger:
           Type: DynamoDB

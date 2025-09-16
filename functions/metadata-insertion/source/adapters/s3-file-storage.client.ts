@@ -1,5 +1,5 @@
 import { Logger } from "pino";
-import { RecordFileData, FileStorageClient } from "../domain/ports/file-storage.client";
+import { FileData, FileStorageClient } from "../domain/ports/file-storage.client";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 export class S3FileStorageClient implements FileStorageClient {
@@ -9,7 +9,7 @@ export class S3FileStorageClient implements FileStorageClient {
     private readonly logger: Logger
   ) {}
 
-  async getFileByKey(key: string, recordId: string): Promise<RecordFileData> {
+  async getFileByKey(key: string): Promise<FileData> {
     try {
       const response = await this.s3Client.send(new GetObjectCommand({
         Bucket: this.bucketName,
@@ -18,7 +18,6 @@ export class S3FileStorageClient implements FileStorageClient {
       const fileInBytes = await response.Body?.transformToByteArray();
       const contentType = response.ContentType
       return {
-        recordId,
         key,
         bytes: fileInBytes!,
         contentType: contentType!

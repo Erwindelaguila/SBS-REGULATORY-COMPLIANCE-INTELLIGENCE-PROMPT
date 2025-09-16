@@ -1,5 +1,5 @@
 import { BedrockRuntimeClient, ContentBlock, ConverseCommand, DocumentFormat } from "@aws-sdk/client-bedrock-runtime";
-import { AIChatClient, FileData, FileMetadata } from "../domain/ports/ai-chat.client";
+import { AIChatClient, RecordData, RecordMetadata } from "../domain/ports/ai-chat.client";
 import { Logger } from "pino";
 
 export class BedrockAIChatClient implements AIChatClient {
@@ -45,7 +45,7 @@ export class BedrockAIChatClient implements AIChatClient {
       .join("-");
   }
 
-  async generateMetadata(systemPrompt: string, userPrompt: string, filesData: FileData[]): Promise<FileMetadata[]> {
+  async generateMetadata(systemPrompt: string, userPrompt: string, filesData: RecordData[]): Promise<RecordMetadata[]> {
     try {
       const files = filesData.map(
         (fileData): ContentBlock => ({
