@@ -5,35 +5,39 @@ import {
   MetadataInsertionPromptCommandRecord,
 } from "../domain/commands/metadata-insertion-prompt.command";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
+import path from "path";
+import { Logger } from "pino";
 
 type MetadataInsertionPromptInput = {
-  insertRecords: DynamoDBRecord[];
+  insertRecords: Record<string, any>[];
 };
 
 export class MetadataInsertionPromptEntryPoint {
-  constructor(private readonly metadataInsertionPromptCommandHandler: MetadataInsertionPromptCommandHandler) {}
+  constructor(
+    private readonly metadataInsertionPromptCommandHandler: MetadataInsertionPromptCommandHandler,
+    private readonly logger: Logger,
+  ) {}
 
   public async handleRequest(metadataInsInput: MetadataInsertionPromptInput): Promise<void> {
     const records: MetadataInsertionPromptCommandRecord[] = metadataInsInput.insertRecords
-      .map<MetadataInsertionPromptCommandRecord | null>((insertRecord) => {
-        if (insertRecord.dynamodb === undefined || insertRecord.dynamodb.NewImage === undefined) {
-          return null;
-        }
-        const jsonRecord = unmarshall(insertRecord.dynamodb.NewImage as any);
-        return {
-          recordId: jsonRecord.id,
-          key: jsonRecord.key,
-          metadata: jsonRecord.metadata,
-          sessionId: jsonRecord.sessionId,
-          parentId: jsonRecord.parentId,
-          application: jsonRecord.application,
-          documentType: jsonRecord.documentType,
-        };
-      })
-      .filter((record) => record !== null);
+      .map<MetadataInsertionPromptCommandRecord>((insertRecord) => ({
+        recordId: insertRecord.id,
+        key: insertRecord.key,
+        metadata: insertRecord.metadata,
+        sessionId: insertRecord.sessionId,
+        parentId: insertRecord.parentId,
+        application: insertRecord.application,
+        documentType: insertRecord.documentType,
+      }))
+      .filter((record) => path.extname(record.key) === ".pdf");
+
+    this.logger.info(`Received ${records.length} records to process`);
+
+    if (records.length === 0) {
+      return;
+    }
 
     const command = MetadataInsertionPromptCommand.createCommand(records);
-
     await this.metadataInsertionPromptCommandHandler.handle(command);
   }
 }

@@ -12,6 +12,7 @@ import { MetadataInsertionPromptEntryPoint } from "./source/entrypoints/metadata
 import { SqsQueueClient } from "./source/adapters/sqs-queue.client";
 import { SQS } from "@aws-sdk/client-sqs";
 import { DynSystemPromptsRepository } from "./source/adapters/dyn-system-prompts.repository";
+import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 const logger = pino({
   level: "debug",
@@ -50,12 +51,19 @@ const metadataInsertionPromptCommandHandler = new MetadataInsertionPromptCommand
   logger,
 );
 
-const metadataInsertionPromptEntrypoint = new MetadataInsertionPromptEntryPoint(metadataInsertionPromptCommandHandler);
+const metadataInsertionPromptEntrypoint = new MetadataInsertionPromptEntryPoint(
+  metadataInsertionPromptCommandHandler,
+  logger,
+);
 
 export const handler = async (event: DynamoDBStreamEvent) => {
+  const records = event.Records.filter(
+    (record) => record.dynamodb !== undefined && record.dynamodb.NewImage !== undefined,
+  ).map((records) => unmarshall(records.dynamodb!.NewImage as any));
+
   try {
     await metadataInsertionPromptEntrypoint.handleRequest({
-      insertRecords: event.Records,
+      insertRecords: records,
     });
 
     return {
