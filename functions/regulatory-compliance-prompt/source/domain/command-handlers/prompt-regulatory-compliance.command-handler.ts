@@ -4,6 +4,7 @@ import { FileStorageClient } from "../ports/file-storage.client";
 import { SystemPromptsRepository } from "../ports/system-prompts.repository";
 import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
 import { PassThrough, Readable, Transform } from "stream";
+import { DocumentType } from "../models/document-type";
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
@@ -141,7 +142,10 @@ export class PromptRegulatoryComplianceCommandHandler {
   async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
     try {
       // Get system prompts
-      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(command.application, "default");
+      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(
+        command.application,
+        DocumentType.DEFAULT,
+      );
       if (systemPrompts.length === 0) {
         throw new Error("No system prompts found");
       }

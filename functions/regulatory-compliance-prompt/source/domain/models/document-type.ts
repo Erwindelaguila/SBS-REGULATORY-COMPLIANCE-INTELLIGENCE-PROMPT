@@ -1,0 +1,6 @@
+export enum DocumentType {
+    POLICY = "POLICY",
+    APPRAISAL = "APPRAISAL",
+    DEFAULT = "DEFAULT",
+    REGISTRATION = "REGISTRATION"
+}

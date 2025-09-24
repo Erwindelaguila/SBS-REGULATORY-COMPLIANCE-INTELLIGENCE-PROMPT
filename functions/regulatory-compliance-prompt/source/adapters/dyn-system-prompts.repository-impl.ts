@@ -15,16 +15,19 @@ export class DynSystemPromptsRepositoryImpl implements SystemPromptsRepository {
       const queryResult = await this.dynamoDBDocumentClient.send(
         new QueryCommand({
           TableName: this.tableName,
-          IndexName: "application-type-index",
-          KeyConditionExpression: " #application = :application AND #type = :type",
+          IndexName: "application-documentType-index",
+          KeyConditionExpression: " #application = :application AND #documentType = :documentType ",
           ExpressionAttributeValues: {
-            ":type": type,
+            ":documentType": type,
             ":application": application,
+            ":promptType": "CHAT",
           },
           ExpressionAttributeNames: {
             "#application": "application",
-            "#type": "type",
+            "#documentType": "documentType",
+            "#promptType": "promptType",
           },
+          FilterExpression: "#promptType = :promptType",
         }),
       );
       return (queryResult?.Items ?? []) as SystemPrompt[];
