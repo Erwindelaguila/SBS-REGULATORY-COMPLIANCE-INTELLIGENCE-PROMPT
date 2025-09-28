@@ -10,27 +10,30 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
     private readonly logger: Logger,
   ) {}
 
-  async updateMetadata(recordId: string, metadata: Record<string, any>): Promise<void> {
+  async updateProcessedKey(recordId: string, processedKey: string): Promise<void> {
     try {
-      this.logger.debug(`Updating metadata for record ${recordId} and metadata ${JSON.stringify(metadata)}`);
+      this.logger.debug(`Updating proccessedKey for record ${recordId}}`);
       const params: UpdateCommandInput = {
         TableName: this.tableName,
         Key: {
-          id: recordId
+          id: recordId,
         },
-        UpdateExpression: "SET metadata = :metadata",
+        UpdateExpression: "SET #processedKey = :processedKey",
         ExpressionAttributeValues: {
-          ":metadata": metadata
+          ":processedKey": processedKey,
         },
-        ReturnValues: "ALL_NEW"
+        ExpressionAttributeNames: {
+          "#processedKey": "processedKey",
+        },
+        ReturnValues: "ALL_NEW",
       };
       const result = await this.dynamoDBDocumentClient.send(new UpdateCommand(params));
-      this.logger.debug({ result }, "Successfully updated metadata");
+      this.logger.debug({ result }, "Successfully updated processedKey");
     } catch (err) {
       if (err instanceof ConditionalCheckFailedException) {
-        this.logger.error({ err }, "Failed to update metadata");
+        this.logger.error({ err }, "Failed to update processedKey");
       }
-      this.logger.error({ err }, `Error updating metadata for record ${recordId}`);
+      this.logger.error({ err }, `Error updating processedKey for record ${recordId}`);
       throw err;
     }
   }

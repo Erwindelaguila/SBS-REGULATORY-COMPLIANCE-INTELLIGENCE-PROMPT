@@ -28,6 +28,9 @@ Parameters:
   CsvAnalysisBucketName:
     Type: String
     Default: bucket
+  ProcessedRecordsBucketName:
+    Type: String
+    Default: bucket
   SupervisoryRecordsTableName:
     Type: String
     Default: table
@@ -46,12 +49,22 @@ Parameters:
   PdfJsLayer:
     Type: String
     Default: layer
+  MetadataExtractionServiceUrl:
+    Type: String
+    Default: url
+  KafkaBrokers:
+    Type: String
+    Default: brokers
 
 Resources:
   CsvBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref CsvAnalysisBucketName
+  ProcessedRecordsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref ProcessedRecordsBucketName
 
   RegulatoryComplianceIntelligenceApi:
     Type: AWS::Serverless::Api
@@ -207,24 +220,24 @@ Resources:
         EntryPoints:
           - app.ts
 
-  MetadataInsertionPromptFunction:
+  ProcessDocumentsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/metadata-insertion/
-      Handler: app.handler
-      Runtime: nodejs22.x
-      MemorySize: 256
+      PackageType: Image
+      MemorySize: 1024
       Timeout: 60
       Architectures:
         - x86_64
-      Role: !GetAtt MetadataInsertionPromptFunctionRole.Arn
+      Role: !GetAtt ProcessDocumentsFunctionRole.Arn
       Environment:
         Variables:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
-          BEDROCK_MODEL_ID: !Ref BedrockModelId
-          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
-          SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
+          S3_PROCESSED_DOCUMENTS_BUCKET_NAME: !Ref ProcessedRecordsBucketName
+          METADATA_EXTRACTION_SERVICE_URL: !Ref MetadataExtractionServiceUrl
+          KAFKA_BROKERS: !Ref KafkaBrokers
+          NODE_OPTIONS: "--enable-source-maps"
+          HOME: "/tmp"
       Events:
         DynamoDBTrigger:
           Type: DynamoDB
@@ -236,13 +249,9 @@ Resources:
               Filters:
                 - Pattern: '{"eventName": ["INSERT"]}'
     Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: "es2020"
-        Sourcemap: true
-        EntryPoints:
-          - app.ts
+      DockerTag: process-documents.v1
+      DockerContext: ./functions/process-documents
+      Dockerfile: Dockerfile
 
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
@@ -277,7 +286,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
 
-  MetadataInsertionPromptFunctionRole:
+  ProcessDocumentsFunctionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
