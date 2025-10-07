@@ -34,6 +34,9 @@ Parameters:
   SupervisoryRecordsTableName:
     Type: String
     Default: table
+  SupervisoryRecordsMetadataTableName:
+    Type: String
+    Default: table
   SupervisoryRecordsStreamArn:
     Type: String
     Default: stream
@@ -232,10 +235,14 @@ Resources:
       Environment:
         Variables:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
+          SUPERVISORY_RECORDS_METADATA_TABLE_NAME: !Ref SupervisoryRecordsMetadataTableName
+          SYSTEM_PROMPTS_TABLE_NAME: !Ref PromptsTableName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           S3_PROCESSED_DOCUMENTS_BUCKET_NAME: !Ref ProcessedRecordsBucketName
           KAFKA_BROKERS: !Ref KafkaBrokers
           NODE_OPTIONS: "--enable-source-maps"
+          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
           HOME: "/tmp"
       Events:
         DynamoDBTrigger:

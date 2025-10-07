@@ -10,6 +10,12 @@ import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { ProcessDocumentsEntryPoint } from "./entrypoints/process-documents.entrypoint";
 import { ProcessDocumentsCommandHandler } from "./domain/command-handlers/process-documents.command-handler";
 import { KafkaProducerAdapter } from "./adapters/kafka-producer.adapter";
+import { DynSupervisoryRecordMetadataRepository } from "./adapters/dyn-supervisory-record-metadata.repository";
+import { BedrockAIChatClient } from "./adapters/bedrock-ai-chat.client";
+import { DynSystemPromptsRepository } from "./adapters/dyn-system-prompts.repository";
+import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
+import { SQS } from "@aws-sdk/client-sqs";
+import { SqsQueueClient } from "./adapters/sqs-queue.client";
 
 const logger = pino({
   level: "debug",
@@ -17,9 +23,15 @@ const logger = pino({
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const s3Client = new S3Client({});
+const bedrockRuntimeClient = new BedrockRuntimeClient({});
+const sqsClient = new SQS({});
 
 const recordsFileStorageClient = new S3FileStorageClient(s3Client, process.env.S3_DOCUMENTS_BUCKET_NAME!, logger);
-const processedRecordsFileStorageClient = new S3FileStorageClient(s3Client, process.env.S3_PROCESSED_DOCUMENTS_BUCKET_NAME!, logger);
+const processedRecordsFileStorageClient = new S3FileStorageClient(
+  s3Client,
+  process.env.S3_PROCESSED_DOCUMENTS_BUCKET_NAME!,
+  logger,
+);
 
 const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
   dynamoDBDocumentClient,
@@ -27,7 +39,19 @@ const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
   logger,
 );
 
-const eventProducetClient = new KafkaProducerAdapter(
+const supervisoryRecordMetadataRepository = new DynSupervisoryRecordMetadataRepository(
+  dynamoDBDocumentClient,
+  process.env.SUPERVISORY_RECORDS_METADATA_TABLE_NAME!,
+  logger,
+);
+
+const systemPromptsRepository = new DynSystemPromptsRepository(
+  dynamoDBDocumentClient,
+  process.env.SYSTEM_PROMPTS_TABLE_NAME!,
+  logger,
+);
+
+const eventProducerClient = new KafkaProducerAdapter(
   {
     brokers: process.env.KAFKA_BROKERS!.split(","),
     clientId: "process-documents-function",
@@ -35,11 +59,18 @@ const eventProducetClient = new KafkaProducerAdapter(
   logger,
 );
 
+const aiChatClient = new BedrockAIChatClient(bedrockRuntimeClient, process.env.BEDROCK_MODEL_ID!, logger);
+const sqsQueueClient = new SqsQueueClient(sqsClient, process.env.INTERACTION_WEBSOCKET_QUEUE_URL!, logger);
+
 const processDocumentsCommandHandler = new ProcessDocumentsCommandHandler(
   recordsFileStorageClient,
   processedRecordsFileStorageClient,
+  aiChatClient,
+  sqsQueueClient,
   supervisoryRecordsRepository,
-  eventProducetClient,
+  systemPromptsRepository,
+  supervisoryRecordMetadataRepository,
+  eventProducerClient,
   logger,
 );
 

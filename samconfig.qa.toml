@@ -28,6 +28,7 @@ parameter_overrides = [
     "CsvAnalysisBucketName=supervisory-records-csv-analysis-qa",
     "ProcessedRecordsBucketName=processed-supervisory-records-qa",
     "SupervisoryRecordsTableName=supervisory-records",
+    "SupervisoryRecordsMetadataTableName=supervisory-records-metadata",
     "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/058264428218/interaction-websocket-queue",
     "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:058264428218:table/supervisory-records/stream/2025-08-20T06:07:26.305",
     "PdfJsLayer=arn:aws:lambda:us-east-1:058264428218:layer:pdfjs-dist-layer:1",

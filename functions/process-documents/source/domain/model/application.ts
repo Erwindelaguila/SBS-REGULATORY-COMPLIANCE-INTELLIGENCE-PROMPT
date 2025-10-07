@@ -1,4 +1,5 @@
 export enum Application {
     DOCUMENT_LOAD = "DOCUMENT_LOAD",
-    WARRANTY = "WARRANTY"
+    WARRANTY = "WARRANTY",
+    LETTER = "LETTER",
 }
