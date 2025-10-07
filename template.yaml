@@ -234,7 +234,6 @@ Resources:
           SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           S3_PROCESSED_DOCUMENTS_BUCKET_NAME: !Ref ProcessedRecordsBucketName
-          METADATA_EXTRACTION_SERVICE_URL: !Ref MetadataExtractionServiceUrl
           KAFKA_BROKERS: !Ref KafkaBrokers
           NODE_OPTIONS: "--enable-source-maps"
           HOME: "/tmp"
