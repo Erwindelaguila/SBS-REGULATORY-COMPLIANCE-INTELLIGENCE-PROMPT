@@ -68,6 +68,12 @@ export class ProcessDocumentsCommandHandler {
     const recordData = Array.from(recordFileDataMap.entries())
       .filter(([_, recordFileData]) => recordFileData.application === Application.DOCUMENT_LOAD)
       .map(([_, recordFileData]) => recordFileData);
+
+    if (recordData.length === 0) {
+      this.logger.info("No records to extract metadata");
+      return;
+    }
+
     this.logger.info({ records: recordData.map((record) => record.recordId) }, "Extracting metadata");
 
     const systemPrompts = await this.systemPromptsRepository.getSystemPromptByApplicationAndDocumentTypeAndPromptType(
@@ -96,7 +102,7 @@ export class ProcessDocumentsCommandHandler {
           id: uuidv4(),
           message: {
             sessionId: record.sessionId,
-            type: NotificationType.InsertMetadata,
+            type: NotificationType.InsertDocumentLoadMetadata,
             data: {
               recordId: record.recordId,
               parentId: record.parentId,
@@ -105,6 +111,28 @@ export class ProcessDocumentsCommandHandler {
         };
       }),
     );
+  }
+
+  extractMetadataMessage(
+    records: ProcessDocumentsCommandRecord[],
+    processedKeys: Map<string, string>,
+  ): Array<{ key: string; value: string }> {
+    return records.map((record) => {
+      const period = parseISO(record.period);
+      const processedKey = processedKeys.get(record.recordId);
+      return {
+        key: record.recordId,
+        value: JSON.stringify({
+          recordId: record.recordId,
+          key: processedKey,
+          documentType: record.documentType,
+          periodMonth: getMonth(period).toString(),
+          periodYear: getYear(period).toString(),
+          sessionId: record.sessionId,
+          parentId: record.parentId,
+        }),
+      };
+    });
   }
 
   async handle(command: ProcessDocumentsCommand): Promise<void> {
@@ -169,30 +197,35 @@ export class ProcessDocumentsCommandHandler {
         }
       }
 
-      const textExtractMetadata = command.records
-        .filter((record) => record.application !== Application.DOCUMENT_LOAD)
-        .map((record) => {
-          const period = parseISO(record.period);
-          const processedKey = processedKeys.get(record.recordId);
+      const warrantyTextExtractMetadata = this.extractMetadataMessage(
+        command.records.filter((record) => record.application === Application.WARRANTY),
+        processedKeys,
+      );
 
-          return {
-            key: record.recordId,
-            value: JSON.stringify({
-              recordId: record.recordId,
-              key: processedKey,
-              documentType: record.documentType,
-              periodMonth: getMonth(period).toString(),
-              periodYear: getYear(period).toString(),
-              sessionId: record.sessionId,
-              parentId: record.parentId,
-            }),
-          };
-        });
+      const letterTextExtractMetadata = this.extractMetadataMessage(
+        command.records.filter((record) => record.application === Application.LETTER),
+        processedKeys,
+      );
+
+      this.logger.info(
+        {
+          warranty: warrantyTextExtractMetadata.length,
+          letter: letterTextExtractMetadata.length,
+        },
+        "Sending events",
+      );
 
       await this.eventProducerClient.sendEvents([
         {
-          topic: NotificationType.InsertMetadata,
-          messages: textExtractMetadata,
+          topic: NotificationType.InsertWarrantyMetadata,
+          messages: warrantyTextExtractMetadata,
+        },
+      ]);
+
+      await this.eventProducerClient.sendEvents([
+        {
+          topic: NotificationType.InsertLetterMetadata,
+          messages: letterTextExtractMetadata,
         },
       ]);
     } catch (error) {

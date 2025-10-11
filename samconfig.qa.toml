@@ -33,7 +33,7 @@ parameter_overrides = [
     "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:058264428218:table/supervisory-records/stream/2025-08-20T06:07:26.305",
     "PdfJsLayer=arn:aws:lambda:us-east-1:058264428218:layer:pdfjs-dist-layer:1",
     "StageName=qa",
-    "KafkaBrokers=34.236.156.4:9092",
+    "KafkaBrokers=98.82.186.188:9092",
 ]
 image_repositories = []
 
