@@ -57,7 +57,7 @@ Parameters:
     Default: develop
   SaveCSVFlag:
     Type: String
-    Default: "false"
+    Default: "true"
   PdfJsLayer:
     Type: String
     Default: layer
