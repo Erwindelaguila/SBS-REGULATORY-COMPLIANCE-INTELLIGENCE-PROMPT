@@ -85,7 +85,7 @@ export class ProcessDocumentsCommandHandler {
     const recordMetadata = await this.aiChatClient.generateMetadata(this.prompt, systemPrompts.prompt, recordData);
     this.logger.info({ recordMetadata: recordMetadata.length }, "Record metadata");
 
-    await this.supervisoryRecordMetadataRepository.createMetadata(
+    await this.supervisoryRecordMetadataRepository.insertMetadata(
       recordMetadata.map((recordMetadata) => {
         return {
           id: uuidv4(),
@@ -215,19 +215,23 @@ export class ProcessDocumentsCommandHandler {
         "Sending events",
       );
 
-      await this.eventProducerClient.sendEvents([
-        {
-          topic: NotificationType.InsertWarrantyMetadata,
-          messages: warrantyTextExtractMetadata,
-        },
-      ]);
+      if (warrantyTextExtractMetadata.length > 0) {
+        await this.eventProducerClient.sendEvents([
+          {
+            topic: NotificationType.InsertWarrantyMetadata,
+            messages: warrantyTextExtractMetadata,
+          },
+        ]);
+      }
 
-      await this.eventProducerClient.sendEvents([
-        {
-          topic: NotificationType.InsertLetterMetadata,
-          messages: letterTextExtractMetadata,
-        },
-      ]);
+      if (letterTextExtractMetadata.length > 0) {
+        await this.eventProducerClient.sendEvents([
+          {
+            topic: NotificationType.InsertLetterMetadata,
+            messages: letterTextExtractMetadata,
+          },
+        ]);
+      }
     } catch (error) {
       this.logger.error(error, `Failed to process for records`);
     }
