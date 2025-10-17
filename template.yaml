@@ -67,6 +67,18 @@ Parameters:
   KafkaBrokers:
     Type: String
     Default: brokers
+  WarrantyRRTableName:
+    Type: String
+    Default: table
+  WarrantyITTableName:
+    Type: String
+    Default: table
+  LetterRRTableName:
+    Type: String
+    Default: table
+  LetterITTableName:
+    Type: String
+    Default: table
 
 Resources:
   CsvBucket:
@@ -272,6 +284,40 @@ Resources:
       DockerContext: ./functions/process-documents
       Dockerfile: Dockerfile
 
+  ProcessCsvDocumentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      MemorySize: 512
+      Timeout: 60
+      Architectures:
+        - x86_64
+      Role: !GetAtt ProcessCsvDocumentsFunctionRole.Arn
+      Environment:
+        Variables:
+          S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
+          WARRANTY_RR_TABLE: !Ref WarrantyRRTableName
+          WARRANTY_IT_TABLE: !Ref WarrantyITTableName
+          LETTER_RR_TABLE: !Ref LetterRRTableName
+          LETTER_IT_TABLE: !Ref LetterITTableName
+          KAFKA_BROKERS: !Ref KafkaBrokers
+          NODE_OPTIONS: "--enable-source-maps"
+          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
+      Events:
+        DynamoDBTrigger:
+          Type: DynamoDB
+          Properties:
+            Stream: !Ref SupervisoryRecordsStreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+    Metadata:
+      DockerTag: process-csv-documents.v1
+      DockerContext: ./functions/process-csv-documents
+      Dockerfile: Dockerfile
+
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -321,6 +367,23 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+
+  ProcessCsvDocumentsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonSQSFullAccess
 
   GetDocumentsAnalysisSheetFunctionRole:
