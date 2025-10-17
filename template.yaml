@@ -140,6 +140,163 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
+  WarrantyRegulatoryReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref WarrantyRRTableName
+      AttributeDefinitions:
+        - AttributeName: ID
+          AttributeType: S
+        - AttributeName: CODGR 
+          AttributeType: S
+        - AttributeName: CODINSCRIPCION 
+          AttributeType: S
+        - AttributeName: PERIOD_YEAR 
+          AttributeType: N
+        - AttributeName: PERIOD_MONTH 
+          AttributeType: N
+      KeySchema:
+        - AttributeName: ID
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codgr-index
+          KeySchema:
+            - AttributeName: CODGR
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: CODINSCRIPCION-index
+          KeySchema:
+            - AttributeName: CODINSCRIPCION
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: periodYear-periodMonth-index
+          KeySchema:
+            - AttributeName: PERIOD_YEAR
+              KeyType: HASH
+            - AttributeName: PERIOD_MONTH
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST 
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100 
+
+  WarrantyInternalTablesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref WarrantyITTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: codgr 
+          AttributeType: S
+        - AttributeName: period 
+          AttributeType: S
+        - AttributeName: period_year 
+          AttributeType: N
+        - AttributeName: period_month 
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codgr-period-index
+          KeySchema:
+            - AttributeName: codgr
+              KeyType: HASH
+            - AttributeName: period
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST 
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100 
+  
+  BankGuaranteeRegulatoryReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref LetterRRTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: ccr
+          AttributeType: S
+        - AttributeName: period_year 
+          AttributeType: N
+        - AttributeName: period_month 
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ccr-index
+          KeySchema:
+            - AttributeName: ccr
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST 
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100 
+
+  BankGuaranteeInternalTablesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref LetterITTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: codigo_credito
+          AttributeType: S
+        - AttributeName: period_year 
+          AttributeType: N
+        - AttributeName: period_month 
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codigo_credito-index
+          KeySchema:
+            - AttributeName: codigo_credito
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST 
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100 
+
+
 
   GetDocumentsAnalysisSheetFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -287,9 +444,11 @@ Resources:
   ProcessCsvDocumentsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      PackageType: Image
+      CodeUri: functions/process-csv-documents/
+      Handler: app.handler
+      Runtime: nodejs22.x
       MemorySize: 512
-      Timeout: 60
+      Timeout: 120
       Architectures:
         - x86_64
       Role: !GetAtt ProcessCsvDocumentsFunctionRole.Arn
@@ -300,7 +459,6 @@ Resources:
           WARRANTY_IT_TABLE: !Ref WarrantyITTableName
           LETTER_RR_TABLE: !Ref LetterRRTableName
           LETTER_IT_TABLE: !Ref LetterITTableName
-          KAFKA_BROKERS: !Ref KafkaBrokers
           NODE_OPTIONS: "--enable-source-maps"
           INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
       Events:
@@ -314,9 +472,13 @@ Resources:
               Filters:
                 - Pattern: '{"eventName": ["INSERT"]}'
     Metadata:
-      DockerTag: process-csv-documents.v1
-      DockerContext: ./functions/process-csv-documents
-      Dockerfile: Dockerfile
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
 
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
