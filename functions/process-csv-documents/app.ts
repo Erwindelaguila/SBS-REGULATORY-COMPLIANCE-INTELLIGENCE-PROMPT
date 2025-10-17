@@ -1,16 +1,15 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBStreamEvent } from "aws-lambda";
-import { S3FileStorageClient } from "./adapters/s3-file-storage.client";
+import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { S3Client } from "@aws-sdk/client-s3";
 import pino from "pino";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import { ProcessCsvDocumentsEntryPoint } from "./entrypoints/process-csv-documents.entrypoint";
-import { ProcessCsvDocumentsCommandHandler } from "./domain/command-handlers/process-csv-documents.command-handler";
-import { KafkaProducerAdapter } from "./adapters/kafka-producer.adapter";
+import { ProcessCsvDocumentsEntryPoint } from "./source/entrypoints/process-csv-documents.entrypoint";
+import { ProcessCsvDocumentsCommandHandler } from "./source/domain/command-handlers/process-csv-documents.command-handler";
 import { SQS } from "@aws-sdk/client-sqs";
-import { SqsQueueClient } from "./adapters/sqs-queue.client";
-import { DynTableRepository } from "./adapters/dyn-table.repository";
+import { SqsQueueClient } from "./source/adapters/sqs-queue.client";
+import { DynTableRepository } from "./source/adapters/dyn-table.repository";
 
 const logger = pino({
   level: "debug",
@@ -46,13 +45,6 @@ const letterITRepository = new DynTableRepository(
   logger,
 );
 
-const eventProducerClient = new KafkaProducerAdapter(
-  {
-    brokers: process.env.KAFKA_BROKERS!.split(","),
-    clientId: "process-csv-documents-function",
-  },
-  logger,
-);
 
 const sqsQueueClient = new SqsQueueClient(sqsClient, process.env.INTERACTION_WEBSOCKET_QUEUE_URL!, logger);
 
@@ -62,7 +54,6 @@ const processCsvDocumentsCommandHandler = new ProcessCsvDocumentsCommandHandler(
   warrantyITRepository,
   letterRRRepository,
   letterITRepository,
-  eventProducerClient,
   sqsQueueClient,
   logger,
 );

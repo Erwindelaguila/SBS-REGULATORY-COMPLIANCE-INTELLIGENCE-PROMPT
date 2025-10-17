@@ -1,5 +1,4 @@
 import { Logger } from "pino";
-import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { ProcessCsvDocumentsCommandHandler } from "../domain/command-handlers/process-csv-documents.command-handler";
 import {
   ProcessCsvDocumentsCommand,
@@ -30,7 +29,8 @@ export class ProcessCsvDocumentsEntryPoint {
       }))
       .filter((record) => {
         const ext = path.extname(record.key);
-        return ext === ".csv";
+
+        return ext === ".csv" && (record.documentType === "REGULATORY" || record.documentType === "INTERNAL"); 
       });
 
     this.logger.info(`Received ${records.length} CSV records to process`);

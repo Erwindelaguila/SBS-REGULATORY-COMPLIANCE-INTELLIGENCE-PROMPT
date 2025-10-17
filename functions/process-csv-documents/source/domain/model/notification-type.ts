@@ -1,7 +1,6 @@
 export const NotificationType = {
   Default: "regulatory-compliance-prompts.default",
-  InsertWarrantyRegulatoryReport: "regulatory-compliance-prompts.insert-warranty-regulatory-report",
-  InsertWarrantyInternalTable: "regulatory-compliance-prompts.insert-warranty-internal-table",
-  InsertLetterRegulatoryReport: "regulatory-compliance-prompts.insert-letter-regulatory-report",
-  InsertLetterInternalTable: "regulatory-compliance-prompts.insert-letter-internal-table",
-};
+  InsertDocumentLoadMetadata: "regulatory-compliance-prompts.insert-metadata",
+  InsertWarrantyMetadata: "regulatory-compliance-prompts.insert-metadata",
+  InsertLetterMetadata: "regulatory-compliance-prompts.insert-letter-metadata",
+}

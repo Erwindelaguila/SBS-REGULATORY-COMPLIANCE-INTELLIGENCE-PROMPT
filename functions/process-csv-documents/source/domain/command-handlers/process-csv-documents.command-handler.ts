@@ -2,7 +2,6 @@ import { Logger } from "pino";
 import { v4 as uuidv4 } from "uuid";
 import { ProcessCsvDocumentsCommand, ProcessCsvDocumentsCommandRecord } from "../commands/process-csv-documents.command";
 import { FileStorageClient } from "../ports/file-storage.client";
-import { EventProducerClient } from "../ports/event-producer.client";
 import { QueueClient } from "../ports/queue.client";
 import { TableRepository } from "../ports/table.repository";
 import { Application } from "../model/application";
@@ -21,7 +20,6 @@ export class ProcessCsvDocumentsCommandHandler {
     private readonly warrantyITRepository: TableRepository,
     private readonly letterRRRepository: TableRepository,
     private readonly letterITRepository: TableRepository,
-    private readonly eventProducerClient: EventProducerClient,
     private readonly queueClient: QueueClient,
     private readonly logger: Logger,
   ) {}
@@ -162,48 +160,7 @@ export class ProcessCsvDocumentsCommandHandler {
   }
 
   private async sendNotifications(type: string, recordData: CsvRecordData, recordCount: number): Promise<void> {
-    let kafkaTopic: string;
-    let notificationType: string;
-
-    switch (type) {
-      case "WARRANTY_REGULATORY":
-        kafkaTopic = NotificationType.InsertWarrantyRegulatoryReport;
-        notificationType = NotificationType.InsertWarrantyRegulatoryReport;
-        break;
-      case "WARRANTY_INTERNAL":
-        kafkaTopic = NotificationType.InsertWarrantyInternalTable;
-        notificationType = NotificationType.InsertWarrantyInternalTable;
-        break;
-      case "LETTER_REGULATORY":
-        kafkaTopic = NotificationType.InsertLetterRegulatoryReport;
-        notificationType = NotificationType.InsertLetterRegulatoryReport;
-        break;
-      case "LETTER_INTERNAL":
-        kafkaTopic = NotificationType.InsertLetterInternalTable;
-        notificationType = NotificationType.InsertLetterInternalTable;
-        break;
-      default:
-        throw new Error(`Unknown record type: ${type}`);
-    }
-
-    await this.eventProducerClient.sendEvents([
-      {
-        topic: kafkaTopic,
-        messages: [
-          {
-            key: recordData.recordId,
-            value: JSON.stringify({
-              recordId: recordData.recordId,
-              key: recordData.key,
-              period: recordData.period,
-              sessionId: recordData.sessionId,
-              parentId: recordData.parentId,
-              recordCount,
-            }),
-          },
-        ],
-      },
-    ]);
+    const notificationType = NotificationType.InsertDocumentLoadMetadata
 
     await this.queueClient.sendMessages([
       {

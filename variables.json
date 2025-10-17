@@ -14,12 +14,5 @@
     "S3_RECORDS_BUCKET_NAME": "supervisory-records",
     "S3_CSV_ANALYSIS_BUCKET_NAME": "supervisory-records-csv-analysis",
     "SUPERVISORY_RECORDS_TABLE_NAME": "supervisory-records"
-  },
-  "ProcessCsvDocumentsFunction": {
-    "S3_DOCUMENTS_BUCKET_NAME": "supervisory-records",
-    "WARRANTY_RR_TABLE": "regulatory-reports",
-    "WARRANTY_IT_TABLE": "internal-tables",
-    "LETTER_RR_TABLE": "bank-guarantee-regulatory-reports",
-    "LETTER_IT_TABLE": "bank-guarantee-internal-tables"
   }
 }
