@@ -21,30 +21,13 @@ const sqsClient = new SQS({});
 
 const fileStorageClient = new S3FileStorageClient(s3Client, process.env.S3_DOCUMENTS_BUCKET_NAME!, logger);
 
-const warrantyRRRepository = new DynTableRepository(
-  dynamoDBDocumentClient,
-  process.env.WARRANTY_RR_TABLE!,
-  logger,
-);
+const warrantyRRRepository = new DynTableRepository(dynamoDBDocumentClient, process.env.WARRANTY_RR_TABLE!, logger);
 
-const warrantyITRepository = new DynTableRepository(
-  dynamoDBDocumentClient,
-  process.env.WARRANTY_IT_TABLE!,
-  logger,
-);
+const warrantyITRepository = new DynTableRepository(dynamoDBDocumentClient, process.env.WARRANTY_IT_TABLE!, logger);
 
-const letterRRRepository = new DynTableRepository(
-  dynamoDBDocumentClient,
-  process.env.LETTER_RR_TABLE!,
-  logger,
-);
+const letterRRRepository = new DynTableRepository(dynamoDBDocumentClient, process.env.LETTER_RR_TABLE!, logger);
 
-const letterITRepository = new DynTableRepository(
-  dynamoDBDocumentClient,
-  process.env.LETTER_IT_TABLE!,
-  logger,
-);
-
+const letterITRepository = new DynTableRepository(dynamoDBDocumentClient, process.env.LETTER_IT_TABLE!, logger);
 
 const sqsQueueClient = new SqsQueueClient(sqsClient, process.env.INTERACTION_WEBSOCKET_QUEUE_URL!, logger);
 

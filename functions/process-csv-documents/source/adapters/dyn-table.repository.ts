@@ -18,11 +18,20 @@ export class DynTableRepository implements TableRepository {
     }
 
     const BATCH_SIZE = 25;
+    const totalBatches = Math.ceil(records.length / BATCH_SIZE);
+    let successfulBatches = 0;
+    let failedBatches = 0;
 
-    try {
-      for (let i = 0; i < records.length; i += BATCH_SIZE) {
-        const batch = records.slice(i, i + BATCH_SIZE);
+    this.logger.info(
+      { total: records.length, batches: totalBatches, table: this.tableName },
+      "Starting batch insertion"
+    );
 
+    for (let i = 0; i < records.length; i += BATCH_SIZE) {
+      const batch = records.slice(i, i + BATCH_SIZE);
+      const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+
+      try {
         const putRequests = batch.map((record) => ({
           PutRequest: {
             Item: this.convertToDecimal(record),
@@ -37,14 +46,42 @@ export class DynTableRepository implements TableRepository {
           }),
         );
 
-        this.logger.debug({ inserted: batch.length, total: records.length }, "Batch inserted");
+        successfulBatches++;
+      } catch (error) {
+        failedBatches++;
+        this.logger.error(
+          {
+            error,
+            batchNumber,
+            batchSize: batch.length,
+            startIndex: i,
+            endIndex: i + batch.length - 1,
+            table: this.tableName,
+          },
+          "Failed to insert batch"
+        );
       }
-
-      this.logger.info({ total: records.length, table: this.tableName }, "All records inserted successfully");
-    } catch (error) {
-      this.logger.error({ error, table: this.tableName }, "Failed to insert records");
-      throw new RepositoryError("Failed to insert records to DynamoDB", error);
     }
+
+    if (failedBatches > 0) {
+      this.logger.error(
+        {
+          total: records.length,
+          successful: successfulBatches,
+          failed: failedBatches,
+          table: this.tableName,
+        },
+        "Batch insertion completed with errors"
+      );
+      throw new RepositoryError(
+        `Failed to insert ${failedBatches} out of ${totalBatches} batches to DynamoDB`
+      );
+    }
+
+    this.logger.info(
+      { total: records.length, batches: totalBatches, table: this.tableName },
+      "All records inserted successfully"
+    );
   }
 
   private convertToDecimal(obj: Record<string, any>): Record<string, any> {
