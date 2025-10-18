@@ -26,6 +26,7 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
 
         const record: Record<string, any> = {
           id: uuidv4(),
+          recordId: recordData.recordId,
           ccr: this.getString(row, "ccr") || this.getString(row, "CCR"),
           ccl: this.getString(row, "ccl") || this.getString(row, "CCL"),
           csbs: this.getString(row, "csbs") || this.getString(row, "CSBS"),
