@@ -24,6 +24,7 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
 
         const record: Record<string, any> = {
           id: uuidv4(),
+          recordId: recordData.recordId,
           codigo_credito: this.getString(row, "codigo_credito") || this.getString(row, "Codigo_credito") || this.getString(row, "CODIGO_CREDITO"),
           codigo_cliente: this.getString(row, "codigo_cliente") || this.getString(row, "Codigo_cliente") || this.getString(row, "CODIGO_CLIENTE"),
           saldo: convertToNumber(row["saldo"] || row["Saldo"] || row["SALDO"]),

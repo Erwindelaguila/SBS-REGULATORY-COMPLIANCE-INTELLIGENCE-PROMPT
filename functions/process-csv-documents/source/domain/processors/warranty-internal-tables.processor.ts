@@ -36,6 +36,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
 
         const record: Record<string, any> = {
           id: uuidv4(),
+          recordId: recordData.recordId,
           codigo_cliente: codigoCliente,
           codigo_garantia: codigoGarantia,
           codigo_tipo_garantia: this.getString(row, "Codigo_Tipo_Garantia") || this.getString(row, "codigo_tipo_garantia"),
