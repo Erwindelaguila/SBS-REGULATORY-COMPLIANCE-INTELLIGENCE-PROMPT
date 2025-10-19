@@ -1,8 +1,42 @@
 import { parse } from "csv-parse/sync";
 import { format, parseISO, getYear, getMonth } from "date-fns";
 
+export const validateCsvDelimiter = (content: string): void => {
+  const cleanContent = content.replace(/^\ufeff|\ufffe|\u00ef\u00bb\u00bf/g, "").trim();
+
+  if (!cleanContent) {
+    throw new Error("CSV content is empty");
+  }
+
+  const lines = cleanContent.split(/\r?\n/).filter(line => line.trim());
+  if (lines.length === 0) {
+    throw new Error("CSV has no valid lines");
+  }
+
+  const firstLine = lines[0];
+
+  const semicolonCount = (firstLine.match(/;/g) || []).length;
+  const commaCount = (firstLine.match(/,/g) || []).length;
+
+  if (semicolonCount === 0 && commaCount > 0) {
+    throw new Error(
+      `Invalid CSV delimiter. Expected semicolon (;) but found comma (,). ` +
+      `This CSV appears to use comma as delimiter. Please convert to semicolon-delimited format.`
+    );
+  }
+
+  if (semicolonCount === 0 && commaCount === 0) {
+    throw new Error(
+      `Invalid CSV format. No semicolon (;) delimiter found in header line. ` +
+      `Expected semicolon-delimited CSV.`
+    );
+  }
+};
+
 export const parseCsvContent = (content: string, delimiter: string = ";"): Record<string, string>[] => {
   const cleanContent = content.replace(/^\ufeff|\ufffe|\u00ef\u00bb\u00bf/g, "");
+
+  validateCsvDelimiter(cleanContent);
 
   return parse(cleanContent, {
     columns: true,
