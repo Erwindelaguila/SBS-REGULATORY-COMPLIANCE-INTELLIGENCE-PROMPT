@@ -14,7 +14,7 @@ export class ProcessCsvDocumentsEntryPoint {
   constructor(
     private readonly processCSVDocumentsCommandHandler: ProcessCsvDocumentsCommandHandler,
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   public async handleRequest(processCSVDocumentsInput: ProcessCsvDocumentsInput): Promise<void> {
     const records: ProcessCsvDocumentsCommandRecord[] = processCSVDocumentsInput.insertRecords
@@ -30,7 +30,7 @@ export class ProcessCsvDocumentsEntryPoint {
       .filter((record) => {
         const ext = path.extname(record.key);
 
-        return ext === ".csv" && (record.documentType === "REGULATORY" || record.documentType === "INTERNAL"); 
+        return ext === ".csv" && (record.documentType === "REGULATORY" || record.documentType === "INTERNAL");
       });
 
     this.logger.info(`Received ${records.length} CSV records to process`);
