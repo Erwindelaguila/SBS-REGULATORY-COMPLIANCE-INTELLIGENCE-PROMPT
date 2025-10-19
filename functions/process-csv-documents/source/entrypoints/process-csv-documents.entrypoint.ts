@@ -28,9 +28,14 @@ export class ProcessCsvDocumentsEntryPoint {
         period: insertRecord.period,
       }))
       .filter((record) => {
-        const ext = path.extname(record.key);
+        const ext = path.extname(record.key).toLowerCase();
+        const isValidDocumentType = record.documentType === "REGULATORY" || record.documentType === "INTERNAL";
 
-        return ext === ".csv" && (record.documentType === "REGULATORY" || record.documentType === "INTERNAL");
+        if (record.application === "LETTER") {
+          return (ext === ".csv" || ext === ".xlsx") && isValidDocumentType;
+        }
+
+        return ext === ".csv" && isValidDocumentType;
       });
 
     this.logger.info(`Received ${records.length} CSV records to process`);

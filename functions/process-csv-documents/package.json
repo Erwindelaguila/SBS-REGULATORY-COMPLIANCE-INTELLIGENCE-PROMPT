@@ -27,7 +27,8 @@
     "date-fns": "^4.1.0",
     "esbuild": "^0.14.14",
     "pino": "^9.7.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -35,6 +36,7 @@
     "@types/aws-lambda": "^8.10.92",
     "@types/jest": "^29.2.0",
     "@types/node": "^20.5.7",
+    "@types/xlsx": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^8.8.0",

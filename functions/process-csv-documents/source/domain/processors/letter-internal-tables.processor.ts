@@ -3,7 +3,8 @@ import { Logger } from "pino";
 import { CsvProcessor } from "../ports/csv-processor.interface";
 import { CsvRecordData } from "../model/csv-record-data";
 import { LetterInternalTable } from "../model/letter-internal-table.model";
-import { parseCsvContent, extractPeriodFromDate } from "../../utils/csv-utils";
+import { extractPeriodFromDate } from "../../utils/csv-utils";
+import { parseFileContent } from "../../utils/file-parser.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 import {
   validateRequiredString,
@@ -20,8 +21,7 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
-      const csvContent = Buffer.from(recordData.fileContent).toString("utf-8");
-      const rows = parseCsvContent(csvContent, ";");
+      const rows = parseFileContent(recordData.fileContent, recordData.key);
 
       const { year, month } = extractPeriodFromDate(recordData.period);
 
