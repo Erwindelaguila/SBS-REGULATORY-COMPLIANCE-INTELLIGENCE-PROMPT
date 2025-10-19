@@ -2,8 +2,18 @@ import { v4 as uuidv4 } from "uuid";
 import { Logger } from "pino";
 import { CsvProcessor } from "../ports/csv-processor.interface";
 import { CsvRecordData } from "../model/csv-record-data";
-import { parseCsvContent, convertToNumber, extractPeriodFromDate } from "../../utils/csv-utils";
+import { LetterInternalTable } from "../model/letter-internal-table.model";
+import { parseCsvContent, extractPeriodFromDate } from "../../utils/csv-utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
+import {
+  validateRequiredString,
+  validateRequiredNumber,
+  validateOptionalNumber,
+  validateCurrency,
+  validatePeriodMonth,
+  validatePeriodYear,
+  LetterValidationError,
+} from "../../utils/letter-validation.utils";
 
 export class LetterInternalTablesProcessor implements CsvProcessor {
   constructor(private readonly logger: Logger) {}
@@ -15,29 +25,90 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
 
       const { year, month } = extractPeriodFromDate(recordData.period);
 
-      const processedRecords: Record<string, any>[] = [];
+      const validatedYear = validatePeriodYear(year);
+      const validatedMonth = validatePeriodMonth(month);
 
-      for (const row of rows) {
-        const saldoMesAnteriorValue = convertToNumber(
-          row["saldo_mes_anterior"] || row["Saldo_mes_anterior"] || row["SALDO_MES_ANTERIOR"],
-        );
+      const processedRecords: LetterInternalTable[] = [];
+      const validationErrors: Array<{ rowIndex: number; error: LetterValidationError }> = [];
 
-        const record: Record<string, any> = {
-          id: uuidv4(),
-          recordId: recordData.recordId,
-          codigo_credito: this.getString(row, "codigo_credito") || this.getString(row, "Codigo_credito") || this.getString(row, "CODIGO_CREDITO"),
-          codigo_cliente: this.getString(row, "codigo_cliente") || this.getString(row, "Codigo_cliente") || this.getString(row, "CODIGO_CLIENTE"),
-          saldo: convertToNumber(row["saldo"] || row["Saldo"] || row["SALDO"]),
-          saldo_mes_anterior: saldoMesAnteriorValue === 0 ? null : saldoMesAnteriorValue,
-          currency: "PEN",
-          period_year: year,
-          period_month: month,
-        };
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const rowIndex = i + 1;
 
-        processedRecords.push(record);
+        try {
+          const codigoCreditoRaw =
+            this.getString(row, "codigo_credito") ||
+            this.getString(row, "Codigo_credito") ||
+            this.getString(row, "CODIGO_CREDITO");
+
+          const codigoClienteRaw =
+            this.getString(row, "codigo_cliente") ||
+            this.getString(row, "Codigo_cliente") ||
+            this.getString(row, "CODIGO_CLIENTE");
+
+          const saldoRaw = row["saldo"] || row["Saldo"] || row["SALDO"];
+
+          const saldoMesAnteriorRaw =
+            row["saldo_mes_anterior"] || row["Saldo_mes_anterior"] || row["SALDO_MES_ANTERIOR"];
+
+          const codigoCredito = validateRequiredString(codigoCreditoRaw, "codigo_credito", rowIndex);
+          const codigoCliente = validateRequiredString(codigoClienteRaw, "codigo_cliente", rowIndex);
+          const saldo = validateRequiredNumber(saldoRaw, "saldo", rowIndex);
+
+          const saldoMesAnterior = validateOptionalNumber(saldoMesAnteriorRaw);
+
+          const record: LetterInternalTable = {
+            id: uuidv4(),
+            recordId: recordData.recordId,
+            codigo_credito: codigoCredito,
+            codigo_cliente: codigoCliente,
+            saldo,
+            saldo_mes_anterior: saldoMesAnterior,
+            currency: validateCurrency(),
+            period_year: validatedYear,
+            period_month: validatedMonth,
+          };
+
+          processedRecords.push(record);
+        } catch (error) {
+          if (error instanceof LetterValidationError) {
+            validationErrors.push({ rowIndex, error });
+            this.logger.warn(
+              {
+                rowIndex,
+                field: error.field,
+                value: error.value,
+                message: error.message,
+                key: recordData.key,
+              },
+              "Validation error for LETTER INTERNAL row"
+            );
+          } else {
+            throw error;
+          }
+        }
       }
 
-      this.logger.info({ total: processedRecords.length }, "Processed LETTER INTERNAL records");
+      if (validationErrors.length > 0) {
+        this.logger.warn(
+          {
+            totalRows: rows.length,
+            validRows: processedRecords.length,
+            invalidRows: validationErrors.length,
+            key: recordData.key,
+          },
+          "LETTER INTERNAL processing completed with validation errors"
+        );
+      }
+
+      this.logger.info(
+        {
+          total: rows.length,
+          processed: processedRecords.length,
+          skipped: validationErrors.length,
+        },
+        "Processed LETTER INTERNAL records"
+      );
 
       return processedRecords;
     } catch (error) {
