@@ -67,6 +67,18 @@ Parameters:
   KafkaBrokers:
     Type: String
     Default: brokers
+  WarrantyRRTableName:
+    Type: String
+    Default: table
+  WarrantyITTableName:
+    Type: String
+    Default: table
+  LetterRRTableName:
+    Type: String
+    Default: table
+  LetterITTableName:
+    Type: String
+    Default: table
 
 Resources:
   CsvBucket:
@@ -127,6 +139,163 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+
+  WarrantyRegulatoryReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref WarrantyRRTableName
+      AttributeDefinitions:
+        - AttributeName: ID
+          AttributeType: S
+        - AttributeName: CODGR
+          AttributeType: S
+        - AttributeName: CODINSCRIPCION
+          AttributeType: S
+        - AttributeName: PERIOD_YEAR
+          AttributeType: N
+        - AttributeName: PERIOD_MONTH
+          AttributeType: N
+      KeySchema:
+        - AttributeName: ID
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codgr-index
+          KeySchema:
+            - AttributeName: CODGR
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: CODINSCRIPCION-index
+          KeySchema:
+            - AttributeName: CODINSCRIPCION
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: periodYear-periodMonth-index
+          KeySchema:
+            - AttributeName: PERIOD_YEAR
+              KeyType: HASH
+            - AttributeName: PERIOD_MONTH
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100
+
+  WarrantyInternalTablesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref WarrantyITTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: codgr
+          AttributeType: S
+        - AttributeName: period
+          AttributeType: S
+        - AttributeName: period_year
+          AttributeType: N
+        - AttributeName: period_month
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codgr-period-index
+          KeySchema:
+            - AttributeName: codgr
+              KeyType: HASH
+            - AttributeName: period
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100
+
+  BankGuaranteeRegulatoryReportsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref LetterRRTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: ccr
+          AttributeType: S
+        - AttributeName: period_year
+          AttributeType: N
+        - AttributeName: period_month
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ccr-index
+          KeySchema:
+            - AttributeName: ccr
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100
+
+  BankGuaranteeInternalTablesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref LetterITTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: codigo_credito
+          AttributeType: S
+        - AttributeName: period_year
+          AttributeType: N
+        - AttributeName: period_month
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: codigo_credito-index
+          KeySchema:
+            - AttributeName: codigo_credito
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: period_year-period_month-index
+          KeySchema:
+            - AttributeName: period_year
+              KeyType: HASH
+            - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+      OnDemandThroughput:
+        MaxReadRequestUnits: 100
+        MaxWriteRequestUnits: 100
+
 
 
   GetDocumentsAnalysisSheetFunction:
@@ -272,6 +441,45 @@ Resources:
       DockerContext: ./functions/process-documents
       Dockerfile: Dockerfile
 
+  ProcessCsvDocumentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/process-csv-documents/
+      Handler: app.handler
+      Runtime: nodejs22.x
+      MemorySize: 512
+      Timeout: 120
+      Architectures:
+        - x86_64
+      Role: !GetAtt ProcessCsvDocumentsFunctionRole.Arn
+      Environment:
+        Variables:
+          S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
+          WARRANTY_RR_TABLE: !Ref WarrantyRRTableName
+          WARRANTY_IT_TABLE: !Ref WarrantyITTableName
+          LETTER_RR_TABLE: !Ref LetterRRTableName
+          LETTER_IT_TABLE: !Ref LetterITTableName
+          NODE_OPTIONS: "--enable-source-maps"
+          INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
+      Events:
+        DynamoDBTrigger:
+          Type: DynamoDB
+          Properties:
+            Stream: !Ref SupervisoryRecordsStreamArn
+            StartingPosition: LATEST
+            BatchSize: 10
+            FilterCriteria:
+              Filters:
+                - Pattern: '{"eventName": ["INSERT"]}'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -321,6 +529,23 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+
+  ProcessCsvDocumentsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonSQSFullAccess
 
   GetDocumentsAnalysisSheetFunctionRole:
