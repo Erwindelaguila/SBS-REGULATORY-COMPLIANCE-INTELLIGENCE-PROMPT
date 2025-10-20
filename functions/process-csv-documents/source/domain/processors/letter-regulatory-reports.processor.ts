@@ -38,15 +38,15 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
         const rowIndex = i + 1;
 
         try {
-          const nclRaw = this.getString(row, "ncl") || this.getString(row, "NCL") || "";
-          const ccrRaw = this.getString(row, "ccr") || this.getString(row, "CCR");
-          const cclRaw = this.getString(row, "ccl") || this.getString(row, "CCL");
-          const csbsRaw = this.getString(row, "csbs") || this.getString(row, "CSBS");
-          const kcoRaw = row["kco"] || row["KCO"];
-          const cccoRaw = this.getString(row, "ccco") || this.getString(row, "CCCO");
-          const kcoMesAnteriorRaw = row["kco_mes_anterior"] || row["KCO_MES_ANTERIOR"];
-          const cccoMesAnteriorRaw = this.getString(row, "ccco_mes_anterior") || this.getString(row, "CCCO_MES_ANTERIOR");
-          const convenioFmvRaw = this.getString(row, "convenio_fmv") || this.getString(row, "CONVENIO_FMV");
+          const nclRaw = this.getString(row, "ncl") || "";
+          const ccrRaw = this.getString(row, "ccr");
+          const cclRaw = this.getString(row, "ccl");
+          const csbsRaw = this.getString(row, "csbs");
+          const kcoRaw = row["kco"];
+          const cccoRaw = this.getString(row, "ccco");
+          const kcoMesAnteriorRaw = row["kco_mes_anterior"];
+          const cccoMesAnteriorRaw = this.getString(row, "ccco_mes_anterior");
+          const convenioFmvRaw = this.getString(row, "convenio_fmv");
 
           const ccr = validateRequiredString(ccrRaw, "ccr", rowIndex);
           const ccl = validateRequiredString(cclRaw, "ccl", rowIndex);

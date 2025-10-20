@@ -1,5 +1,6 @@
 import { parse } from "csv-parse/sync";
 import { format, parseISO, getYear, getMonth } from "date-fns";
+import { normalizeRowKeys } from "./normalize-columns.utils";
 
 export const validateCsvDelimiter = (content: string): void => {
   const cleanContent = content.replace(/^\ufeff|\ufffe|\u00ef\u00bb\u00bf/g, "").trim();
@@ -38,7 +39,7 @@ export const parseCsvContent = (content: string, delimiter: string = ";"): Recor
 
   validateCsvDelimiter(cleanContent);
 
-  return parse(cleanContent, {
+  const rows = parse(cleanContent, {
     columns: true,
     skip_empty_lines: true,
     delimiter,
@@ -46,6 +47,8 @@ export const parseCsvContent = (content: string, delimiter: string = ";"): Recor
     encoding: "utf-8",
     relaxColumnCount: true,
   });
+
+  return rows.map(normalizeRowKeys);
 };
 
 export const convertExcelSerialToDate = (serialDate: number): string => {
@@ -90,7 +93,20 @@ export const cleanNombreField = (nombre: string): string => {
 
 export const convertToNumber = (value: any, defaultValue: number | null = null): number | null => {
   if (value === null || value === undefined || value === "") return defaultValue;
-  const strValue = String(value).trim().replace(/,/g, ".");
+
+  let strValue = String(value).trim();
+
+  strValue = strValue.replace(/^(S\/|USD|\$|€|£)\s*/gi, "");
+  strValue = strValue.replace(/\s+/g, "");
+
+  const hasCommaAsDecimal = /,\d{1,2}$/.test(strValue);
+
+  if (hasCommaAsDecimal) {
+    strValue = strValue.replace(/\./g, "").replace(/,/g, ".");
+  } else {
+    strValue = strValue.replace(/,/g, "");
+  }
+
   const num = parseFloat(strValue);
   return isNaN(num) ? defaultValue : num;
 };

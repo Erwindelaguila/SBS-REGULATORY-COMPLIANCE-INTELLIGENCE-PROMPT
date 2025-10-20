@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import { normalizeRowKeys } from "./normalize-columns.utils";
 
 export const parseExcelContent = (content: Uint8Array): Record<string, string>[] => {
   const workbook = XLSX.read(content, { type: "array" });
@@ -21,6 +22,6 @@ export const parseExcelContent = (content: Uint8Array): Record<string, string>[]
     for (const [key, value] of Object.entries(row)) {
       stringRow[key] = value !== null && value !== undefined ? String(value) : "";
     }
-    return stringRow;
+    return normalizeRowKeys(stringRow);
   });
 };

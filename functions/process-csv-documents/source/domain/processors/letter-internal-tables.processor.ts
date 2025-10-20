@@ -36,20 +36,10 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
         const rowIndex = i + 1;
 
         try {
-          const codigoCreditoRaw =
-            this.getString(row, "codigo_credito") ||
-            this.getString(row, "Codigo_credito") ||
-            this.getString(row, "CODIGO_CREDITO");
-
-          const codigoClienteRaw =
-            this.getString(row, "codigo_cliente") ||
-            this.getString(row, "Codigo_cliente") ||
-            this.getString(row, "CODIGO_CLIENTE");
-
-          const saldoRaw = row["saldo"] || row["Saldo"] || row["SALDO"];
-
-          const saldoMesAnteriorRaw =
-            row["saldo_mes_anterior"] || row["Saldo_mes_anterior"] || row["SALDO_MES_ANTERIOR"];
+          const codigoCreditoRaw = this.getString(row, "codigo_credito");
+          const codigoClienteRaw = this.getString(row, "codigo_cliente");
+          const saldoRaw = row["saldo"];
+          const saldoMesAnteriorRaw = row["saldo_mes_anterior"];
 
           const codigoCredito = validateRequiredString(codigoCreditoRaw, "codigo_credito", rowIndex);
           const codigoCliente = validateRequiredString(codigoClienteRaw, "codigo_cliente", rowIndex);
