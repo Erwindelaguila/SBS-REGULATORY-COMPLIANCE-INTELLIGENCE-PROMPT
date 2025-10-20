@@ -5,6 +5,8 @@ import { SystemPromptsRepository } from "../ports/system-prompts.repository";
 import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
 import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
+import {SourceProcessRepository} from "../ports/source_process.repository";
+import {SystemPrompt} from "../models/supervisory-record.model";
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
@@ -16,8 +18,10 @@ export class PromptRegulatoryComplianceCommandHandler {
 
   constructor(
     private readonly documentsFileStorageClient: FileStorageClient,
+    private readonly documentsFileStorageClientForLetterAnalysis: FileStorageClient,
     private readonly csvFileStorageClient: FileStorageClient,
     private readonly systemPromptsRepository: SystemPromptsRepository,
+    private readonly sourceProcessLetterAnalysisRepository:SourceProcessRepository,
     private readonly aiChatClient: AIChatClient,
     private readonly saveCSVFlag: boolean,
     private readonly logger: Logger,
@@ -138,49 +142,119 @@ export class PromptRegulatoryComplianceCommandHandler {
 
     return stream;
   }
+    private async handleDocumentLoad(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
 
-  async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
-    try {
-      // Get system prompts
-      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(
-        command.application,
-        DocumentType.DEFAULT,
-      );
-      if (systemPrompts.length === 0) {
-        throw new Error("No system prompts found");
-      }
-      const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
-      this.logger.info({ systemPrompt }, "System prompt");
+        try {
+            // Get system prompts
+            const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(
+                command.application,
+                DocumentType.DEFAULT,
+            );
+            if (systemPrompts.length === 0) {
+                throw new Error("No system prompts found");
+            }
+            const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
+            this.logger.info({ systemPrompt }, "System prompt");
 
-      // Get files by keys
-      const filesData = await this.documentsFileStorageClient.getFilesByKey(command.recordKeys);
-      this.logger.info(
-        {
-          filesData: filesData.map((file) => ({
-            key: file.key,
-            bytes: file.bytes.length,
-            contentType: file.contentType,
-          })),
-        },
-        "Files data",
-      );
+            // Get files by keys
+            const filesData = await this.documentsFileStorageClient.getFilesByKey(command.recordKeys);
+            this.logger.info(
+                {
+                    filesData: filesData.map((file) => ({
+                        key: file.key,
+                        bytes: file.bytes.length,
+                        contentType: file.contentType,
+                    })),
+                },
+                "Files data",
+            );
 
-      // Get AI chat response
-      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
-      const processedResponse = new PassThrough();
+            // Get AI chat response
+            const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
+            const processedResponse = new PassThrough();
 
-      chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+            chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
 
-      return {
-        result: processedResponse,
-        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
-      };
-    } catch (err) {
-      // TODO: Handle specific errors and their codes
-      if (err instanceof Error) {
-        this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
-      }
-      throw err;
+            return {
+                result: processedResponse,
+                fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+            };
+        } catch (err) {
+            // TODO: Handle specific errors and their codes
+            if (err instanceof Error) {
+                this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
+            }
+            throw err;
+        }
     }
+
+    private async handleLetter(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
+        try {
+            // Get system prompts
+            const systemPrompts: Array<SystemPrompt> = [{
+                id:"1",
+                prompt:"Dado el siguiente conjunto de datos realiza una análisis sobre las consultas del usuario usando únicamente estos documentos como información",
+                version:"1",
+                type:"1",
+                createdAt:"19/10/2025",
+                updatedAt:"19/10/2025"
+            }]
+            if (systemPrompts.length === 0) {
+                throw new Error("No system prompts found");
+            }
+            const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
+            this.logger.info({ systemPrompt }, "System prompt");
+            // Get sources from dynamo
+            const sources = await this.sourceProcessLetterAnalysisRepository.getSources(command.recordKeys);
+            console.log("sources",sources)
+            if( sources.length==0){
+                throw  new Error("No se encuentra sources que puedan llamar a un archivo")
+            }
+
+            // Get files by keys
+            const filesData = await this.documentsFileStorageClientForLetterAnalysis.getFilesByKey(sources);
+            this.logger.info(
+                {
+                    filesData: filesData.map((file) => ({
+                        key: file.key,
+                        bytes: file.bytes.length,
+                        contentType: file.contentType,
+                    })),
+                },
+                "Files data",
+            );
+
+            // Get AI chat response
+            const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
+            const processedResponse = new PassThrough();
+
+            chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+
+            /*   return {
+                   result: processedResponse,
+                   fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+               };*/
+            return {
+                result: processedResponse ,
+                fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+            }
+        } catch (err) {
+            // TODO: Handle specific errors and their codes
+            if (err instanceof Error) {
+                this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
+            }
+            throw err;
+        }
+    }
+
+
+    async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
+        switch (command.application){
+            case "LETTER":
+                return this.handleLetter(command)
+            case "DOCUMENT_LOAD":
+            default:
+                return this.handleDocumentLoad(command);
+        }
   }
 }
