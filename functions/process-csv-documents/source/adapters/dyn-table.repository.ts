@@ -3,6 +3,7 @@ import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { Logger } from "pino";
 import { TableRepository } from "../domain/ports/table.repository";
 import { RepositoryError } from "../domain/errors/repository.error";
+import { promisify } from "util";
 
 export class DynTableRepository implements TableRepository {
   constructor(
@@ -36,6 +37,8 @@ export class DynTableRepository implements TableRepository {
             },
           }),
         );
+
+        await promisify(setTimeout)(5000);
 
         this.logger.debug({ inserted: batch.length, total: records.length }, "Batch inserted");
       }
