@@ -66,12 +66,27 @@ const sourceProcessLetterRepository=new DynSourceProcessRepositoryImpl(
     logger,
 )
 
+// Garantías preferenciales
+const documentsFileStorageClientForWarrantyAnalysis = new S3FileStorageClient(
+  new S3Client({}),
+  process.env.S3_WARRANTY_REPORTS_BUCKET_NAME!,
+  logger,
+);
+const sourceProcessWarrantyRepository=new DynSourceProcessRepositoryImpl(
+  dynamoDBDocumentClient,
+  process.env.WARRANTY_ANALYSIS_TABLE_NAME!,
+  logger,
+);
+
+
 const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComplianceCommandHandler(
   documentsFileStorageClient,
   documentsFileStorageClientForLetterAnalysis,
+  documentsFileStorageClientForWarrantyAnalysis,
   csvFileStorageClient,
   systemPromptsRepository,
     sourceProcessLetterRepository,
+  sourceProcessWarrantyRepository,
   aiChatClient,
   process.env.SAVE_CSV_FLAG === "true",
   logger,

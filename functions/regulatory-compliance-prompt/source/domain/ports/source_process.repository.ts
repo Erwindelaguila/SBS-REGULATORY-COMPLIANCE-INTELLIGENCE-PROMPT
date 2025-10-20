@@ -1,3 +1,4 @@
 export interface SourceProcessRepository{
-    getSources(sources: string[]):Promise<string[]>
+  getSources(sources: string[], flow:string):Promise<string[]>
 }
+
