@@ -224,7 +224,7 @@ Resources:
         MaxReadRequestUnits: 100
         MaxWriteRequestUnits: 100
 
-  BankGuaranteeRegulatoryReportsTable:
+  LetterRegulatoryReportsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref LetterRRTableName
@@ -260,7 +260,7 @@ Resources:
         MaxReadRequestUnits: 100
         MaxWriteRequestUnits: 100
 
-  BankGuaranteeInternalTablesTable:
+  LetterInternalTablesTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref LetterITTableName
