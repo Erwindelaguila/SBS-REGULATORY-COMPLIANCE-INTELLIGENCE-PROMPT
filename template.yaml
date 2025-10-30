@@ -448,7 +448,7 @@ Resources:
       Handler: app.handler
       Runtime: nodejs22.x
       MemorySize: 512
-      Timeout: 120
+      Timeout: 900
       Architectures:
         - x86_64
       Role: !GetAtt ProcessCsvDocumentsFunctionRole.Arn
