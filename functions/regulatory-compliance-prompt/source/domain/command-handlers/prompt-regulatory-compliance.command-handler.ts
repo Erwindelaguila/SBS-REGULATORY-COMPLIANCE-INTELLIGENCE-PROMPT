@@ -1,10 +1,12 @@
 import { Logger } from "pino";
-import { AIChatClient } from "../ports/ai-chat.client";
+import { AIChatClient, FileData } from "../ports/ai-chat.client";
 import { FileStorageClient } from "../ports/file-storage.client";
 import { SystemPromptsRepository } from "../ports/system-prompts.repository";
 import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
 import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
+import { SourceProcessRepository } from "../ports/source_process.repository";
+import { SystemPrompt } from "../models/supervisory-record.model";
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
@@ -16,8 +18,12 @@ export class PromptRegulatoryComplianceCommandHandler {
 
   constructor(
     private readonly documentsFileStorageClient: FileStorageClient,
+    private readonly documentsFileStorageClientForLetterAnalysis: FileStorageClient,
+    private readonly documentsFileStorageClientForWarrantyAnalysis: FileStorageClient,
     private readonly csvFileStorageClient: FileStorageClient,
     private readonly systemPromptsRepository: SystemPromptsRepository,
+    private readonly sourceProcessLetterAnalysisRepository: SourceProcessRepository,
+    private readonly sourceProcessWarrantyRepository: SourceProcessRepository,
     private readonly aiChatClient: AIChatClient,
     private readonly saveCSVFlag: boolean,
     private readonly logger: Logger,
@@ -138,19 +144,21 @@ export class PromptRegulatoryComplianceCommandHandler {
 
     return stream;
   }
-
-  async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
+  private async handleDocumentLoad(
+    command: PromptRegulatoryComplianceCommand,
+  ): Promise<PromptRegComplCommandHandlerOutput> {
     try {
       // Get system prompts
       const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(
         command.application,
         DocumentType.DEFAULT,
       );
-      if (systemPrompts.length === 0) {
-        throw new Error("No system prompts found");
+
+      let systemPrompt = "";
+      if (systemPrompts.length > 0) {
+        systemPrompt = systemPrompts[0].prompt;
+        this.logger.info({ systemPrompt: systemPrompts[0].id }, "System prompt");
       }
-      const systemPrompt = systemPrompts[0].prompt; // Assuming we take the first prompt
-      this.logger.info({ systemPrompt }, "System prompt");
 
       // Get files by keys
       const filesData = await this.documentsFileStorageClient.getFilesByKey(command.recordKeys);
@@ -181,6 +189,170 @@ export class PromptRegulatoryComplianceCommandHandler {
         this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
       }
       throw err;
+    }
+  }
+
+  private solveBigJsonFile(filesData: FileData[]): FileData[] {
+    return filesData.map((file) => {
+      try {
+        // Decodificar bytes a texto y parsear JSON
+        const jsonText = new TextDecoder().decode(file.bytes);
+        const json = JSON.parse(jsonText);
+
+        // Si es objeto con listas top-level, cortar cada una
+        const reduced: any = {};
+        if (json && typeof json === "object") {
+          for (const [key, value] of Object.entries(json)) {
+            reduced[key] = Array.isArray(value) ? value.slice(0, 100) : value;
+          }
+        }
+
+        // Volver a bytes el nuevo JSON reducido
+        const reducedText = JSON.stringify(reduced);
+        const reducedBytes = new TextEncoder().encode(reducedText);
+
+        return {
+          key: file.key.replace(/(\.[^.]+)?$/, "_sampled.json"),
+          bytes: reducedBytes,
+          contentType: "application/json",
+        } as FileData;
+      } catch (error) {
+        this.logger.warn({ key: file.key, error }, "No se pudo procesar el archivo JSON");
+        // si falla, devolvemos el original
+        return file;
+      }
+    });
+  }
+
+  private async handleWarranty(
+    command: PromptRegulatoryComplianceCommand,
+  ): Promise<PromptRegComplCommandHandlerOutput> {
+    try {
+      // Get system prompts
+      const systemPrompts: Array<SystemPrompt> = [
+        {
+          id: "1",
+          prompt:
+            "Dado el siguiente conjunto de datos realiza una análisis sobre las consultas del usuario usando únicamente estos documentos como información",
+          version: "1",
+          type: "1",
+          createdAt: "19/10/2025",
+          updatedAt: "19/10/2025",
+        },
+      ];
+
+      let systemPrompt = "";
+      if (systemPrompts.length > 0) {
+        systemPrompt = systemPrompts[0].prompt;
+        this.logger.info({ systemPrompt: systemPrompts[0].id }, "System prompt");
+      }
+
+      // Get sources from dynamo
+      const sources = await this.sourceProcessWarrantyRepository.getSources(command.recordKeys, command.application);
+
+      if (sources.length == 0) {
+        throw new Error("No se encuentra sources que puedan llamar a un archivo");
+      }
+
+      // Get files by keys
+      const filesData: FileData[] = await this.documentsFileStorageClientForWarrantyAnalysis.getFilesByKey(sources);
+      this.logger.info(
+        {
+          filesData: filesData.map((file) => ({
+            key: file.key,
+            bytes: file.bytes.length,
+            contentType: file.contentType,
+          })),
+        },
+        "Files data",
+      );
+      const reducedFilesData: FileData[] = this.solveBigJsonFile(filesData);
+
+      // Get AI chat response
+      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, reducedFilesData);
+      const processedResponse = new PassThrough();
+
+      chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+      return {
+        result: processedResponse,
+        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+      };
+    } catch (err) {
+      // TODO: Handle specific errors and their codes
+      if (err instanceof Error) {
+        this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
+      }
+      throw err;
+    }
+  }
+
+  private async handleLetter(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
+    try {
+      // Get system prompts
+
+      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(command.application, "DEFAULT");
+      let systemPrompt = "";
+      if (systemPrompts.length > 0) {
+        systemPrompt = systemPrompts[0].prompt;
+        this.logger.info({ systemPrompt: systemPrompts[0].id }, "System prompt");
+      }
+
+      this.logger.debug({ systemPrompt }, "System prompt");
+      // Get sources from dynamo
+      const sources = await this.sourceProcessLetterAnalysisRepository.getSources(
+        command.recordKeys,
+        command.application,
+      );
+
+      if (sources.length == 0) {
+        throw new Error("No se encuentra sources que puedan llamar a un archivo");
+      }
+
+      // Get files by keys
+      const filesData = await this.documentsFileStorageClientForLetterAnalysis.getFilesByKey(sources);
+      this.logger.info(
+        {
+          filesData: filesData.map((file) => ({
+            key: file.key,
+            bytes: file.bytes.length,
+            contentType: file.contentType,
+          })),
+        },
+        "Files data",
+      );
+
+      // Get AI chat response
+      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
+      const processedResponse = new PassThrough();
+
+      chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+
+      /*   return {
+                   result: processedResponse,
+                   fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+               };*/
+      return {
+        result: processedResponse,
+        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+      };
+    } catch (err) {
+      // TODO: Handle specific errors and their codes
+      if (err instanceof Error) {
+        this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
+      }
+      throw err;
+    }
+  }
+
+  async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
+    switch (command.application) {
+      case "LETTER":
+        return this.handleLetter(command);
+      case "WARRANTY":
+        return this.handleWarranty(command);
+      case "DOCUMENT_LOAD":
+      default:
+        return this.handleDocumentLoad(command);
     }
   }
 }
