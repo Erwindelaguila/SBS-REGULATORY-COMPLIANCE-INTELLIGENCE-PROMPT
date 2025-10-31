@@ -10,6 +10,7 @@ import { DynSystemPromptsRepositoryImpl } from "./source/adapters/dyn-system-pro
 import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { PromptRegulatoryComplianceCommandHandler } from "./source/domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/prompt-regulatory-compliance.entrypoint";
+import {DynSourceProcessRepositoryImpl} from "./source/adapters/dyn-source-process.repository-impl";
 
 /**
  *
@@ -25,7 +26,22 @@ const logger = pino({
   level: "debug",
 });
 
+// Uso general
+const aiChatClient = new BedrockAIChatClient(
+    new BedrockRuntimeClient({
+        region: "us-east-1",
+    }),
+    process.env.BEDROCK_MODEL_ID!,
+    logger,
+);
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const systemPromptsRepository = new DynSystemPromptsRepositoryImpl(
+    dynamoDBDocumentClient,
+    process.env.SYSTEM_PROMPTS_TABLE_NAME!,
+    logger,
+);
+
+// Carga documental
 
 const documentsFileStorageClient = new S3FileStorageClient(
   new S3Client({}),
@@ -34,24 +50,43 @@ const documentsFileStorageClient = new S3FileStorageClient(
 );
 const csvFileStorageClient = new S3FileStorageClient(new S3Client({}), process.env.S3_CSV_BUCKET_NAME!, logger);
 
-const systemPromptsRepository = new DynSystemPromptsRepositoryImpl(
+
+
+
+
+// Carta fianza
+const documentsFileStorageClientForLetterAnalysis = new S3FileStorageClient(
+    new S3Client({}),
+    process.env.S3_LETTER_REPORTS_BUCKET_NAME!,
+    logger,
+);
+const sourceProcessLetterRepository=new DynSourceProcessRepositoryImpl(
+    dynamoDBDocumentClient,
+    process.env.LETTER_ANALYSIS_TABLE_NAME!,
+    logger,
+)
+
+// Garantías preferenciales
+const documentsFileStorageClientForWarrantyAnalysis = new S3FileStorageClient(
+  new S3Client({}),
+  process.env.S3_WARRANTY_REPORTS_BUCKET_NAME!,
+  logger,
+);
+const sourceProcessWarrantyRepository=new DynSourceProcessRepositoryImpl(
   dynamoDBDocumentClient,
-  process.env.SYSTEM_PROMPTS_TABLE_NAME!,
+  process.env.WARRANTY_ANALYSIS_TABLE_NAME!,
   logger,
 );
 
-const aiChatClient = new BedrockAIChatClient(
-  new BedrockRuntimeClient({
-    region: "us-east-1",
-  }),
-  process.env.BEDROCK_MODEL_ID!,
-  logger,
-);
 
 const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComplianceCommandHandler(
   documentsFileStorageClient,
+  documentsFileStorageClientForLetterAnalysis,
+  documentsFileStorageClientForWarrantyAnalysis,
   csvFileStorageClient,
   systemPromptsRepository,
+    sourceProcessLetterRepository,
+  sourceProcessWarrantyRepository,
   aiChatClient,
   process.env.SAVE_CSV_FLAG === "true",
   logger,
@@ -69,10 +104,10 @@ export const handler = awslambda.streamifyResponse(
     try {
       const messageId = (body.sessionId as string).split(":")[1];
       const promptRegComplOutput = await promptRegulatoryComplianceEntrypoint.handleRequest({
-        messageId,
-        application: body.application as string,
-        question: body.question as string,
-        recordKeys: body.recordKeys as string[],
+        messageId, //SessionId
+        application: body.application as string,// LETTER. WARRANTY. DOCUMENT_LOAD
+        question: body.question as string,//USer input
+        recordKeys: body.recordKeys as string[],//DOCUMENT LOAD
       });
 
       let fullResponse = "";

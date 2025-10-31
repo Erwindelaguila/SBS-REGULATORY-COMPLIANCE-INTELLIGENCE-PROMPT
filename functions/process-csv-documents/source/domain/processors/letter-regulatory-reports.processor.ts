@@ -19,7 +19,7 @@ import {
 } from "../../utils/letter-validation.utils";
 
 export class LetterRegulatoryReportsProcessor implements CsvProcessor {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly logger: Logger) { }
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
