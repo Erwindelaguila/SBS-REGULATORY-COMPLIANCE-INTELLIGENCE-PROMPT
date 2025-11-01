@@ -18,7 +18,7 @@ const CONSTANTS = {
 };
 
 export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly logger: Logger) { }
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
@@ -42,6 +42,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
 
         const record: Record<string, any> = {
           ID: uuidv4(),
+          recordId: recordData.recordId,
           CODGR: this.getString(row, "CODGR"),
           CGR: convertToInteger(row["CGR"] || row["cgr"]),
           TGR: this.getString(row, "TGR"),
