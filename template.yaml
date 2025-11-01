@@ -147,13 +147,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: ID
           AttributeType: S
-        - AttributeName: CODGR
+        - AttributeName: CODGR 
           AttributeType: S
-        - AttributeName: CODINSCRIPCION
+        - AttributeName: CODINSCRIPCION 
           AttributeType: S
-        - AttributeName: PERIOD_YEAR
+        - AttributeName: PERIOD_YEAR 
           AttributeType: N
-        - AttributeName: PERIOD_MONTH
+        - AttributeName: PERIOD_MONTH 
           AttributeType: N
       KeySchema:
         - AttributeName: ID
@@ -179,10 +179,10 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PAY_PER_REQUEST 
       OnDemandThroughput:
         MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100
+        MaxWriteRequestUnits: 100 
 
   WarrantyInternalTablesTable:
     Type: AWS::DynamoDB::Table
@@ -191,13 +191,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        - AttributeName: codgr
+        - AttributeName: codgr 
           AttributeType: S
-        - AttributeName: period
+        - AttributeName: period 
           AttributeType: S
-        - AttributeName: period_year
+        - AttributeName: period_year 
           AttributeType: N
-        - AttributeName: period_month
+        - AttributeName: period_month 
           AttributeType: N
       KeySchema:
         - AttributeName: id
@@ -219,83 +219,10 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
+      BillingMode: PAY_PER_REQUEST 
       OnDemandThroughput:
         MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100
-
-  LetterRegulatoryReportsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref LetterRRTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: ccr
-          AttributeType: S
-        - AttributeName: period_year
-          AttributeType: N
-        - AttributeName: period_month
-          AttributeType: N
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: ccr-index
-          KeySchema:
-            - AttributeName: ccr
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: period_year-period_month-index
-          KeySchema:
-            - AttributeName: period_year
-              KeyType: HASH
-            - AttributeName: period_month
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100
-
-  LetterInternalTablesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref LetterITTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: codigo_credito
-          AttributeType: S
-        - AttributeName: period_year
-          AttributeType: N
-        - AttributeName: period_month
-          AttributeType: N
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: codigo_credito-index
-          KeySchema:
-            - AttributeName: codigo_credito
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: period_year-period_month-index
-          KeySchema:
-            - AttributeName: period_year
-              KeyType: HASH
-            - AttributeName: period_month
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100
-
+        MaxWriteRequestUnits: 100 
 
 
   GetDocumentsAnalysisSheetFunction:
