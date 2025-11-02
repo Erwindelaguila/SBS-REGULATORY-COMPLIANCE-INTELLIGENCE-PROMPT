@@ -18,7 +18,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
-      const csvContent = Buffer.from(recordData.fileContent).toString("utf-8");
+      const csvContent = Buffer.from(recordData.fileContent).toString("latin1");
       const rows = parseCsvContent(csvContent, ";");
 
       const { year: periodYear, month: periodMonth } = extractPeriodFromDate(recordData.period);
