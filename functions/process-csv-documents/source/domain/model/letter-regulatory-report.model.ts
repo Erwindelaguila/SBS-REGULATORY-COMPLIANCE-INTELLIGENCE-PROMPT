@@ -12,5 +12,6 @@ export interface LetterRegulatoryReport {
   ncl: string | null;
   period_month: number | null;
   period_year: number | null;
+  period: string | null;
   recordId: string | null;
 }
