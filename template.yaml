@@ -159,6 +159,8 @@ Resources:
           AttributeType: S
         - AttributeName: period 
           AttributeType: S
+        - AttributeName: recordId 
+          AttributeType: S
       KeySchema:
         - AttributeName: ID
           KeyType: HASH
@@ -191,6 +193,12 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        - IndexName: recordId-index
+          KeySchema:
+            - AttributeName: recordId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST 
       OnDemandThroughput:
         MaxReadRequestUnits: 100
@@ -212,6 +220,8 @@ Resources:
         - AttributeName: supervisedEntityId 
           AttributeType: S
         - AttributeName: period 
+          AttributeType: S
+        - AttributeName: recordId 
           AttributeType: S
       KeySchema:
         - AttributeName: id
@@ -239,6 +249,12 @@ Resources:
               KeyType: HASH
             - AttributeName: period
               KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: recordId-index
+          KeySchema:
+            - AttributeName: recordId
+              KeyType: HASH
           Projection:
             ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST 
