@@ -155,6 +155,10 @@ Resources:
           AttributeType: N
         - AttributeName: PERIOD_MONTH 
           AttributeType: N
+        - AttributeName: supervisedEntityId 
+          AttributeType: S
+        - AttributeName: period 
+          AttributeType: S
       KeySchema:
         - AttributeName: ID
           KeyType: HASH
@@ -179,6 +183,14 @@ Resources:
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
+        - IndexName: supervisedEntityId-period-index
+          KeySchema:
+            - AttributeName: supervisedEntityId
+              KeyType: HASH
+            - AttributeName: period
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST 
       OnDemandThroughput:
         MaxReadRequestUnits: 100
@@ -199,6 +211,10 @@ Resources:
           AttributeType: N
         - AttributeName: period_month 
           AttributeType: N
+        - AttributeName: supervisedEntityId 
+          AttributeType: S
+        - AttributeName: period 
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
@@ -216,6 +232,14 @@ Resources:
             - AttributeName: period_year
               KeyType: HASH
             - AttributeName: period_month
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: supervisedEntityId-period-index
+          KeySchema:
+            - AttributeName: supervisedEntityId
+              KeyType: HASH
+            - AttributeName: period
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
