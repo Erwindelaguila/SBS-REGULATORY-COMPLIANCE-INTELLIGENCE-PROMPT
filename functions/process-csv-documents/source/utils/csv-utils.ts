@@ -67,11 +67,77 @@ export const validateAndConvertDate = (value: string | number): string | null =>
 
   const strValue = String(value).trim();
 
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(strValue)) {
-    const [day, month, year] = strValue.split("/").map(Number);
-    if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1900 && year <= 2100) {
-      return `${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+  if (/#/.test(strValue)) {
+    return null;
+  }
+
+  const isoDatetimeMatch = strValue.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+\d{2}:\d{2}:\d{2}$/);
+  if (isoDatetimeMatch) {
+    const year = isoDatetimeMatch[1];
+    const month = isoDatetimeMatch[2].padStart(2, "0");
+    const day = isoDatetimeMatch[3].padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  }
+
+  const isoDateMatch = strValue.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (isoDateMatch) {
+    const year = isoDateMatch[1];
+    const month = isoDateMatch[2].padStart(2, "0");
+    const day = isoDateMatch[3].padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  }
+
+  const mmDdYyMatch = strValue.match(/^(\d{1,2})-(\d{1,2})-(\d{2})$/);
+  if (mmDdYyMatch) {
+    const month = mmDdYyMatch[1].padStart(2, "0");
+    const day = mmDdYyMatch[2].padStart(2, "0");
+    const yearShort = parseInt(mmDdYyMatch[3], 10);
+
+    const fullYear = yearShort <= 30 ? 2000 + yearShort : 1900 + yearShort;
+
+    return `${day}/${month}/${fullYear}`;
+  }
+
+  const mmDdYyyyMatch = strValue.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (mmDdYyyyMatch) {
+    const month = mmDdYyyyMatch[1].padStart(2, "0");
+    const day = mmDdYyyyMatch[2].padStart(2, "0");
+    const year = mmDdYyyyMatch[3];
+    return `${day}/${month}/${year}`;
+  }
+
+  const ddMmYyyyMatch = strValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (ddMmYyyyMatch) {
+    const day = ddMmYyyyMatch[1].padStart(2, "0");
+    const month = ddMmYyyyMatch[2].padStart(2, "0");
+    const year = ddMmYyyyMatch[3];
+
+    const monthNum = parseInt(month, 10);
+    const dayNum = parseInt(day, 10);
+    const yearNum = parseInt(year, 10);
+
+    if (monthNum >= 1 && monthNum <= 12 && dayNum >= 1 && dayNum <= 31 && yearNum >= 1900 && yearNum <= 2100) {
+      return `${day}/${month}/${year}`;
     }
+  }
+
+  const ddMmYyyyTimeMatch = strValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+\d{1,2}:\d{2}$/);
+  if (ddMmYyyyTimeMatch) {
+    const day = ddMmYyyyTimeMatch[1].padStart(2, "0");
+    const month = ddMmYyyyTimeMatch[2].padStart(2, "0");
+    const year = ddMmYyyyTimeMatch[3];
+    return `${day}/${month}/${year}`;
+  }
+
+  const ddMmYyMatch = strValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+  if (ddMmYyMatch) {
+    const day = ddMmYyMatch[1].padStart(2, "0");
+    const month = ddMmYyMatch[2].padStart(2, "0");
+    const yearShort = parseInt(ddMmYyMatch[3], 10);
+
+    const fullYear = yearShort <= 30 ? 2000 + yearShort : 1900 + yearShort;
+
+    return `${day}/${month}/${fullYear}`;
   }
 
   if (/^\d+(\.\d+)?$/.test(strValue)) {
@@ -83,12 +149,30 @@ export const validateAndConvertDate = (value: string | number): string | null =>
     }
   }
 
-  return null;
+  return strValue;
 };
 
 export const cleanNombreField = (nombre: string): string => {
-  if (!nombre) return "";
-  return nombre.replace(/\//g, " ").replace(/\\\\/g, "").replace(/\.,/g, ",").trim();
+  if (!nombre || nombre.trim() === "") return "";
+
+  const trimmedNombre = nombre.trim();
+
+  // Pattern to detect the specific format - handles ., \, and / characters
+  // Converts from: "{APELLIDO1}/{APELLIDO2}.\,{NOMBRE}"
+  // To: "{APELLIDO1} {APELLIDO2}, {NOMBRE}"
+  const pattern = /^(.+?)\/(.+?)\.\\\,(.+)$/;
+  const match = trimmedNombre.match(pattern);
+
+  if (match) {
+    const apellido1 = match[1].trim();
+    const apellido2 = match[2].trim();
+    const nombre = match[3].trim();
+
+    return `${apellido1} ${apellido2}, ${nombre}`;
+  }
+
+  // If doesn't match pattern, return original value cleaned
+  return trimmedNombre;
 };
 
 export const convertToNumber = (value: any, defaultValue: number | null = null): number | null => {

@@ -12,10 +12,6 @@ import {
 } from "../../utils/csv-utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 
-const CONSTANTS = {
-  IDENSUP: "97019df3-513a-4256-8301-84e74671db1b",
-};
-
 export class WarrantyInternalTablesProcessor implements CsvProcessor {
   constructor(private readonly logger: Logger) { }
 
@@ -63,7 +59,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
           period_year: periodYear,
           period_month: periodMonth,
           period: `${periodYear}-${String(periodMonth).padStart(2, "0")}`,
-          id_entidad_supervisada: CONSTANTS.IDENSUP,
+          supervisedEntityId: recordData.supervisedEntityId,
         };
 
         processedRecords.push(record);
