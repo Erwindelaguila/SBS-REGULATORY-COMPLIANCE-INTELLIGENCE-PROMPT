@@ -1,60 +1,39 @@
 export interface WarrantyRegulatoryReport {
-  // Identificadores
   ID: string;
-  recordId: string;
-  supervisedEntityId: string;
-
-  // Campos de garantía
-  CODGR: string | null;
-  CGR: number | null;
-  TGR: string | null;
+  BLOQ: number | null;
   CC: string | null;
-
-  // Representante/persona
-  REPEV: string | null;
-  IDREPEV: string | null;
-
-  // Póliza
-  POL: string | null;
-  FVEPOL: string | null;
-  FINPOL: null;
-
-  // Valores y montos
-  VCONS: number | null;
+  CCLQGR: string | null;
+  CGR: number | null;
+  COBGR: number | null;
+  CODINSCRIPCION: string | null;
+  CODGR: string | null;
+  FBLOQ: string | null;
   FCONS: string | null;
+  FINPOL: null;
   FUVAL: string | null;
-  VCOM: number | null;
-  VREA: number | null;
-  VBC: number | null;
-  VANX: number | null;
-
-  // Moneda y división por moneda
+  FVEPOL: string | null;
+  IDREPEV: string | null;
+  IGRC: number | null;
   MONGR: number | null;
+  NCLQGR: string | null;
+  NINS: string;
+  PERIOD_MONTH: number;
+  PERIOD_YEAR: number;
+  period: string;
+  POL: string | null;
+  recordId: string;
+  REPEV: string | null;
+  supervisedEntityId: string;
+  TGR: string | null;
+  VANX: number | null;
+  VBC: number | null;
+  VCOM: number | null;
+  VCOM_OTH: number | null;
   VCOM_PEN: number | null;
   VCOM_USD: number | null;
-  VCOM_OTH: number | null;
+  VCONS: number | null;
+  VREA: number | null;
+  VREA_OTH: number | null;
   VREA_PEN: number | null;
   VREA_USD: number | null;
-  VREA_OTH: number | null;
-
-  // Bloqueo
-  BLOQ: number | null;
-  FBLOQ: string | null;
-
-  // Cobertura
-  COBGR: number | null;
-  IGRC: number | null;
-
-  // Liquidación
-  CCLQGR: string | null;
-  NCLQGR: string | null;
-
-  // Inscripción
-  CODINSCRIPCION: string | null;
-  NINS: string;
-
-  // Período
-  PERIOD_YEAR: number;
-  PERIOD_MONTH: number;
-  period: string;
 }
