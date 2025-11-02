@@ -10,6 +10,7 @@ import {
   convertToInteger,
   extractPeriodFromDate,
 } from "../../utils/csv-utils";
+import { cleanSupervisedEntityId } from "../../utils/letter-validation.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 
 const CONSTANTS = {
@@ -66,7 +67,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
           FINPOL: null,
           IDREPEV: this.getString(row, "IDREPEV"),
           CODINSCRIPCION: this.getString(row, "CODINSCRIPCION"),
-          supervisedEntityId: recordData.supervisedEntityId,
+          supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
           PERIOD_YEAR: year,
           PERIOD_MONTH: month,
           period: `${year}-${String(month).padStart(2, "0")}`,
