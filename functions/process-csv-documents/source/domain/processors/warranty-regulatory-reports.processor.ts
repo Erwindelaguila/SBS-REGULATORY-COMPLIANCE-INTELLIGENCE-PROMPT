@@ -14,7 +14,7 @@ import { CsvProcessorError } from "../errors/csv-processor.error";
 
 const CONSTANTS = {
   CC_FILTER: "8414020102",
-  IDENSUP: "97019df3-513a-4256-8301-84e74671db1b",
+  DEFAULT_NINS: "P19041954",
 };
 
 export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
@@ -67,10 +67,11 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
           FINPOL: null,
           IDREPEV: this.getString(row, "IDREPEV"),
           CODINSCRIPCION: this.getString(row, "CODINSCRIPCION"),
-          NINS: this.getString(row, "NINS") || "P19041954",
-          IDENSUP: CONSTANTS.IDENSUP,
+          NINS: this.getString(row, "NINS") || CONSTANTS.DEFAULT_NINS,
+          supervisedEntityId: recordData.supervisedEntityId,
           PERIOD_YEAR: year,
           PERIOD_MONTH: month,
+          period: `${year}-${String(month).padStart(2, "0")}`,
         };
 
         if (mongr === 1) {
