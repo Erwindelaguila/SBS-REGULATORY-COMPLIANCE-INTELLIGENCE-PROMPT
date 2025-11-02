@@ -13,6 +13,7 @@ import {
   validateCurrency,
   validatePeriodMonth,
   validatePeriodYear,
+  cleanSupervisedEntityId,
   LetterValidationError,
 } from "../../utils/letter-validation.utils";
 
@@ -62,7 +63,7 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
             period_year: validatedYear,
             period_month: validatedMonth,
             period,
-            supervisedEntityId: recordData.supervisedEntityId,
+            supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
           };
 
           processedRecords.push(record);

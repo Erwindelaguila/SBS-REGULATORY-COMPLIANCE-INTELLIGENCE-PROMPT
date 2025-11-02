@@ -15,6 +15,7 @@ import {
   validatePeriodMonth,
   validatePeriodYear,
   removeQuotes,
+  cleanSupervisedEntityId,
   LetterValidationError,
 } from "../../utils/letter-validation.utils";
 
@@ -82,7 +83,7 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
             period_year: validatedYear,
             period_month: validatedMonth,
             period,
-            supervisedEntityId: recordData.supervisedEntityId,
+            supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
           };
 
           processedRecords.push(record);
