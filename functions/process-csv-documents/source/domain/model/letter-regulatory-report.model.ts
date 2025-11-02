@@ -14,4 +14,5 @@ export interface LetterRegulatoryReport {
   period_year: number | null;
   period: string | null;
   recordId: string | null;
+  supervisedEntityId: string | null;
 }

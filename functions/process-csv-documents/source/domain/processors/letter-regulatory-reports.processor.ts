@@ -82,6 +82,7 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
             period_year: validatedYear,
             period_month: validatedMonth,
             period,
+            supervisedEntityId: recordData.supervisedEntityId,
           };
 
           processedRecords.push(record);

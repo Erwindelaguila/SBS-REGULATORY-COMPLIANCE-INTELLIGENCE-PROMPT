@@ -9,4 +9,5 @@ export interface LetterInternalTable {
   saldo: number | null;
   saldo_mes_anterior: number | null;
   recordId: string | null;
+  supervisedEntityId: string | null;
 }

@@ -8,4 +8,5 @@ export interface CsvRecordData {
   fileContent: Uint8Array;
   key: string;
   period: string;
+  supervisedEntityId: string;
 }
