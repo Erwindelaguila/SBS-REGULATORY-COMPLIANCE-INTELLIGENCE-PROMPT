@@ -205,8 +205,6 @@ Resources:
           AttributeType: S
         - AttributeName: codgr 
           AttributeType: S
-        - AttributeName: period 
-          AttributeType: S
         - AttributeName: period_year 
           AttributeType: N
         - AttributeName: period_month 
