@@ -84,6 +84,7 @@ export class ProcessCsvDocumentsCommandHandler {
           fileContent: fileData.bytes,
           key: record.key,
           period: record.period,
+          supervisedEntityId: record.supervisedEntityId,
         };
 
         const processedRecords = await this.processRecord(type, csvRecordData);
