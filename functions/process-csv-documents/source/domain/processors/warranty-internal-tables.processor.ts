@@ -10,6 +10,7 @@ import {
   convertToInteger,
   extractPeriodFromDate,
 } from "../../utils/csv-utils";
+import { cleanSupervisedEntityId } from "../../utils/letter-validation.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 
 export class WarrantyInternalTablesProcessor implements CsvProcessor {
@@ -59,7 +60,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
           period_year: periodYear,
           period_month: periodMonth,
           period: `${periodYear}-${String(periodMonth).padStart(2, "0")}`,
-          supervisedEntityId: recordData.supervisedEntityId,
+          supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
         };
 
         processedRecords.push(record);
