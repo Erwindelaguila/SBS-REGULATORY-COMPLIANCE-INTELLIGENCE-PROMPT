@@ -62,6 +62,10 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
 
           const convenioFmv = validateOptionalString(convenioFmvRaw);
 
+          const period = validatedYear && validatedMonth
+            ? `${validatedYear}-${String(validatedMonth).padStart(2, '0')}`
+            : null;
+
           const record: LetterRegulatoryReport = {
             id: uuidv4(),
             recordId: recordData.recordId,
@@ -77,6 +81,7 @@ export class LetterRegulatoryReportsProcessor implements CsvProcessor {
             currency: validateCurrency(),
             period_year: validatedYear,
             period_month: validatedMonth,
+            period,
           };
 
           processedRecords.push(record);

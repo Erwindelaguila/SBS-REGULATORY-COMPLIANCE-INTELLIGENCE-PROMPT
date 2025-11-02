@@ -47,6 +47,10 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
 
           const saldoMesAnterior = validateOptionalNumber(saldoMesAnteriorRaw);
 
+          const period = validatedYear && validatedMonth
+            ? `${validatedYear}-${String(validatedMonth).padStart(2, '0')}`
+            : null;
+
           const record: LetterInternalTable = {
             id: uuidv4(),
             recordId: recordData.recordId,
@@ -57,6 +61,7 @@ export class LetterInternalTablesProcessor implements CsvProcessor {
             currency: validateCurrency(),
             period_year: validatedYear,
             period_month: validatedMonth,
+            period,
           };
 
           processedRecords.push(record);
