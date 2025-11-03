@@ -9,6 +9,7 @@ export interface ProcessCsvDocumentsCommandRecord {
   application: Application;
   documentType: DocumentType;
   period: string;
+  supervisedEntityId: string;
 }
 
 export class ProcessCsvDocumentsCommand {

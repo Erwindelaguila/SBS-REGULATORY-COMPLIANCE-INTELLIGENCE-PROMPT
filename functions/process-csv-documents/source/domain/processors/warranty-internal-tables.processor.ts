@@ -10,18 +10,15 @@ import {
   convertToInteger,
   extractPeriodFromDate,
 } from "../../utils/csv-utils";
+import { cleanSupervisedEntityId } from "../../utils/letter-validation.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
-
-const CONSTANTS = {
-  IDENSUP: "97019df3-513a-4256-8301-84e74671db1b",
-};
 
 export class WarrantyInternalTablesProcessor implements CsvProcessor {
   constructor(private readonly logger: Logger) { }
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
-      const csvContent = Buffer.from(recordData.fileContent).toString("utf-8");
+      const csvContent = Buffer.from(recordData.fileContent).toString("latin1");
       const rows = parseCsvContent(csvContent, ";");
 
       const { year: periodYear, month: periodMonth } = extractPeriodFromDate(recordData.period);
@@ -63,7 +60,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
           period_year: periodYear,
           period_month: periodMonth,
           period: `${periodYear}-${String(periodMonth).padStart(2, "0")}`,
-          id_entidad_supervisada: CONSTANTS.IDENSUP,
+          supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
         };
 
         processedRecords.push(record);

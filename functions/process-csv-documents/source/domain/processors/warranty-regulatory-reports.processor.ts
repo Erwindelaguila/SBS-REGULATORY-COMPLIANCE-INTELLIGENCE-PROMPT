@@ -10,11 +10,11 @@ import {
   convertToInteger,
   extractPeriodFromDate,
 } from "../../utils/csv-utils";
+import { cleanSupervisedEntityId } from "../../utils/letter-validation.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 
 const CONSTANTS = {
   CC_FILTER: "8414020102",
-  IDENSUP: "97019df3-513a-4256-8301-84e74671db1b",
 };
 
 export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
@@ -22,7 +22,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
-      const csvContent = Buffer.from(recordData.fileContent).toString("utf-8");
+      const csvContent = Buffer.from(recordData.fileContent).toString("latin1");
       const rows = parseCsvContent(csvContent, ";");
 
       const { year, month } = extractPeriodFromDate(recordData.period);
@@ -40,10 +40,13 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
         const vcom = convertToNumber(row["VCOM"] || row["vcom"]);
         const vrea = convertToNumber(row["VREA"] || row["vrea"]);
 
+        const codgr = this.getString(row, "CODGR");
+        const codinscripcion = this.getString(row, "CODINSCRIPCION");
+
         const record: Record<string, any> = {
           ID: uuidv4(),
           recordId: recordData.recordId,
-          CODGR: this.getString(row, "CODGR"),
+          ...(codgr !== null && { CODGR: codgr }),
           CGR: convertToInteger(row["CGR"] || row["cgr"]),
           TGR: this.getString(row, "TGR"),
           CC: this.getString(row, "CC"),
@@ -66,11 +69,11 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
           FBLOQ: validateAndConvertDate(row["FBLOQ"] || row["fbloq"]),
           FINPOL: null,
           IDREPEV: this.getString(row, "IDREPEV"),
-          CODINSCRIPCION: this.getString(row, "CODINSCRIPCION"),
-          NINS: this.getString(row, "NINS") || "P19041954",
-          IDENSUP: CONSTANTS.IDENSUP,
+          ...(codinscripcion !== null && { CODINSCRIPCION: codinscripcion }),
+          supervisedEntityId: cleanSupervisedEntityId(recordData.supervisedEntityId),
           PERIOD_YEAR: year,
           PERIOD_MONTH: month,
+          period: `${year}-${String(month).padStart(2, "0")}`,
         };
 
         if (mongr === 1) {

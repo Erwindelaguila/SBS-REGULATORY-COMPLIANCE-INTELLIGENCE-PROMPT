@@ -26,6 +26,7 @@ export class ProcessCsvDocumentsEntryPoint {
         application: insertRecord.application,
         documentType: insertRecord.documentType,
         period: insertRecord.period,
+        supervisedEntityId: insertRecord.supervisedEntityId,
       }))
       .filter((record) => {
         const ext = path.extname(record.key).toLowerCase();
