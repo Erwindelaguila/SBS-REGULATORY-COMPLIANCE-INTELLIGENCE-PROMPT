@@ -5,7 +5,9 @@ export interface LetterInternalTable {
   currency: "PEN" | null;
   period_month: number | null;
   period_year: number | null;
+  period: string | null;
   saldo: number | null;
   saldo_mes_anterior: number | null;
   recordId: string | null;
+  supervisedEntityId: string | null;
 }

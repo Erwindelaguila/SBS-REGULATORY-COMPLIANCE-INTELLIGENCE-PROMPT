@@ -161,7 +161,14 @@ export class DynTableRepository implements TableRepository {
     const result: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(obj)) {
-      if (value === null || value === undefined) {
+      // Only skip undefined values
+      if (value === undefined) {
+        continue;
+      }
+
+      // Explicitly save null values
+      if (value === null) {
+        result[key] = null;
         continue;
       }
 

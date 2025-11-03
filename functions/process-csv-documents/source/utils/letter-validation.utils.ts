@@ -40,6 +40,13 @@ export const removeQuotes = (value: string): string => {
   return value.replace(/^["']|["']$/g, "").trim();
 };
 
+export const cleanSupervisedEntityId = (value: string): string => {
+  if (!value) return value;
+  const hashIndex = value.indexOf("#");
+  if (hashIndex === -1) return value;
+  return value.substring(0, hashIndex);
+};
+
 export const validateCurrency = (): "PEN" => {
   return "PEN";
 };

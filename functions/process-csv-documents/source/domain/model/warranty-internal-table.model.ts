@@ -1,0 +1,30 @@
+export interface WarrantyInternalTable {
+  id: string;
+  codigo_cliente: string | null;
+  codigo_garantia: string | null;
+  codigo_inscripcion: string | null;
+  codigo_moneda: number | null;
+  codigo_tipo_garantia: string | null;
+  codgr: string;
+  descripcion_garantia: string | null;
+  direccion_garantia: string | null;
+  fecha_constitucion: string | null;
+  fecha_fin_poliza: string | null;
+  fecha_inicio_poliza: string | null;
+  fecha_tasacion: string | null;
+  fecha_vencimiento_tasacion: string | null;
+  nombre_tasador: string | null;
+  numero_poliza: string | null;
+  period: string;
+  period_month: number;
+  period_year: number;
+  recordId: string;
+  supervisedEntityId: string;
+  tipo_cambio_tasacion: number | null;
+  valor_constitucion: number | null;
+  valor_constitucion_soles: number | null;
+  valor_mercado: number | null;
+  valor_mercado_soles: number | null;
+  valor_realizacion: number | null;
+  valor_realizacion_soles: number | null;
+}
