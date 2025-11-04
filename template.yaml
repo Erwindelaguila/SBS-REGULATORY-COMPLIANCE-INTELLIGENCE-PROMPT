@@ -31,6 +31,9 @@ Parameters:
   WarrantyReportsBucketName:
     Type: String
     Default: bucket
+  LetterReportsBucketName:
+    Type: String
+    Default: bucket
   RecordsBucketName:
     Type: String
     Default: bucket
@@ -468,7 +471,7 @@ Resources:
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           S3_CSV_BUCKET_NAME: !Ref CsvAnalysisBucketName
           S3_WARRANTY_REPORTS_BUCKET_NAME: !Ref WarrantyReportsBucketName
-          S3_LETTER_REPORTS_BUCKET_NAME: !Ref WarrantyReportsBucketName
+          S3_LETTER_REPORTS_BUCKET_NAME: !Ref LetterReportsBucketName
           WARRANTY_ANALYSIS_TABLE_NAME: !Ref WarrantyAnalysisTableName
           LETTER_ANALYSIS_TABLE_NAME: !Ref LetterAnalysisTableName
           SAVE_CSV_FLAG: !Ref SaveCSVFlag
