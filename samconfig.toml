@@ -30,6 +30,7 @@ parameter_overrides = [
     "CsvAnalysisBucketName=supervisory-records-csv-analysis",
     "ProcessedRecordsBucketName=processed-supervisory-records",
     "WarrantyReportsBucketName=warranty-analysis-reports",
+    "LetterReportsBucketName=letter-analysis-reports",
     "SupervisoryRecordsTableName=supervisory-records",
     "InteractionWebSocketQueueUrl=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
     "SupervisoryRecordsStreamArn=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
