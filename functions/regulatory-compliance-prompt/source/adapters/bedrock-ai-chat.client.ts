@@ -58,59 +58,90 @@ export class BedrockAIChatClient implements AIChatClient {
     userPrompt: string,
     filesData: FileData[],
   ): Promise<Readable> {
-    try {
-      const files = filesData.map(
-        (fileData): ContentBlock => ({
-          document: {
-            name: this.parseDocumentName(this.removeExtension(fileData.key)),
-            source: {
-              bytes: fileData.bytes,
-            },
-            format: this.parseContentTypeToFormat(fileData.contentType),
-          },
-        }),
-      );
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 segundo
 
-      this.logger.debug(
-        {
-          files: files.map((file) => ({
-            name: file.document!.name,
-            format: file.document!.format,
-            bytes: file.document!.source!.bytes!.length,
-          })),
-        },
-        "Files to send to Bedrock",
-      );
-
-      const converseCommand = new ConverseStreamCommand({
-        modelId: this.modelId,
-        system: [{ text: systemPrompt }],
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                text: userPrompt,
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const files = filesData.map(
+          (fileData): ContentBlock => ({
+            document: {
+              name: this.parseDocumentName(this.removeExtension(fileData.key)),
+              source: {
+                bytes: fileData.bytes,
               },
-              ...files,
-            ],
+              format: this.parseContentTypeToFormat(fileData.contentType),
+            },
+          }),
+        );
+
+        this.logger.debug(
+          {
+            files: files.map((file) => ({
+              name: file.document!.name,
+              format: file.document!.format,
+              bytes: file.document!.source!.bytes!.length,
+            })),
           },
-        ],
-      });
-      const response = await this.bedrockRuntimeClient.send(converseCommand);
-      if (!response.stream) {
-        throw new Error("No response stream received from Bedrock AI");
-      }
-      const readable = Readable.from(this.streamToAsyncIterator(response.stream));
-      return readable;
-    } catch (error) {
-      this.logger.error({ error }, "Failed to get chat response from Bedrock AI");
+          "Files to send to Bedrock",
+        );
 
-      if (error instanceof ThrottlingException) {
-        return Readable.from(["Max requests exceeded, try again later"]);
-      }
+        const converseCommand = new ConverseStreamCommand({
+          modelId: this.modelId,
+          system: [{ text: systemPrompt }],
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  text: userPrompt,
+                },
+                ...files,
+              ],
+            },
+          ],
+        });
+        
+        const response = await this.bedrockRuntimeClient.send(converseCommand);
+        
+        if (!response.stream) {
+          throw new Error("No response stream received from Bedrock AI");
+        }
+        
+        const readable = Readable.from(this.streamToAsyncIterator(response.stream));
+        return readable;
+        
+      } catch (error) {
+        const isThrottling = error instanceof ThrottlingException;
+        const isLastAttempt = attempt === maxRetries;
 
-      throw error;
+        this.logger.error({ 
+          error, 
+          attempt, 
+          maxRetries,
+          isThrottling,
+          willRetry: isThrottling && !isLastAttempt
+        }, "Failed to get chat response from Bedrock AI");
+
+        if (isThrottling && !isLastAttempt) {
+          // Exponential backoff: 1s, 2s, 4s
+          const delay = baseDelay * Math.pow(2, attempt - 1);
+          this.logger.warn({ delay, attempt }, `⏳ Throttled by AWS. Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue; // Retry
+        }
+
+        if (isThrottling) {
+          return Readable.from([
+            "⚠️ El servicio está temporalmente saturado. Por favor intenta nuevamente en unos segundos."
+          ]);
+        }
+
+        throw error;
+      }
     }
+
+    // This should never be reached, but TypeScript needs it
+    throw new Error("Max retries exceeded");
   }
 }

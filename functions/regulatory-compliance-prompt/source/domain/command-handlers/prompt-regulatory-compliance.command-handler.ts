@@ -2,11 +2,12 @@ import { Logger } from "pino";
 import { AIChatClient, FileData } from "../ports/ai-chat.client";
 import { FileStorageClient } from "../ports/file-storage.client";
 import { SystemPromptsRepository } from "../ports/system-prompts.repository";
-import { PromptRegulatoryComplianceCommand } from "../commands/prompt-regulatory-compliance.command";
+import { PromptRegulatoryComplianceCommand, ConversationMessage } from "../commands/prompt-regulatory-compliance.command";
 import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
 import { SourceProcessRepository } from "../ports/source_process.repository";
 import { SystemPrompt } from "../models/supervisory-record.model";
+import { MOCK_PROMPTS } from "../mocks/mock-prompts";
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
@@ -144,6 +145,91 @@ export class PromptRegulatoryComplianceCommandHandler {
 
     return stream;
   }
+
+  /**
+   * Detects if the user wants to generate a document based on keywords in the question
+   * @param question - The user's question
+   * @returns true if document generation is requested, false otherwise
+   */
+  private detectDocumentGenerationIntent(question: string): boolean {
+    const keywords = [
+      'genera',
+      'generar',
+      'crear documento',
+      'crear observación',
+      'crear observacion',
+      'observación preliminar',
+      'observacion preliminar',
+      'documento preliminar',
+      'generar word',
+      'word',
+      'documento de observación',
+      'documento de observacion',
+    ];
+
+    const lowerQuestion = question.toLowerCase();
+    return keywords.some(keyword => lowerQuestion.includes(keyword));
+  }
+
+  /**
+   * Detects if the user wants to modify the previously generated document
+   * @param question - The user's question
+   * @returns true if modification is requested, false otherwise
+   */
+  private detectModificationIntent(question: string): boolean {
+    const modificationKeywords = [
+      'cambia',
+      'cambiar',
+      'modifica',
+      'modificar',
+      'actualiza',
+      'actualizar',
+      'ajusta',
+      'ajustar',
+      'corrige',
+      'corrigir',
+      'edita',
+      'editar',
+      'reemplaza',
+      'reemplazar',
+    ];
+
+    const lowerQuestion = question.toLowerCase();
+    return modificationKeywords.some(keyword => lowerQuestion.includes(keyword));
+  }
+
+  /**
+   * Extracts the last generated Markdown document from conversation history
+   * @param conversationHistory - The conversation history
+   * @returns The last Markdown document found in assistant responses, or null if none found
+   */
+  private extractPreviousDocumentMarkdown(conversationHistory: ConversationMessage[]): string | null {
+    // Search backwards through conversation history for assistant responses
+    for (let i = conversationHistory.length - 1; i >= 0; i--) {
+      const message = conversationHistory[i];
+      
+      if (message.role === 'assistant') {
+        const content = message.content.trim();
+        
+        // Check if it looks like our Markdown document structure
+        // Look for key indicators: title with #, metadata with **, sections
+        const hasTitle = content.match(/^#\s+.+$/m);
+        const hasMetadata = content.match(/\*\*Entidad:\*\*/i) || content.match(/\*\*Período:\*\*/i);
+        const hasHallazgos = content.match(/##\s+Hallazgos/i);
+        const hasAnexos = content.match(/##\s+Anexos/i);
+        
+        // If it has title + metadata or typical document sections, consider it a document
+        if ((hasTitle && hasMetadata) || hasHallazgos || hasAnexos) {
+          this.logger.info('📄 Found previous Markdown document in conversation history');
+          return content;
+        }
+      }
+    }
+    
+    this.logger.info('📭 No previous Markdown document found in conversation history');
+    return null;
+  }
+
   private async handleDocumentLoad(
     command: PromptRegulatoryComplianceCommand,
   ): Promise<PromptRegComplCommandHandlerOutput> {
@@ -228,24 +314,51 @@ export class PromptRegulatoryComplianceCommandHandler {
     command: PromptRegulatoryComplianceCommand,
   ): Promise<PromptRegComplCommandHandlerOutput> {
     try {
-      // Get system prompts
-      const systemPrompts: Array<SystemPrompt> = [
-        {
-          id: "1",
-          prompt:
-            "Dado el siguiente conjunto de datos realiza una análisis sobre las consultas del usuario usando únicamente estos documentos como información",
-          version: "1",
-          type: "1",
-          createdAt: "19/10/2025",
-          updatedAt: "19/10/2025",
-        },
-      ];
+      // Detect if user wants to generate a document
+      const isDocumentGeneration = this.detectDocumentGenerationIntent(command.question);
+      
+      // Detect if user wants to modify a previous document
+      const isModification = this.detectModificationIntent(command.question);
+      
+      // Extract previous Markdown if it exists (for modifications)
+      const previousMarkdown = isModification ? this.extractPreviousDocumentMarkdown(command.conversationHistory) : null;
+      
+      // Select appropriate prompt based on intent
+      const systemPrompt = isDocumentGeneration 
+        ? MOCK_PROMPTS.WARRANTY_DOCUMENT_GENERATOR
+        : MOCK_PROMPTS.WARRANTY_DEFAULT;
+      
+      // Build the question with context if modifying
+      let enhancedQuestion = command.question;
+      if (isModification && previousMarkdown) {
+        enhancedQuestion = `DOCUMENTO PREVIO EN MARKDOWN:
+${previousMarkdown}
 
-      let systemPrompt = "";
-      if (systemPrompts.length > 0) {
-        systemPrompt = systemPrompts[0].prompt;
-        this.logger.info({ systemPrompt: systemPrompts[0].id }, "System prompt");
+INSTRUCCIÓN DE MODIFICACIÓN:
+${command.question}
+
+Por favor, modifica el documento previo según la instrucción. Mantén toda la estructura Markdown y solo actualiza lo solicitado.`;
+        
+        this.logger.info({
+          isModification: true,
+          hasPreviousMarkdown: true,
+          originalQuestionLength: command.question.length,
+          enhancedQuestionLength: enhancedQuestion.length
+        }, "🔄 Modification mode activated with previous Markdown context");
+      } else if (isModification && !previousMarkdown) {
+        this.logger.warn({
+          isModification: true,
+          hasPreviousMarkdown: false,
+        }, "⚠️ Modification requested but no previous Markdown found in history");
       }
+      
+      this.logger.info({ 
+        isDocumentGeneration, 
+        isModification,
+        hasPreviousMarkdown: !!previousMarkdown,
+        promptType: isDocumentGeneration ? 'DOCUMENT_GENERATOR' : 'DEFAULT',
+        questionLength: enhancedQuestion.length
+      }, "System prompt selected for WARRANTY");
 
       // Get sources from dynamo
       const sources = await this.sourceProcessWarrantyRepository.getSources(command.recordKeys, command.application);
@@ -268,8 +381,17 @@ export class PromptRegulatoryComplianceCommandHandler {
       );
       const reducedFilesData: FileData[] = this.solveBigJsonFile(filesData);
 
-      // Get AI chat response
-      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, reducedFilesData);
+      // Log para debugging: ver qué datos tiene el análisis
+      this.logger.info({
+        totalFiles: reducedFilesData.length,
+        firstFileSample: reducedFilesData[0] ? {
+          key: reducedFilesData[0].key,
+          contentPreview: new TextDecoder().decode(reducedFilesData[0].bytes).substring(0, 500)
+        } : null
+      }, "📊 Data being sent to AI for document generation");
+
+      // Get AI chat response with enhanced question (includes previous JSON if modifying)
+      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, reducedFilesData);
       const processedResponse = new PassThrough();
 
       chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);

@@ -1,12 +1,13 @@
 import { Readable } from "stream";
 import { PromptRegulatoryComplianceCommandHandler } from "../domain/command-handlers/prompt-regulatory-compliance.command-handler";
-import { PromptRegulatoryComplianceCommand } from "../domain/commands/prompt-regulatory-compliance.command";
+import { PromptRegulatoryComplianceCommand, ConversationMessage } from "../domain/commands/prompt-regulatory-compliance.command";
 
 type PromptRegComplInput = {
   messageId: string;
   application: string;
   question: string;
   recordKeys: string[];
+  conversationHistory?: ConversationMessage[];
 };
 
 type PromptRegComplOutPut = {
@@ -23,6 +24,7 @@ export class PromptRegulatoryComplianceEntrypoint {
       promptRegComplInput.application,
       promptRegComplInput.question,
       promptRegComplInput.recordKeys,
+      promptRegComplInput.conversationHistory || [],
     );
 
     const result = await this.promptRegulatoryComplianceCommandHandler.handle(command);
