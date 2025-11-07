@@ -11,7 +11,9 @@
     "lint": "eslint --fix",
     "format": "prettier --write src/**/*.ts --config ./.prettierrc",
     "compile": "tsc",
-    "test": "npm run compile && npm run unit"
+    "test": "npm run compile && npm run unit",
+    "local:server": "tsx handlers/local.server.ts",
+    "local:handler": "tsx handlers/local.handler.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.862.0",
@@ -21,13 +23,19 @@
     "@middy/core": "^6.4.1",
     "@middy/http-header-normalizer": "^6.4.1",
     "@middy/http-json-body-parser": "^6.4.1",
+    "cors": "^2.8.5",
+    "docx": "^9.5.1",
+    "dotenv": "^16.4.5",
     "esbuild": "^0.14.14",
+    "express": "^4.18.2",
     "pino": "^9.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@jest/globals": "^29.2.0",
     "@types/aws-lambda": "^8.10.92",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
     "@types/jest": "^29.2.0",
     "@types/node": "^20.5.7",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
@@ -41,7 +49,12 @@
     "prettier": "^2.5.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
+    "tsx": "^4.7.0",
     "typescript": "^4.8.4",
     "typescript-eslint": "^8.38.0"
+  },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
   }
 }
