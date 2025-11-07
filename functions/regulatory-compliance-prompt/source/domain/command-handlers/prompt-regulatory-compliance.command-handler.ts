@@ -146,11 +146,6 @@ export class PromptRegulatoryComplianceCommandHandler {
     return stream;
   }
 
-  /**
-   * Detects if the user wants to generate a document based on keywords in the question
-   * @param question - The user's question
-   * @returns true if document generation is requested, false otherwise
-   */
   private detectDocumentGenerationIntent(question: string): boolean {
     const keywords = [
       'genera',
@@ -171,11 +166,6 @@ export class PromptRegulatoryComplianceCommandHandler {
     return keywords.some(keyword => lowerQuestion.includes(keyword));
   }
 
-  /**
-   * Detects if the user wants to modify the previously generated document
-   * @param question - The user's question
-   * @returns true if modification is requested, false otherwise
-   */
   private detectModificationIntent(question: string): boolean {
     const modificationKeywords = [
       'cambia',
@@ -198,11 +188,7 @@ export class PromptRegulatoryComplianceCommandHandler {
     return modificationKeywords.some(keyword => lowerQuestion.includes(keyword));
   }
 
-  /**
-   * Extracts the last generated Markdown document from conversation history
-   * @param conversationHistory - The conversation history
-   * @returns The last Markdown document found in assistant responses, or null if none found
-   */
+
   private extractPreviousDocumentMarkdown(conversationHistory: ConversationMessage[]): string | null {
     // Search backwards through conversation history for assistant responses
     for (let i = conversationHistory.length - 1; i >= 0; i--) {
@@ -344,12 +330,12 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
           hasPreviousMarkdown: true,
           originalQuestionLength: command.question.length,
           enhancedQuestionLength: enhancedQuestion.length
-        }, "🔄 Modification mode activated with previous Markdown context");
+        }, "Modification mode activated with previous Markdown context");
       } else if (isModification && !previousMarkdown) {
         this.logger.warn({
           isModification: true,
           hasPreviousMarkdown: false,
-        }, "⚠️ Modification requested but no previous Markdown found in history");
+        }, "Modification requested but no previous Markdown found in history");
       }
       
       this.logger.info({ 
@@ -388,7 +374,7 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
           key: reducedFilesData[0].key,
           contentPreview: new TextDecoder().decode(reducedFilesData[0].bytes).substring(0, 500)
         } : null
-      }, "📊 Data being sent to AI for document generation");
+      }, "Data being sent to AI for document generation");
 
       // Get AI chat response with enhanced question (includes previous JSON if modifying)
       const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, reducedFilesData);

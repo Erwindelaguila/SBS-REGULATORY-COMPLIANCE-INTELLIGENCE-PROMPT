@@ -1,12 +1,7 @@
-/**
- * Mock prompts for WARRANTY application
- * These will be replaced with DynamoDB queries in production
- */
+
 
 export const MOCK_PROMPTS = {
-  /**
-   * Default prompt for conversational chat about warranty analysis
-   */
+
   WARRANTY_DEFAULT: `Eres un experto en normativa de garantías preferidas del sistema financiero peruano según el Reglamento para la evaluación y clasificación del deudor y la exigencia de provisiones.
 
 Tu tarea es analizar los datos JSON del análisis de garantías que se te proporcionan y responder las preguntas del usuario de forma clara, concisa y profesional.
