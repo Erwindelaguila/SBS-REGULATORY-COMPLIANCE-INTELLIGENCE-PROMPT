@@ -20,7 +20,7 @@ confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "suptech-regulatory-compliance-prompt"
 region = "us-east-1"
-profile = "default"
+profile = "protecso-dev"
 parameter_overrides = [
     "PromptsTableName=system-prompts",
     "WarrantyAnalysisTableName=preferred-warranty-analysis",
@@ -37,12 +37,13 @@ parameter_overrides = [
     "PdfJsLayer=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
     "StageName=develop",
     "KafkaBrokers=34.236.156.4:9092",
-    "WarrantyRRTableName=processed-warranty-regulatory-reports",
-    "WarrantyITTableName=processed-warranty-internal-tables",
-    "LetterRRTableName=processed-bank-guarantee-regulatory-reports",
-    "LetterITTableName=processed-bank-guarantee-internal-tables"
+    "WarrantyRRTableName=regulatory-reports",
+    "WarrantyITTableName=internal-tables",
+    "LetterRRTableName=bank-guarantee-regulatory-reports",
+    "LetterITTableName=bank-guarantee-internal-tables"
 ]
-image_repositories = []
+# Commented because ImageUri is explicitly set in template.yaml
+# image_repositories = ["ProcessDocumentsFunction=891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo"]
 
 [default.package.parameters]
 resolve_s3 = true

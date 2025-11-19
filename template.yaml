@@ -143,239 +143,10 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
-  WarrantyRegulatoryReportsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref WarrantyRRTableName
-      AttributeDefinitions:
-        - AttributeName: ID
-          AttributeType: S
-        - AttributeName: CODGR 
-          AttributeType: S
-        - AttributeName: CODINSCRIPCION 
-          AttributeType: S
-        - AttributeName: PERIOD_YEAR 
-          AttributeType: N
-        - AttributeName: PERIOD_MONTH 
-          AttributeType: N
-        - AttributeName: supervisedEntityId 
-          AttributeType: S
-        - AttributeName: period 
-          AttributeType: S
-        - AttributeName: recordId 
-          AttributeType: S
-      KeySchema:
-        - AttributeName: ID
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: codgr-index
-          KeySchema:
-            - AttributeName: CODGR
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: CODINSCRIPCION-index
-          KeySchema:
-            - AttributeName: CODINSCRIPCION
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: periodYear-periodMonth-index
-          KeySchema:
-            - AttributeName: PERIOD_YEAR
-              KeyType: HASH
-            - AttributeName: PERIOD_MONTH
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: supervisedEntityId-period-index
-          KeySchema:
-            - AttributeName: supervisedEntityId
-              KeyType: HASH
-            - AttributeName: period
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: recordId-index
-          KeySchema:
-            - AttributeName: recordId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST 
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100 
-
-  WarrantyInternalTablesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref WarrantyITTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: codgr 
-          AttributeType: S
-        - AttributeName: period_year 
-          AttributeType: N
-        - AttributeName: period_month 
-          AttributeType: N
-        - AttributeName: supervisedEntityId 
-          AttributeType: S
-        - AttributeName: period 
-          AttributeType: S
-        - AttributeName: recordId 
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: codgr-period-index
-          KeySchema:
-            - AttributeName: codgr
-              KeyType: HASH
-            - AttributeName: period
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: period_year-period_month-index
-          KeySchema:
-            - AttributeName: period_year
-              KeyType: HASH
-            - AttributeName: period_month
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: supervisedEntityId-period-index
-          KeySchema:
-            - AttributeName: supervisedEntityId
-              KeyType: HASH
-            - AttributeName: period
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: recordId-index
-          KeySchema:
-            - AttributeName: recordId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST 
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100 
-    
-  LetterRegulatoryReportsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref LetterRRTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: ccr
-          AttributeType: S
-        - AttributeName: period_year 
-          AttributeType: N
-        - AttributeName: period_month 
-          AttributeType: N 
-        - AttributeName: recordId 
-          AttributeType: S
-        - AttributeName: supervisedEntityId 
-          AttributeType: S
-        - AttributeName: period 
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: ccr-index
-          KeySchema:
-            - AttributeName: ccr
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: period_year-period_month-index
-          KeySchema:
-            - AttributeName: period_year
-              KeyType: HASH
-            - AttributeName: period_month
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: supervisedEntityId-period-index
-          KeySchema:
-            - AttributeName: supervisedEntityId
-              KeyType: HASH
-            - AttributeName: period
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: recordId-index
-          KeySchema:
-            - AttributeName: recordId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST 
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100 
-
-  LetterInternalTablesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Ref LetterITTableName
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: codigo_credito
-          AttributeType: S
-        - AttributeName: period_year 
-          AttributeType: N
-        - AttributeName: period_month 
-          AttributeType: N
-        - AttributeName: recordId 
-          AttributeType: S
-        - AttributeName: supervisedEntityId 
-          AttributeType: S
-        - AttributeName: period 
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: codigo_credito-index
-          KeySchema:
-            - AttributeName: codigo_credito
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: period_year-period_month-index
-          KeySchema:
-            - AttributeName: period_year
-              KeyType: HASH
-            - AttributeName: period_month
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: supervisedEntityId-period-index
-          KeySchema:
-            - AttributeName: supervisedEntityId
-              KeyType: HASH
-            - AttributeName: period
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-        - IndexName: recordId-index
-          KeySchema:
-            - AttributeName: recordId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST 
-      OnDemandThroughput:
-        MaxReadRequestUnits: 100
-        MaxWriteRequestUnits: 100 
+  # NOTE: WARRANTY and LETTER DynamoDB tables already exist in AWS
+  # They are managed separately and should not be modified by this template
+  # Removed: WarrantyRegulatoryReportsTable, WarrantyInternalTablesTable,
+  #          BankGuaranteeRegulatoryReportsTable, BankGuaranteeInternalTablesTable
 
   GetDocumentsAnalysisSheetFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -447,7 +218,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/regulatory-compliance-prompt/
-      Handler: handlers/lambda.handler.handler
+      Handler: app.handler
       Runtime: nodejs22.x
       MemorySize: 256
       Timeout: 60
@@ -488,6 +259,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
+      ImageUri: 891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo:processdocumentsfunction-1b7514fc2cf6-process-documents.v1
       MemorySize: 1024
       Timeout: 60
       Architectures:
@@ -515,10 +287,7 @@ Resources:
             FilterCriteria:
               Filters:
                 - Pattern: '{"eventName": ["INSERT"]}'
-    Metadata:
-      DockerTag: process-documents.v1
-      DockerContext: ./functions/process-documents
-      Dockerfile: Dockerfile
+    # Metadata removed - using existing ECR image directly, no rebuild needed
 
   ProcessCsvDocumentsFunction:
     Type: AWS::Serverless::Function
@@ -574,8 +343,7 @@ Resources:
         InvokeMode: BUFFERED
         Cors:
           AllowMethods:
-            - "POST"
-            - "OPTIONS"
+            - "*"
           AllowHeaders:
             - "*"
           AllowOrigins:

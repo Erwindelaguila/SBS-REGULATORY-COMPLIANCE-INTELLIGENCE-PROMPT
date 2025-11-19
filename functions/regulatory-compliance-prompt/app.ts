@@ -96,3 +96,6 @@ export const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComp
 export const promptRegulatoryComplianceEntrypoint = new PromptRegulatoryComplianceEntrypoint(
   promptRegulatoryComplianceCommandHandler
 );
+
+// Export Lambda handler for production
+export { handler } from './handlers/lambda.handler';

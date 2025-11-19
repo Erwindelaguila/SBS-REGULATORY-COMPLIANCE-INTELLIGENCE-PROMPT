@@ -14,7 +14,10 @@ export const handler: APIGatewayProxyHandler = async (
   try {
     // Parsear body de la petición
     const body = JSON.parse(event.body || "{}");
-    const { markdownContent, application } = body;
+    
+    // ✅ Aceptar "markdownContent" (nuevo) o "markdown" (frontend actual)
+    const markdownContent = body.markdownContent || body.markdown;
+    const application = body.application;
 
     // Validar que existe markdownContent
     if (!markdownContent || typeof markdownContent !== "string") {
@@ -22,10 +25,9 @@ export const handler: APIGatewayProxyHandler = async (
         statusCode: 400,
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
-          error: "Missing required field: markdownContent (must be string)",
+          error: "Missing required field: markdownContent or markdown (must be string)",
         }),
       };
     }
@@ -51,9 +53,6 @@ export const handler: APIGatewayProxyHandler = async (
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "Content-Disposition": `attachment; filename="${result.filename}"`,
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
       },
       isBase64Encoded: true, // 👈 CRÍTICO: sin esto, el archivo se corrompe
       body: base64Result,
@@ -65,7 +64,6 @@ export const handler: APIGatewayProxyHandler = async (
       statusCode: 500,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         error: "Error generating document",
