@@ -559,6 +559,39 @@ Resources:
         EntryPoints:
           - app.ts
 
+  GenerateWarrantyDocumentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/generate-warranty-document/
+      Handler: app.handler
+      Runtime: nodejs22.x
+      MemorySize: 512
+      Timeout: 30
+      Architectures:
+        - x86_64
+      FunctionUrlConfig:
+        AuthType: NONE
+        InvokeMode: BUFFERED
+        Cors:
+          AllowMethods:
+            - "POST"
+            - "OPTIONS"
+          AllowHeaders:
+            - "*"
+          AllowOrigins:
+            - "*"
+      Environment:
+        Variables:
+          NODE_OPTIONS: "--enable-source-maps"
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   RegulatoryCompliancePromptFunctionRole:
     Type: AWS::IAM::Role
     Properties:
