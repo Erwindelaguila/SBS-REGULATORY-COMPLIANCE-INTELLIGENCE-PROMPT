@@ -1,0 +1,43 @@
+{
+  "name": "generate-warranty-document",
+  "version": "1.0.0",
+  "description": "Lambda function to generate Word documents for WARRANTY observations",
+  "main": "app.js",
+  "author": "SBS",
+  "license": "MIT",
+  "scripts": {
+    "unit": "jest",
+    "lint": "eslint --fix",
+    "format": "prettier --write src/**/*.ts --config ./.prettierrc",
+    "compile": "tsc",
+    "test": "npm run compile && npm run unit"
+  },
+  "dependencies": {
+    "@middy/core": "^6.4.1",
+    "@middy/http-header-normalizer": "^6.4.1",
+    "@middy/http-json-body-parser": "^6.4.1",
+    "docx": "^8.5.0",
+    "esbuild": "^0.14.14",
+    "pino": "^9.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@jest/globals": "^29.2.0",
+    "@types/aws-lambda": "^8.10.92",
+    "@types/jest": "^29.2.0",
+    "@types/node": "^20.5.7",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^4.0.0",
+    "globals": "^16.3.0",
+    "jest": "^29.2.1",
+    "jiti": "^2.5.1",
+    "prettier": "^2.5.1",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "typescript-eslint": "^8.38.0"
+  }
+}
