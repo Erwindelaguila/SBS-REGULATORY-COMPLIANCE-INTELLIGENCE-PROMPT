@@ -152,8 +152,14 @@ export class DocumentGeneratorService {
     const headerLine = tableLines[0];
     const headers = headerLine
       .split('|')
-      .map(h => h.trim())
-      .filter(h => h.length > 0);
+      .map(h => h.trim());
+    
+    // Remover primer y último elemento si están vacíos (son los | externos)
+    if (headers.length > 0 && headers[0] === '') headers.shift();
+    if (headers.length > 0 && headers[headers.length - 1] === '') headers.pop();
+    
+    // NO filtrar celdas vacías - mantenerlas para preservar la estructura
+    // .filter(h => h.length > 0);  ← ELIMINADO: esto borraba las celdas vacías
     
     // La segunda línea es el separador (ignorarla)
     // Las demás líneas son datos
@@ -169,7 +175,7 @@ export class DocumentGeneratorService {
           new TableCell({
             children: [
               new Paragraph({
-                children: [new TextRun({ text: header, bold: true })],
+                children: [new TextRun({ text: header || ' ', bold: header.length > 0 })],  // ← Si vacía, poner espacio sin negrita
                 alignment: AlignmentType.CENTER,
               })
             ],
@@ -186,8 +192,14 @@ export class DocumentGeneratorService {
     dataLines.forEach(dataLine => {
       const cells = dataLine
         .split('|')
-        .map(c => c.trim())
-        .filter(c => c.length > 0);
+        .map(c => c.trim());
+      
+      // Remover primer y último elemento si están vacíos (son los | externos)
+      if (cells.length > 0 && cells[0] === '') cells.shift();
+      if (cells.length > 0 && cells[cells.length - 1] === '') cells.pop();
+      
+      // NO filtrar celdas vacías - mantenerlas para preservar la estructura
+      // .filter(c => c.length > 0);  ← ELIMINADO
       
       if (cells.length > 0) {
         tableRows.push(
@@ -196,7 +208,7 @@ export class DocumentGeneratorService {
               new TableCell({
                 children: [
                   new Paragraph({
-                    text: cellContent,
+                    text: cellContent || ' ',  // ← Si está vacía, poner un espacio
                     alignment: AlignmentType.LEFT,
                   })
                 ],

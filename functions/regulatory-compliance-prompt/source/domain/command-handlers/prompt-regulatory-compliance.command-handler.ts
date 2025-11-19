@@ -7,11 +7,12 @@ import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
 import { SourceProcessRepository } from "../ports/source_process.repository";
 import { SystemPrompt } from "../models/supervisory-record.model";
-import { MOCK_PROMPTS } from "../mocks/mock-prompts";
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
   fileKeys: string[];
+  isDocumentGenerated?: boolean;  // Flag to indicate if a document was generated (for frontend button)
+  documentType?: 'WARRANTY' | 'LETTER';  // Type of document generated
 }
 
 export class PromptRegulatoryComplianceCommandHandler {
@@ -206,7 +207,7 @@ export class PromptRegulatoryComplianceCommandHandler {
         
         // If it has title + metadata or typical document sections, consider it a document
         if ((hasTitle && hasMetadata) || hasHallazgos || hasAnexos) {
-          this.logger.info('📄 Found previous Markdown document in conversation history');
+          this.logger.info('Found previous Markdown document in conversation history');
           return content;
         }
       }
@@ -309,10 +310,35 @@ export class PromptRegulatoryComplianceCommandHandler {
       // Extract previous Markdown if it exists (for modifications)
       const previousMarkdown = isModification ? this.extractPreviousDocumentMarkdown(command.conversationHistory) : null;
       
-      // Select appropriate prompt based on intent
-      const systemPrompt = isDocumentGeneration 
-        ? MOCK_PROMPTS.WARRANTY_DOCUMENT_GENERATOR
-        : MOCK_PROMPTS.WARRANTY_DEFAULT;
+      // Select appropriate prompt type based on intent
+      const promptType = isDocumentGeneration ? "DOCUMENT_GENERATOR" : "CHAT";
+      
+      // Get system prompt from DynamoDB using new method that supports promptType filtering
+      // Note: All prompts are under application "SUPTECH" regardless of analysis type
+      const systemPrompts = await this.systemPromptsRepository.getSystemPromptByType(
+        "SUPTECH",           // ✅ Hardcoded - all prompts are SUPTECH application
+        "WARRANTY",          // documentType
+        promptType           // "CHAT" or "DOCUMENT_GENERATOR"
+      );
+      
+      // Validate that prompt was found in DynamoDB
+      if (systemPrompts.length === 0) {
+        const errorMsg = `No WARRANTY prompt found in DynamoDB for promptType: ${promptType}. Please check that prompts are inserted in DynamoDB.`;
+        this.logger.error({ 
+          promptType,
+          application: "SUPTECH",
+          documentType: "WARRANTY"
+        }, errorMsg);
+        throw new Error(errorMsg);
+      }
+      
+      const systemPrompt = systemPrompts[0].prompt;
+      this.logger.info({ 
+        systemPromptId: systemPrompts[0].id,
+        promptType,
+        version: systemPrompts[0].version,
+        promptLength: systemPrompt.length
+      }, "✅ System prompt loaded from DynamoDB for WARRANTY");
       
       // Build the question with context if modifying
       let enhancedQuestion = command.question;
@@ -380,10 +406,18 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
       const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, reducedFilesData);
       const processedResponse = new PassThrough();
 
-      chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+      // Si es generación de documento, NO aplicar filtro de delimitador (puede cortar el Markdown)
+      if (isDocumentGeneration) {
+        chatResponse.pipe(processedResponse);
+      } else {
+        chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+      }
+
       return {
         result: processedResponse,
-        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+        fileKeys: command.recordKeys,
+        isDocumentGenerated: isDocumentGeneration,  // ← NUEVA BANDERA
+        documentType: 'WARRANTY'  // ← TIPO DE DOCUMENTO
       };
     } catch (err) {
       // TODO: Handle specific errors and their codes

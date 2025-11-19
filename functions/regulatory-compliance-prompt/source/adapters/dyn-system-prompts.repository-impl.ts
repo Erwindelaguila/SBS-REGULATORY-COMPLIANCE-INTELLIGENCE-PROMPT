@@ -39,4 +39,34 @@ export class DynSystemPromptsRepositoryImpl implements SystemPromptsRepository {
       throw err;
     }
   }
+
+  async getSystemPromptByType(application: string, documentType: string, promptType: string): Promise<SystemPrompt[]> {
+    try {
+      const queryResult = await this.dynamoDBDocumentClient.send(
+        new QueryCommand({
+          TableName: this.tableName,
+          IndexName: "application-documentType-index",
+          KeyConditionExpression: " #application = :application AND #documentType = :documentType ",
+          ExpressionAttributeValues: {
+            ":documentType": documentType,
+            ":application": application,
+            ":promptType": promptType,
+          },
+          ExpressionAttributeNames: {
+            "#application": "application",
+            "#documentType": "documentType",
+            "#promptType": "promptType",
+          },
+          FilterExpression: "#promptType = :promptType",
+        }),
+      );
+      return (queryResult?.Items ?? []) as SystemPrompt[];
+    } catch (err) {
+      // TODO: Handle specific DynamoDB errors
+      if (err instanceof Error) {
+        this.logger.error({ err }, "Failed to get system prompts by type");
+      }
+      throw err;
+    }
+  }
 }

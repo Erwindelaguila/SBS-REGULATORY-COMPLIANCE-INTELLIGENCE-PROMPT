@@ -18,8 +18,36 @@ export class BedrockAIChatClient implements AIChatClient {
   ) {}
 
   private async *streamToAsyncIterator(bedrockStream: AsyncIterable<ConverseStreamOutput>) {
-    for await (const chunk of bedrockStream) {
-      yield chunk.contentBlockDelta?.delta?.text || "";
+    let totalChunks = 0;
+    let totalChars = 0;
+    
+    try {
+      for await (const chunk of bedrockStream) {
+        const text = chunk.contentBlockDelta?.delta?.text || "";
+        totalChunks++;
+        totalChars += text.length;
+        
+        // Log cada 50 chunks
+        if (totalChunks % 50 === 0) {
+          this.logger.debug({ totalChunks, totalChars }, "Streaming progress");
+        }
+        
+        // Verificar si el stream terminó normalmente
+        if (chunk.messageStop) {
+          this.logger.info({ 
+            totalChunks, 
+            totalChars, 
+            stopReason: chunk.messageStop.stopReason 
+          }, "Stream stopped by Claude");
+        }
+        
+        yield text;
+      }
+      
+      this.logger.info({ totalChunks, totalChars }, "Stream completed successfully");
+    } catch (error) {
+      this.logger.error({ error, totalChunks, totalChars }, "Stream error");
+      throw error;
     }
   }
 
