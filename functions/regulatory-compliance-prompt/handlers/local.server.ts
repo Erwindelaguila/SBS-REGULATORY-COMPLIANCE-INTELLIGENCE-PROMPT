@@ -84,18 +84,38 @@ app.post("/", async (req: Request, res: Response) => {
 
     let fullResponse = "";
 
-    // Stream response
+    // Check if document was generated (for WARRANTY only)
+    const isDocumentGenerated = promptRegComplOutput.isDocumentGenerated || false;
+    const documentType = promptRegComplOutput.documentType || null;
+
+    console.log(`  📄 Document generated: ${isDocumentGenerated} (${documentType})`);
+
+    // Send headers to indicate if document was generated
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("X-Document-Generated", isDocumentGenerated.toString());
+    if (documentType) {
+      res.setHeader("X-Document-Type", documentType);
+    }
+    
+    // ✅ EXPONER headers personalizados para que el frontend pueda leerlos (CORS)
+    res.setHeader("Access-Control-Expose-Headers", "X-Document-Generated, X-Document-Type");
 
     for await (const chunk of promptRegComplOutput.result) {
       fullResponse += chunk;
       res.write(chunk);
+      
+      // Log progreso cada 5000 caracteres
+      if (fullResponse.length % 5000 < chunk.length) {
+        console.log(`  📊 Progress: ${fullResponse.length} chars...`);
+      }
     }
 
     res.end();
 
     console.log(`  ✅ Response sent (${fullResponse.length} chars)`);
+    console.log(`  📝 First 200 chars: ${fullResponse.substring(0, 200)}`);
+    console.log(`  📝 Last 200 chars: ${fullResponse.substring(fullResponse.length - 200)}`);
   } catch (error) {
     if (error instanceof Error) {
       console.log(`  ❌ Error: ${error.message}`);
