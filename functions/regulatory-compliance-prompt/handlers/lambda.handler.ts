@@ -16,7 +16,19 @@ export const handler = awslambda.streamifyResponse(
     logger.debug({ body }, "Body");
 
     try {
-      const messageId = (body.sessionId as string).split(":")[1];
+      // ✅ Validar campos obligatorios (igual que local.server.ts)
+      if (!body.sessionId || !body.application || !body.question) {
+        const errorMessage = JSON.stringify({
+          error: "Missing required fields: sessionId, application, question",
+        });
+        responseStream.write(errorMessage);
+        responseStream.end();
+        return;
+      }
+
+      // ✅ Generar messageId desde sessionId (igual que local.server.ts)
+      const messageId = (body.sessionId as string).split(":")[1] || body.sessionId;
+      
       const promptRegComplOutput = await promptRegulatoryComplianceEntrypoint.handleRequest({
         messageId, // SessionId
         application: body.application as string, // LETTER, WARRANTY, DOCUMENT_LOAD
@@ -30,20 +42,22 @@ export const handler = awslambda.streamifyResponse(
       const documentType = promptRegComplOutput.documentType || null;
 
       logger.debug({ isDocumentGenerated, documentType }, "Document generation status");
-
-      // Set custom headers before streaming (if document was generated)
-      if (isDocumentGenerated) {
-        responseStream.setContentType("text/plain; charset=utf-8");
-        // Note: Custom headers in streaming responses might have limited support
-        // Consider using metadata in the response body if headers don't work
+      
+      // ✅ SOLO PARA WARRANTY: Enviar palabra clave AL INICIO (antes del streaming)
+      if (body.application === "WARRANTY" && isDocumentGenerated) {
+        responseStream.write('[DOCUMENT_GENERATED]\n\n');
+        logger.debug("Added [DOCUMENT_GENERATED] keyword at START for WARRANTY");
       }
-
+      
       let fullResponse = "";
 
       for await (const chunk of promptRegComplOutput.result) {
-        // logger.debug({ chunk }, "Chunk");
-        fullResponse += chunk;
-        responseStream.write(chunk);
+        // ✅ Convertir Buffer a string si es necesario
+        const chunkText = typeof chunk === 'string' ? chunk : chunk.toString('utf-8');
+        fullResponse += chunkText;
+        
+        // Enviar chunk normal (texto plano para todos)
+        responseStream.write(chunkText);
       }
 
       logger.debug("Finish writing response");
