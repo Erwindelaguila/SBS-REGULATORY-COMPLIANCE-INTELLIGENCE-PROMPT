@@ -29,16 +29,15 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
     
     const ccStr = cc.trim();
     
-    // Si contiene notación científica (E o e), convertir a número y luego a string
+
     if (ccStr.includes('E') || ccStr.includes('e')) {
       try {
         const numericValue = parseFloat(ccStr);
         if (!isNaN(numericValue)) {
-          // Convertir a entero (sin decimales) y luego a string
           return Math.floor(numericValue).toString();
         }
       } catch {
-        return ccStr; // Si falla, devolver original
+        return ccStr; 
       }
     }
     
@@ -58,7 +57,6 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
         const ccRaw = row["CC"] || row["cc"];
         const cc = this.normalizeCC(ccRaw);
         
-        // Filtrar: solo procesar registros con CC válido 
         if (!cc || !CONSTANTS.CC_FILTERS.includes(cc)) {
           continue;
         }
@@ -77,7 +75,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
           ...(codgr !== null && { CODGR: codgr }),
           CGR: convertToInteger(row["CGR"] || row["cgr"]),
           TGR: this.getString(row, "TGR"),
-          CC: cc, // Usar el CC normalizado
+          CC: cc,
           REPEV: cleanNombreField(this.getString(row, "REPEV") || ""),
           POL: this.getString(row, "POL"),
           VCONS: convertToNumber(row["VCONS"] || row["vcons"]),
