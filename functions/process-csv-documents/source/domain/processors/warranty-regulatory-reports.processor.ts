@@ -14,11 +14,36 @@ import { cleanSupervisedEntityId } from "../../utils/letter-validation.utils";
 import { CsvProcessorError } from "../errors/csv-processor.error";
 
 const CONSTANTS = {
-  CC_FILTER: "8414020102",
+  CC_FILTERS: ["8414020102", "8404020000000000", "8404020102010000"], 
 };
 
 export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
   constructor(private readonly logger: Logger) { }
+
+  /**
+   * Normaliza el código CC que puede venir en notación científica desde Excel
+   * Ejemplo: "8.40402E+15" -> "8404020000000000"
+   */
+  private normalizeCC(cc: string | null): string | null {
+    if (!cc) return null;
+    
+    const ccStr = cc.trim();
+    
+    // Si contiene notación científica (E o e), convertir a número y luego a string
+    if (ccStr.includes('E') || ccStr.includes('e')) {
+      try {
+        const numericValue = parseFloat(ccStr);
+        if (!isNaN(numericValue)) {
+          // Convertir a entero (sin decimales) y luego a string
+          return Math.floor(numericValue).toString();
+        }
+      } catch {
+        return ccStr; // Si falla, devolver original
+      }
+    }
+    
+    return ccStr;
+  }
 
   async process(recordData: CsvRecordData): Promise<Record<string, any>[]> {
     try {
@@ -30,8 +55,11 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
       const processedRecords: Record<string, any>[] = [];
 
       for (const row of rows) {
-        const cc = row["CC"] || row["cc"];
-        if (cc !== CONSTANTS.CC_FILTER) {
+        const ccRaw = row["CC"] || row["cc"];
+        const cc = this.normalizeCC(ccRaw);
+        
+        // Filtrar: solo procesar registros con CC válido 
+        if (!cc || !CONSTANTS.CC_FILTERS.includes(cc)) {
           continue;
         }
 
@@ -49,7 +77,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
           ...(codgr !== null && { CODGR: codgr }),
           CGR: convertToInteger(row["CGR"] || row["cgr"]),
           TGR: this.getString(row, "TGR"),
-          CC: this.getString(row, "CC"),
+          CC: cc, // Usar el CC normalizado
           REPEV: cleanNombreField(this.getString(row, "REPEV") || ""),
           POL: this.getString(row, "POL"),
           VCONS: convertToNumber(row["VCONS"] || row["vcons"]),
@@ -110,7 +138,7 @@ export class WarrantyRegulatoryReportsProcessor implements CsvProcessor {
       }
 
       this.logger.info(
-        { total: rows.length, filtered: processedRecords.length },
+        { total: rows.length, processed: processedRecords.length },
         "Processed WARRANTY REGULATORY records",
       );
 
