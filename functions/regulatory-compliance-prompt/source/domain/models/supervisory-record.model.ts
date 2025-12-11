@@ -2,7 +2,7 @@ export type SystemPrompt = {
   id: string;
   prompt: string;
   version: string;
-  promptType: string;  // CHAT, DOCUMENT_GENERATOR, etc.
-  createdAt: string; // ISO string
+  promptType: string; 
+  createdAt: string; 
   updatedAt: string;
 }

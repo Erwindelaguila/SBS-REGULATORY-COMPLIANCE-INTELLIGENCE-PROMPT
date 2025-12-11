@@ -6,13 +6,13 @@ import { PromptRegulatoryComplianceCommand, ConversationMessage } from "../comma
 import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
 import { SourceProcessRepository } from "../ports/source_process.repository";
-import { SystemPrompt } from "../models/supervisory-record.model";
+
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
   fileKeys: string[];
-  isDocumentGenerated?: boolean;  // Flag to indicate if a document was generated (for frontend button)
-  documentType?: 'WARRANTY' | 'LETTER';  // Type of document generated
+  isDocumentGenerated?: boolean; 
+  documentType?: 'WARRANTY' | 'LETTER'; 
 }
 
 export class PromptRegulatoryComplianceCommandHandler {
@@ -46,7 +46,6 @@ export class PromptRegulatoryComplianceCommandHandler {
         const value = Buffer.from(chunk).toString();
         temporalConcatenatedChunks += value;
 
-        // console.log({ value, temporalConcatenatedChunks }, "Chunk");
 
         const firstNumeralIndex = temporalConcatenatedChunks.indexOf("#");
         if (firstNumeralIndex === -1) {
@@ -191,21 +190,19 @@ export class PromptRegulatoryComplianceCommandHandler {
 
 
   private extractPreviousDocumentMarkdown(conversationHistory: ConversationMessage[]): string | null {
-    // Search backwards through conversation history for assistant responses
+
     for (let i = conversationHistory.length - 1; i >= 0; i--) {
       const message = conversationHistory[i];
       
       if (message.role === 'assistant') {
         const content = message.content.trim();
         
-        // Check if it looks like our Markdown document structure
-        // Look for key indicators: title with #, metadata with **, sections
+
         const hasTitle = content.match(/^#\s+.+$/m);
         const hasMetadata = content.match(/\*\*Entidad:\*\*/i) || content.match(/\*\*Período:\*\*/i);
         const hasHallazgos = content.match(/##\s+Hallazgos/i);
         const hasAnexos = content.match(/##\s+Anexos/i);
         
-        // If it has title + metadata or typical document sections, consider it a document
         if ((hasTitle && hasMetadata) || hasHallazgos || hasAnexos) {
           this.logger.info('Found previous Markdown document in conversation history');
           return content;
@@ -301,33 +298,26 @@ export class PromptRegulatoryComplianceCommandHandler {
     command: PromptRegulatoryComplianceCommand,
   ): Promise<PromptRegComplCommandHandlerOutput> {
     try {
-      // Detect if user wants to generate a document
+
       const isDocumentGeneration = this.detectDocumentGenerationIntent(command.question);
-      
-      // Detect if user wants to modify a previous document
       const isModification = this.detectModificationIntent(command.question);
-      
-      // Extract previous Markdown if it exists (for modifications)
       const previousMarkdown = isModification ? this.extractPreviousDocumentMarkdown(command.conversationHistory) : null;
-      
-      // Select appropriate prompt type based on intent
       const promptType = isDocumentGeneration ? "DOCUMENT_GENERATOR" : "CHAT";
+      const documentType = command.application || "WARRANTY";
       
-      // Get system prompt from DynamoDB using new method that supports promptType filtering
-      // Note: All prompts are under application "SUPTECH" regardless of analysis type
+
       const systemPrompts = await this.systemPromptsRepository.getSystemPromptByType(
-        "SUPTECH",           // ✅ Hardcoded - all prompts are SUPTECH application
-        "WARRANTY",          // documentType
-        promptType           // "CHAT" or "DOCUMENT_GENERATOR"
+        "SUPTECH",          
+        documentType,       
+        promptType          
       );
       
-      // Validate that prompt was found in DynamoDB
       if (systemPrompts.length === 0) {
-        const errorMsg = `No WARRANTY prompt found in DynamoDB for promptType: ${promptType}. Please check that prompts are inserted in DynamoDB.`;
+        const errorMsg = `No ${documentType} prompt found in DynamoDB for promptType: ${promptType}. Please check that prompts are inserted in DynamoDB.`;
         this.logger.error({ 
           promptType,
           application: "SUPTECH",
-          documentType: "WARRANTY"
+          documentType
         }, errorMsg);
         throw new Error(errorMsg);
       }
@@ -336,11 +326,12 @@ export class PromptRegulatoryComplianceCommandHandler {
       this.logger.info({ 
         systemPromptId: systemPrompts[0].id,
         promptType,
+        documentType,
         version: systemPrompts[0].version,
         promptLength: systemPrompt.length
-      }, "✅ System prompt loaded from DynamoDB for WARRANTY");
+      }, `System prompt loaded from DynamoDB for ${documentType}`);
       
-      // Build the question with context if modifying
+
       let enhancedQuestion = command.question;
       if (isModification && previousMarkdown) {
         enhancedQuestion = `DOCUMENTO PREVIO EN MARKDOWN:
@@ -393,7 +384,7 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
       );
       const reducedFilesData: FileData[] = this.solveBigJsonFile(filesData);
 
-      // Log para debugging: ver qué datos tiene el análisis
+  
       this.logger.info({
         totalFiles: reducedFilesData.length,
         firstFileSample: reducedFilesData[0] ? {
@@ -402,11 +393,10 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
         } : null
       }, "Data being sent to AI for document generation");
 
-      // Get AI chat response with enhanced question (includes previous JSON if modifying)
       const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, reducedFilesData);
       const processedResponse = new PassThrough();
 
-      // Si es generación de documento, NO aplicar filtro de delimitador (puede cortar el Markdown)
+
       if (isDocumentGeneration) {
         chatResponse.pipe(processedResponse);
       } else {
@@ -416,11 +406,10 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
       return {
         result: processedResponse,
         fileKeys: command.recordKeys,
-        isDocumentGenerated: isDocumentGeneration,  // ← NUEVA BANDERA
-        documentType: 'WARRANTY'  // ← TIPO DE DOCUMENTO
+        isDocumentGenerated: isDocumentGeneration, 
+        documentType: 'WARRANTY'  
       };
     } catch (err) {
-      // TODO: Handle specific errors and their codes
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
       }
@@ -430,17 +419,63 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
 
   private async handleLetter(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
     try {
-      // Get system prompts
 
-      const systemPrompts = await this.systemPromptsRepository.getSystemPrompt(command.application, "DEFAULT");
-      let systemPrompt = "";
-      if (systemPrompts.length > 0) {
-        systemPrompt = systemPrompts[0].prompt;
-        this.logger.info({ systemPrompt: systemPrompts[0].id }, "System prompt");
+      const isDocumentGeneration = this.detectDocumentGenerationIntent(command.question);
+      const isModification = this.detectModificationIntent(command.question);
+      const previousMarkdown = isModification ? this.extractPreviousDocumentMarkdown(command.conversationHistory) : null;
+      const promptType = isDocumentGeneration ? "DOCUMENT_GENERATOR" : "CHAT";
+      const documentType = "LETTER";
+    
+      const systemPrompts = await this.systemPromptsRepository.getSystemPromptByType(
+        "SUPTECH",
+        documentType,
+        promptType
+      );
+      
+      if (systemPrompts.length === 0) {
+        const errorMsg = `No ${documentType} prompt found in DynamoDB for promptType: ${promptType}. Please check that prompts are inserted in DynamoDB.`;
+        this.logger.error({ 
+          promptType,
+          application: "SUPTECH",
+          documentType
+        }, errorMsg);
+        throw new Error(errorMsg);
+      }
+      
+      const systemPrompt = systemPrompts[0].prompt;
+      this.logger.info({ 
+        systemPromptId: systemPrompts[0].id,
+        promptType,
+        documentType,
+        version: systemPrompts[0].version,
+        promptLength: systemPrompt.length
+      }, `System prompt loaded from DynamoDB for ${documentType}`);
+      
+
+      let enhancedQuestion = command.question;
+      if (isModification && previousMarkdown) {
+        enhancedQuestion = `DOCUMENTO PREVIO EN MARKDOWN:
+${previousMarkdown}
+
+INSTRUCCIÓN DE MODIFICACIÓN:
+${command.question}
+
+Por favor, modifica el documento previo según la instrucción. Mantén toda la estructura Markdown y solo actualiza lo solicitado.`;
+        
+        this.logger.info({
+          isModification: true,
+          hasPreviousMarkdown: true,
+          originalQuestionLength: command.question.length,
+          enhancedQuestionLength: enhancedQuestion.length
+        }, "Modification mode activated with previous Markdown context");
+      } else if (isModification && !previousMarkdown) {
+        this.logger.warn({ isModification: true, hasPreviousMarkdown: false }, 
+          "User requested modification but no previous document found in history");
       }
 
       this.logger.debug({ systemPrompt }, "System prompt");
-      // Get sources from dynamo
+      
+
       const sources = await this.sourceProcessLetterAnalysisRepository.getSources(
         command.recordKeys,
         command.application,
@@ -450,7 +485,7 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
         throw new Error("No se encuentra sources que puedan llamar a un archivo");
       }
 
-      // Get files by keys
+ 
       const filesData = await this.documentsFileStorageClientForLetterAnalysis.getFilesByKey(sources);
       this.logger.info(
         {
@@ -463,22 +498,18 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
         "Files data",
       );
 
-      // Get AI chat response
-      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, command.question, filesData);
+      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, filesData);
       const processedResponse = new PassThrough();
 
       chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
 
-      /*   return {
-                   result: processedResponse,
-                   fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
-               };*/
       return {
         result: processedResponse,
-        fileKeys: command.recordKeys, // Assuming we return the same keys as part of the response
+        fileKeys: command.recordKeys,
+        isDocumentGenerated: isDocumentGeneration,
+        documentType: isDocumentGeneration ? documentType : undefined,
       };
     } catch (err) {
-      // TODO: Handle specific errors and their codes
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to handle PromptRegulatoryComplianceCommand");
       }

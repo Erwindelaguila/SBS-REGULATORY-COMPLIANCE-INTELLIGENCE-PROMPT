@@ -32,7 +32,7 @@ export class DynSystemPromptsRepositoryImpl implements SystemPromptsRepository {
       );
       return (queryResult?.Items ?? []) as SystemPrompt[];
     } catch (err) {
-      // TODO: Handle specific DynamoDB errors
+
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to get system prompts");
       }
@@ -60,9 +60,9 @@ export class DynSystemPromptsRepositoryImpl implements SystemPromptsRepository {
           FilterExpression: "#promptType = :promptType",
         }),
       );
+      
       return (queryResult?.Items ?? []) as SystemPrompt[];
     } catch (err) {
-      // TODO: Handle specific DynamoDB errors
       if (err instanceof Error) {
         this.logger.error({ err }, "Failed to get system prompts by type");
       }

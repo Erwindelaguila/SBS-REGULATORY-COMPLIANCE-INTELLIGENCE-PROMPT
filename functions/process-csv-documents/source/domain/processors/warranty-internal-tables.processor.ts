@@ -29,6 +29,7 @@ export class WarrantyInternalTablesProcessor implements CsvProcessor {
         const codigoCliente = this.getString(row, "Codigo_Cliente") || this.getString(row, "codigo_cliente");
         const codigoGarantia = this.getString(row, "Codigo_Garantia") || this.getString(row, "codigo_garantia");
 
+        // Generate CODGR by concatenating codigoCliente + codigoGarantia (padded to 3 digits)
         const codgr = `${codigoCliente}${String(codigoGarantia).padStart(3, "0")}`;
 
         const record: Record<string, any> = {
