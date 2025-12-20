@@ -13,7 +13,7 @@ export const parseExcelContent = (content: Uint8Array): Record<string, string>[]
 
   const rows = XLSX.utils.sheet_to_json<Record<string, any>>(worksheet, {
     defval: null,
-    raw: false,
+    raw: true,
     dateNF: "dd/mm/yyyy",
   });
 
