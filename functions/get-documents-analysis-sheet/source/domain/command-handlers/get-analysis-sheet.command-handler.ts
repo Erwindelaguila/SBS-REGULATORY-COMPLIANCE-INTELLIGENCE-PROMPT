@@ -158,23 +158,24 @@ export class GetAnalysisSheetCommandHandler {
       { key: 'cumplimiento', width: 60 },
     ];
 
-    // Style header row (row 2) - Apply ONLY to columns A-E
+    // Style header row (row 2) - Apply ONLY to columns A-E (gris con texto negro bold)
     const headerRow = worksheet.getRow(2);
     ['A', 'B', 'C', 'D', 'E'].forEach(col => {
       const cell = headerRow.getCell(col);
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.font = { bold: true, color: { argb: 'FF000000' } }; // Negro bold
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'FF4F81BD' },
+        fgColor: { argb: 'FFD9D9D9' }, // Gris
       };
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     });
     headerRow.height = 30;
 
-    // Helper function to apply bold to "Cláusula X.XX:" in Excel rich text
+    // Helper function to apply bold to "Cláusula X.XX:" and "Art° X:" or "Art° X-X:" in Excel rich text
     const applyClauseBold = (text: string) => {
-      const regex = /(Cláusula\s+\d+\.\d+:)/g;
+      // Captura: "Cláusula X.Y.Z:" (múltiples niveles) o "Art° X-Y-Zc:" (con ° o Â° y letra opcional)
+      const regex = /(Cláusula\s+\d+(?:\.\d+)+:|Art[°Â]\s*\d+(?:-\d+[a-z]?)*:)/g;
       const parts: Array<{ text: string; font?: { bold: boolean } }> = [];
       let lastIndex = 0;
       let match;
