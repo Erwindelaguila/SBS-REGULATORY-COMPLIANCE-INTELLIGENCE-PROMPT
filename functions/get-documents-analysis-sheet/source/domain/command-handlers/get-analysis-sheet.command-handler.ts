@@ -113,6 +113,21 @@ export class GetAnalysisSheetCommandHandler {
       throw new GetAnalysisSheetError("Invalid analysis data structure");
     }
 
+    // Ordenar criterios por ID (1, 2, 2a, 2b, 3, 3a, 3b, etc.)
+    criterios.sort((a, b) => {
+      const parseId = (id: string) => {
+        const match = id.match(/^(\d+)([a-z]?)$/);
+        if (!match) return { num: 0, letter: '' };
+        return { num: parseInt(match[1]), letter: match[2] };
+      };
+      
+      const aId = parseId(a.id);
+      const bId = parseId(b.id);
+      
+      if (aId.num !== bId.num) return aId.num - bId.num;
+      return aId.letter.localeCompare(bId.letter);
+    });
+
     this.logger.info({ criteriaCount: criterios.length }, "Generating Excel for subordinated debt analysis");
 
     // Create Excel with ExcelJS
@@ -157,19 +172,54 @@ export class GetAnalysisSheetCommandHandler {
     });
     headerRow.height = 30;
 
+    // Helper function to apply bold to "Cláusula X.XX:" in Excel rich text
+    const applyClauseBold = (text: string) => {
+      const regex = /(Cláusula\s+\d+\.\d+:)/g;
+      const parts: Array<{ text: string; font?: { bold: boolean } }> = [];
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        // Add text before match
+        if (match.index > lastIndex) {
+          parts.push({ text: text.substring(lastIndex, match.index) });
+        }
+        // Add bold clause
+        parts.push({ text: match[0], font: { bold: true } });
+        lastIndex = regex.lastIndex;
+      }
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        parts.push({ text: text.substring(lastIndex) });
+      }
+
+      return parts.length > 0 ? { richText: parts } : text;
+    };
+
     // Add data rows
     criterios.forEach((criterio: any) => {
       const cumplimientoText = criterio.cumplimiento === "Cumple" 
         ? "Cumple" 
         : `${criterio.cumplimiento}: ${criterio.justificacion}`;
 
-      worksheet.addRow({
+      const row = worksheet.addRow({
         id: criterio.id,
         basilea: criterio.basilea,
         resolucion_sbs: criterio.resolucion_sbs,
         contrato: criterio.contrato,
         cumplimiento: cumplimientoText,
       });
+
+      // Apply bold formatting to clauses
+      const basileaCell = row.getCell('basilea');
+      basileaCell.value = applyClauseBold(criterio.basilea);
+
+      const resolucionCell = row.getCell('resolucion_sbs');
+      resolucionCell.value = applyClauseBold(criterio.resolucion_sbs);
+
+      const contratoCell = row.getCell('contrato');
+      contratoCell.value = applyClauseBold(criterio.contrato);
     });
 
     // Style data rows
