@@ -16,12 +16,15 @@ import { DynSystemPromptsRepository } from "./adapters/dyn-system-prompts.reposi
 import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
 import { SQS } from "@aws-sdk/client-sqs";
 import { SqsQueueClient } from "./adapters/sqs-queue.client";
+import { DynamoDBSubordinatedDebtCriteriaRepository } from "./adapters/dynamodb-subordinated-debt-criteria.repository";
+import { DynamoDBSubordinatedDebtAnalysisRepository } from "./adapters/dynamodb-subordinated-debt-analysis.repository";
 
 const logger = pino({
   level: "debug",
 });
 
 const dynamoDBDocumentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+const dynamoDBClient = new DynamoDBClient({});
 const s3Client = new S3Client({});
 const bedrockRuntimeClient = new BedrockRuntimeClient({});
 const sqsClient = new SQS({});
@@ -62,6 +65,18 @@ const eventProducerClient = new KafkaProducerAdapter(
 const aiChatClient = new BedrockAIChatClient(bedrockRuntimeClient, process.env.BEDROCK_MODEL_ID!, logger);
 const sqsQueueClient = new SqsQueueClient(sqsClient, process.env.INTERACTION_WEBSOCKET_QUEUE_URL!, logger);
 
+const subordinatedDebtCriteriaRepository = new DynamoDBSubordinatedDebtCriteriaRepository(
+  dynamoDBClient,
+  process.env.SUBORDINATED_DEBT_CRITERIA_TABLE_NAME!,
+  logger,
+);
+
+const subordinatedDebtAnalysisRepository = new DynamoDBSubordinatedDebtAnalysisRepository(
+  dynamoDBClient,
+  process.env.SUBORDINATED_DEBT_ANALYSIS_TABLE_NAME!,
+  logger,
+);
+
 const processDocumentsCommandHandler = new ProcessDocumentsCommandHandler(
   recordsFileStorageClient,
   processedRecordsFileStorageClient,
@@ -71,6 +86,8 @@ const processDocumentsCommandHandler = new ProcessDocumentsCommandHandler(
   systemPromptsRepository,
   supervisoryRecordMetadataRepository,
   eventProducerClient,
+  subordinatedDebtCriteriaRepository,
+  subordinatedDebtAnalysisRepository,
   logger,
 );
 

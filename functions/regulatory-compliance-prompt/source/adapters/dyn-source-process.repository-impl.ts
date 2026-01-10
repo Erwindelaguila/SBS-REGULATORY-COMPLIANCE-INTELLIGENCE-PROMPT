@@ -36,7 +36,11 @@ export class DynSourceProcessRepositoryImpl implements SourceProcessRepository {
         for (const item of resp.Items ?? []) {
           // Verifica si tiene type === 'processed' y existe el campo data
           this.logger.debug({ source, item }, "Encontrado item con type=processed y data presente");
-          finallyResponses.push(flow==="LETTER"?this.solveKeyWhenIsLetter(item):this.solveKeyWhenIsWarranty(item))
+          finallyResponses.push(
+            flow === "LETTER" ? this.solveKeyWhenIsLetter(item) :
+            flow === "SUBORDINATED_DEBT" ? this.solveKeyWhenIsSubordinatedDebt(item) :
+            this.solveKeyWhenIsWarranty(item)
+          )
 
         }
       } while (ExclusiveStartKey);
@@ -62,6 +66,12 @@ export class DynSourceProcessRepositoryImpl implements SourceProcessRepository {
     return "";
   }
 
-
+  private solveKeyWhenIsSubordinatedDebt(item: any): string {
+    if (item?.type === "subordinated-debt.analysis.finished" && item?.data) {
+      console.log("data", item?.data);
+      return item.data?.key ?? "";
+    }
+    return "";
+  }
 
 }

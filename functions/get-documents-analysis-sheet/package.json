@@ -19,6 +19,7 @@
     "@middy/http-header-normalizer": "^6.4.1",
     "@middy/http-json-body-parser": "^6.4.1",
     "esbuild": "^0.14.14",
+    "exceljs": "^4.4.0",
     "pino": "^9.7.0",
     "xlsx": "^0.18.5"
   },

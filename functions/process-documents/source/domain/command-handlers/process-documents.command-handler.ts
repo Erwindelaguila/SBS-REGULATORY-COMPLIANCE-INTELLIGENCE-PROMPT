@@ -23,6 +23,8 @@ import { RecordFileData } from "../model/record-file-data";
 import { SupervisoryRecordMetadataRepository } from "../ports/supervisory-record-metadata.repository";
 import { QueueClient } from "../ports/queue.client";
 import { Notification } from "../model/notification";
+import { SubordinatedDebtCriteriaRepository } from "../ports/subordinated-debt-criteria.repository";
+import { SubordinatedDebtAnalysisRepository } from "../ports/subordinated-debt-analysis.repository";
 
 export class ProcessDocumentsCommandHandler {
   private readonly prompt =
@@ -37,6 +39,8 @@ export class ProcessDocumentsCommandHandler {
     private readonly systemPromptsRepository: SystemPromptsRepository,
     private readonly supervisoryRecordMetadataRepository: SupervisoryRecordMetadataRepository,
     private readonly eventProducerClient: EventProducerClient,
+    private readonly subordinatedDebtCriteriaRepository: SubordinatedDebtCriteriaRepository,
+    private readonly subordinatedDebtAnalysisRepository: SubordinatedDebtAnalysisRepository,
     private readonly logger: Logger,
   ) {}
 
@@ -134,7 +138,144 @@ export class ProcessDocumentsCommandHandler {
       };
     });
   }
+  async processSubordinatedDebtCompliance(recordFileDataMap: Map<string, RecordFileData>): Promise<void> {
+    const recordData = Array.from(recordFileDataMap.entries())
+      .filter(([_, recordFileData]) => recordFileData.application === Application.SUBORDINATED_DEBT)
+      .map(([_, recordFileData]) => recordFileData);
 
+    if (recordData.length === 0) {
+      this.logger.info("No subordinated debt records to process");
+      return;
+    }
+
+    this.logger.info(
+      { records: recordData.map((record) => record.recordId) },
+      "Processing subordinated debt compliance",
+    );
+
+    // Obtener criterios regulatorios desde DynamoDB
+    const allCriteria = await this.subordinatedDebtCriteriaRepository.getAllCriteria();
+    
+    // Filtrar solo criterios de tipo "Local"
+    const criteria = allCriteria.filter(c => c.tipo === "Local");
+    
+    // Ordenar criterios por campo 'orden' para mantener la secuencia correcta
+    criteria.sort((a, b) => a.orden - b.orden);
+    
+    this.logger.info(
+      { totalCriteria: allCriteria.length, localCriteria: criteria.length, criteriaOrder: criteria.map(c => c.id) }, 
+      "Loaded and sorted regulatory criteria (Local only)"
+    );
+
+    if (criteria.length === 0) {
+      this.logger.error("No Local criteria found in database. Cannot process subordinated debt compliance.");
+      return;
+    }
+
+    // Procesar cada documento
+    for (const record of recordData) {
+      try {
+        // Notificar inicio de análisis
+        await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
+          source: record.recordId,
+          id: 2,
+          type: "subordinated-debt.analysis.started",
+          data: { key: "" },
+          createdAt: new Date().toISOString(),
+        });
+
+        // Actualizar supervisory-records con analysisStarted para que frontend vea el cambio
+        await this.supervisoryRecordsRepository.updateRecord(
+          record.supervisedEntityId,
+          record.recordId,
+          { analysisStarted: new Date().toISOString() }
+        );
+
+        // Enviar notificación WebSocket de inicio
+        await this.queueClient.sendMessages([
+          {
+            id: uuidv4(),
+            message: {
+              sessionId: record.sessionId,
+              type: NotificationType.SubordinatedDebtAnalysisStarted,
+              data: {
+                recordId: record.recordId,
+                parentId: record.parentId,
+              },
+            },
+          },
+        ]);
+
+        // Analizar cumplimiento con Bedrock
+        const analysisResult = await this.aiChatClient.analyzeSubordinatedDebtCompliance(
+          record.file.bytes,
+          criteria,
+        );
+
+        this.logger.info(
+          {
+            recordId: record.recordId,
+            criteriaAnalyzed: analysisResult.criterios.length,
+          },
+          "Completed subordinated debt analysis",
+        );
+
+        // Guardar resultado en S3
+        const analysisKey = `analysis/${record.recordId}.json`;
+        const analysisBytes = Buffer.from(JSON.stringify(analysisResult, null, 2), "utf-8");
+        await this.processedRecordsFileStorageClient.saveFile(analysisKey, analysisBytes, "application/json");
+
+        // Guardar resultado en DynamoDB
+        await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
+          source: record.recordId,
+          id: 2,
+          type: "subordinated-debt.analysis.finished",
+          data: { key: analysisKey },
+          createdAt: new Date().toISOString(),
+        });
+
+        // Actualizar supervisory-records con analysisFinished para que frontend vea el cambio
+        await this.supervisoryRecordsRepository.updateRecord(
+          record.supervisedEntityId,
+          record.recordId,
+          { analysisFinished: new Date().toISOString() }
+        );
+
+        // Enviar notificación WebSocket de finalización
+        await this.queueClient.sendMessages([
+          {
+            id: uuidv4(),
+            message: {
+              sessionId: record.sessionId,
+              type: NotificationType.SubordinatedDebtAnalysisFinished,
+              data: {
+                recordId: record.recordId,
+                parentId: record.parentId,
+                analysisKey,
+              },
+            },
+          },
+        ]);
+
+        this.logger.info({ recordId: record.recordId, analysisKey }, "Saved subordinated debt analysis");
+      } catch (error) {
+        this.logger.error(error, `Failed to process subordinated debt compliance for ${record.recordId}`);
+
+        // Guardar estado de error
+        try {
+          await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
+            source: record.recordId,
+            id: 2,
+            type: "subordinated-debt.analysis.error",
+            data: { key: "" },
+            createdAt: new Date().toISOString(),
+          });
+        } catch (saveError) {
+          this.logger.error(saveError, "Failed to save error state");
+        }
+      }
+    }
+  }
   async handle(command: ProcessDocumentsCommand): Promise<void> {
     let filesRecordsMap: Map<string, RecordFileData>;
     try {
@@ -148,6 +289,12 @@ export class ProcessDocumentsCommandHandler {
       await this.extractMetadata(filesRecordsMap);
     } catch (error) {
       this.logger.error(error, "Failed to extract metadata");
+    }
+
+    try {
+      await this.processSubordinatedDebtCompliance(filesRecordsMap);
+    } catch (error) {
+      this.logger.error(error, "Failed to process subordinated debt compliance");
     }
 
     try {

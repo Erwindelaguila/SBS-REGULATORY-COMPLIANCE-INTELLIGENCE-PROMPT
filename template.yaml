@@ -82,6 +82,9 @@ Parameters:
   LetterITTableName:
     Type: String
     Default: table
+  SubordinatedDebtCriteriaTableName:
+    Type: String
+    Default: table
 
 Resources:
   CsvBucket:
@@ -143,10 +146,31 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
-  # NOTE: WARRANTY and LETTER DynamoDB tables already exist in AWS
-  # They are managed separately and should not be modified by this template
-  # Removed: WarrantyRegulatoryReportsTable, WarrantyInternalTablesTable,
-  #          BankGuaranteeRegulatoryReportsTable, BankGuaranteeInternalTablesTable
+  # NOTE: WARRANTY and LETTER DynamoDB tables already exist in QA AWS environment
+  # These tables are currently managed by CloudFormation in the QA stack
+  # They were intentionally left out of this template to avoid GSI update conflicts
+  # The tables will continue to exist and be used by the Lambda functions via table name parameters
+
+  SubordinatedDebtCriteriaTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref SubordinatedDebtCriteriaTableName
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: tipo
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+        - AttributeName: tipo
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Purpose
+          Value: SubordinatedDebtComplianceCriteria
+        - Key: Source
+          Value: BasileaIII-SBS-3950-2022
 
   GetDocumentsAnalysisSheetFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -162,6 +186,7 @@ Resources:
       Environment:
         Variables:
           S3_CSV_BUCKET_NAME: !Ref CsvAnalysisBucketName
+          S3_PROCESSED_DOCUMENTS_BUCKET_NAME: !Ref ProcessedRecordsBucketName
       Events:
         GetDocumentAnalysisSheetApi:
           Type: Api
@@ -241,10 +266,13 @@ Resources:
           BEDROCK_MODEL_ID: !Ref BedrockModelId
           S3_DOCUMENTS_BUCKET_NAME: !Ref RecordsBucketName
           S3_CSV_BUCKET_NAME: !Ref CsvAnalysisBucketName
+          S3_PROCESSED_DOCUMENTS_BUCKET_NAME: !Ref ProcessedRecordsBucketName
           S3_WARRANTY_REPORTS_BUCKET_NAME: !Ref WarrantyReportsBucketName
           S3_LETTER_REPORTS_BUCKET_NAME: !Ref LetterReportsBucketName
           WARRANTY_ANALYSIS_TABLE_NAME: !Ref WarrantyAnalysisTableName
           LETTER_ANALYSIS_TABLE_NAME: !Ref LetterAnalysisTableName
+          SUBORDINATED_DEBT_ANALYSIS_TABLE_NAME: "subordinated-debt-analysis"
+          SUPERVISORY_RECORDS_TABLE_NAME: !Ref SupervisoryRecordsTableName
           SAVE_CSV_FLAG: !Ref SaveCSVFlag
     Metadata: # Manage esbuild properties
       BuildMethod: esbuild
@@ -259,9 +287,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: 891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo:processdocumentsfunction-1b7514fc2cf6-process-documents.v1
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:9fa6c298889ae27b55cebcd4e80fa3f7d04da311a40100e36cfe2e5bced25fa4"
       MemorySize: 1024
-      Timeout: 60
+      Timeout: 180
       Architectures:
         - x86_64
       Role: !GetAtt ProcessDocumentsFunctionRole.Arn
@@ -277,6 +305,8 @@ Resources:
           NODE_OPTIONS: "--enable-source-maps"
           INTERACTION_WEBSOCKET_QUEUE_URL: !Ref InteractionWebSocketQueueUrl
           HOME: "/tmp"
+          SUBORDINATED_DEBT_CRITERIA_TABLE_NAME: "SubordinatedDebtCriteriaTable"
+          SUBORDINATED_DEBT_ANALYSIS_TABLE_NAME: "subordinated-debt-analysis"
       Events:
         DynamoDBTrigger:
           Type: DynamoDB

@@ -12,6 +12,7 @@ import { S3FileStorageClient } from "./source/adapters/s3-file-storage.client";
 import { PromptRegulatoryComplianceCommandHandler } from "./source/domain/command-handlers/prompt-regulatory-compliance.command-handler";
 import { PromptRegulatoryComplianceEntrypoint } from "./source/entrypoints/prompt-regulatory-compliance.entrypoint";
 import { DynSourceProcessRepositoryImpl } from "./source/adapters/dyn-source-process.repository-impl";
+import { DynSupervisoryRecordsRepository } from "./source/adapters/dyn-supervisory-records.repository";
 
 /**
  * DI Container - Dependency Injection Container
@@ -78,6 +79,26 @@ export const sourceProcessWarrantyRepository = new DynSourceProcessRepositoryImp
   logger
 );
 
+// Deuda subordinada
+export const subordinatedDebtAnalysisFileStorageClient = new S3FileStorageClient(
+  new S3Client({}),
+  process.env.S3_PROCESSED_DOCUMENTS_BUCKET_NAME!,
+  logger
+);
+
+export const subordinatedDebtSourceProcessRepository = new DynSourceProcessRepositoryImpl(
+  dynamoDBDocumentClient,
+  process.env.SUBORDINATED_DEBT_ANALYSIS_TABLE_NAME!,
+  logger
+);
+
+// Supervisory Records Repository
+export const supervisoryRecordsRepository = new DynSupervisoryRecordsRepository(
+  dynamoDBDocumentClient,
+  process.env.SUPERVISORY_RECORDS_TABLE_NAME!,
+  logger
+);
+
 // Command Handler
 export const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComplianceCommandHandler(
   documentsFileStorageClient,
@@ -87,6 +108,9 @@ export const promptRegulatoryComplianceCommandHandler = new PromptRegulatoryComp
   systemPromptsRepository,
   sourceProcessLetterRepository,
   sourceProcessWarrantyRepository,
+  subordinatedDebtSourceProcessRepository,
+  subordinatedDebtAnalysisFileStorageClient,
+  supervisoryRecordsRepository,
   aiChatClient,
   process.env.SAVE_CSV_FLAG === "true",
   logger
