@@ -113,8 +113,13 @@ Tu tarea es analizar el contrato de deuda subordinada proporcionado y determinar
 
 Para CADA criterio debes:
 1. Buscar evidencia en el documento (fragmentos de texto exactos)
-2. Determinar si cumple, no cumple, o no aplica
+2. Determinar si cumple o no cumple
 3. Proporcionar justificación clara
+
+REGLAS DE EVALUACIÓN CRÍTICAS:
+- Si la "Resolución SBS 3950-2022" dice "undefined", "null", o está vacía → SIEMPRE marca como "No cumple"
+- Si NO encuentras la cláusula específica en el contrato → marca como "No cumple"
+- SOLO marca "Cumple" si AMBOS criterios están claramente definidos Y el contrato los cumple
 
 IMPORTANTE: Tu respuesta DEBE ser un objeto JSON válido con la siguiente estructura exacta:
 {
@@ -123,7 +128,7 @@ IMPORTANTE: Tu respuesta DEBE ser un objeto JSON válido con la siguiente estruc
       "id": "1",
       "tipo": "Local",
       "basilea": "texto del criterio basilea",
-      "resolucion_sbs": "texto del criterio SBS",
+      "resolucion_sbs": "texto del criterio SBS o 'undefined' si no existe",
       "cumplimiento": "Cumple" | "No cumple",
       "contrato": "Cláusula X.Y: texto exacto del documento que evidencia el cumplimiento o incumplimiento, DEBE COMENZAR con el número de cláusula si existe (ej: 'Cláusula 4.26: texto...')",
       "justificacion": "explicación breve de por qué cumple o no cumple"
@@ -134,7 +139,7 @@ IMPORTANTE: Tu respuesta DEBE ser un objeto JSON válido con la siguiente estruc
 IMPORTANTE sobre el campo 'contrato': 
 - SIEMPRE debe incluir la referencia de la cláusula al inicio si existe en el documento (ejemplo: "Cláusula 4.26: texto...")
 - Si el texto está en múltiples cláusulas, incluye todas las referencias
-- Si no hay número de cláusula explícito, simplemente incluye el texto encontrado
+- Si no hay número de cláusula explícito, simplemente incluye el texto encontrado o "No se encontró información específica"
 
 Responde SOLO con el JSON. Sin texto adicional antes o después.`;
 

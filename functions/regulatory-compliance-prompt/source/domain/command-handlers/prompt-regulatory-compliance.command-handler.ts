@@ -593,7 +593,7 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
       const criterios = analysisJson.criterios;
 
       // Ordenar criterios por ID (1, 2, 2a, 2b, 3, 3a, 3b, etc.)
-      criterios.sort((a, b) => {
+      criterios.sort((a: any, b: any) => {
         const parseId = (id: string) => {
           const match = id.match(/^(\d+)([a-z]?)$/);
           if (!match) return { num: 0, letter: '' };
@@ -625,9 +625,10 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
           ? "Cumple" 
           : `${criterio.cumplimiento}: ${criterio.justificacion}`;
         
-        const basileaFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.basilea));
-        const resolucionFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.resolucion_sbs));
-        const contratoFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.contrato));
+        // Aplicar bold ANTES de escapar, luego escapar todo excepto los ** del bold
+        const basileaFormatted = this.boldClauseNumber(criterio.basilea);
+        const resolucionFormatted = this.boldClauseNumber(criterio.resolucion_sbs);
+        const contratoFormatted = this.boldClauseNumber(criterio.contrato);
         
         markdown += `| ${criterio.id} | ${basileaFormatted} | ${resolucionFormatted} | ${contratoFormatted} | ${cumplimientoText} |\n`;
       }
@@ -713,7 +714,8 @@ Si el usuario pide un "reporte" o "tabla de criterios", indícale que puede soli
   }
 
   private boldClauseNumber(text: string): string {
-    // Busca "Cláusula X.XX:" y lo envuelve en negrita
-    return text.replace(/(Cláusula\s+\d+\.\d+:)/g, '**$1**');
+    // Busca "Cláusula X.Y.Z:" (múltiples niveles) y "Art° X-Y-Zc:" (con letra opcional) y los envuelve en negrita
+    // Incluye Art°, Art░, ArtÂ para manejar diferentes codificaciones Unicode
+    return text.replace(/(Cláusula\s+\d+(?:\.\d+)+:|Art[°░Â]\s*\d+(?:-\d+[a-z]?)*:)/g, '**$1**');
   }
 }

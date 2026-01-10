@@ -14,7 +14,7 @@ type PromptRegComplOutPut = {
   result: Readable;
   fileKeys: string[];
   isDocumentGenerated?: boolean;  // Flag to indicate if a document was generated
-  documentType?: 'WARRANTY' | 'LETTER';  // Type of document generated
+  documentType?: 'WARRANTY' | 'LETTER' | 'SUBORDINATED_DEBT';  // Type of document generated
 };
 
 export class PromptRegulatoryComplianceEntrypoint {
