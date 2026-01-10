@@ -26,10 +26,11 @@ Process CSV Documents Handler
 ## Tipos de Procesamiento
 
 ### WARRANTY REGULATORY
-- **Fuente**: Archivos CSV con reportes regulatorios de garantías
-- **Filtro**: Solo registros con CC="8414020102"
+- **Fuente**: Archivos CSV con reportes regulatorios de garantías (BDC03A)
 - **Tabla destino**: Definida en `WARRANTY_RR_TABLE`
 - **Características**:
+  - Procesa TODOS los tipos de garantías (hipotecas, vehículos, fondos de garantía, etc.)
+  - Compatible con Bancos (código 04) y Cajas Municipales (código 14)
   - Extracción de período del nombre de archivo (YYYYMM)
   - División de valores por moneda (PEN, USD, OTH)
   - Conversión de fechas Excel a formato dd/MM/yyyy

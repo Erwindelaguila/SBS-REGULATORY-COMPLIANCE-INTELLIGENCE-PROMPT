@@ -6,13 +6,14 @@ import { PromptRegulatoryComplianceCommand, ConversationMessage } from "../comma
 import { PassThrough, Readable, Transform } from "stream";
 import { DocumentType } from "../models/document-type";
 import { SourceProcessRepository } from "../ports/source_process.repository";
+import { SupervisoryRecordsRepository } from "../ports/supervisory-records.repository";
 
 
 export interface PromptRegComplCommandHandlerOutput {
   result: Readable;
   fileKeys: string[];
   isDocumentGenerated?: boolean; 
-  documentType?: 'WARRANTY' | 'LETTER'; 
+  documentType?: 'WARRANTY' | 'LETTER' | 'SUBORDINATED_DEBT'; 
 }
 
 export class PromptRegulatoryComplianceCommandHandler {
@@ -26,6 +27,9 @@ export class PromptRegulatoryComplianceCommandHandler {
     private readonly systemPromptsRepository: SystemPromptsRepository,
     private readonly sourceProcessLetterAnalysisRepository: SourceProcessRepository,
     private readonly sourceProcessWarrantyRepository: SourceProcessRepository,
+    private readonly subordinatedDebtSourceProcessRepository: SourceProcessRepository,
+    private readonly subordinatedDebtAnalysisFileStorageClient: FileStorageClient,
+    private readonly supervisoryRecordsRepository: SupervisoryRecordsRepository,
     private readonly aiChatClient: AIChatClient,
     private readonly saveCSVFlag: boolean,
     private readonly logger: Logger,
@@ -517,12 +521,172 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
     }
   }
 
+  private async handleSubordinatedDebt(
+    command: PromptRegulatoryComplianceCommand,
+  ): Promise<PromptRegComplCommandHandlerOutput> {
+    try {
+      this.logger.info(
+        { recordKeys: command.recordKeys, question: command.question },
+        "Handling subordinated debt compliance query",
+      );
+
+      // Detectar si el usuario pide reporte de criterios
+      const isReportRequest = this.detectSubordinatedDebtReportRequest(command.question);
+
+      if (isReportRequest) {
+        this.logger.info("Detected subordinated debt report request - generating criteria table");
+        return await this.generateSubordinatedDebtReport(command);
+      }
+
+      // Si no es reporte, usar chat normal con el análisis como contexto
+      return await this.handleSubordinatedDebtChat(command);
+    } catch (err) {
+      this.logger.error(err, "Failed to handle subordinated debt");
+      if (err instanceof Error) {
+        this.logger.error({ err }, "Failed to handle subordinated debt");
+      }
+      throw err;
+    }
+  }
+
+  private detectSubordinatedDebtReportRequest(question: string): boolean {
+    const reportKeywords = [
+      'reporte',
+      'criterios',
+      'cumplimiento',
+      'tabla',
+      'resultados',
+      'análisis',
+      'analisis',
+      'resumen',
+      'dame el reporte',
+      'muestra criterios',
+      'ver criterios',
+    ];
+
+    const lowerQuestion = question.toLowerCase();
+    return reportKeywords.some(keyword => lowerQuestion.includes(keyword));
+  }
+
+  private async generateSubordinatedDebtReport(
+    command: PromptRegulatoryComplianceCommand,
+  ): Promise<PromptRegComplCommandHandlerOutput> {
+    try {
+      // Obtener el recordKey del primer documento (debería haber solo 1)
+      const recordKey = command.recordKeys[0];
+      
+      // Mapear filename a S3 key usando el repository
+      const sources = await this.subordinatedDebtSourceProcessRepository.getSources([recordKey], "SUBORDINATED_DEBT");
+      if (sources.length === 0) {
+        throw new Error(`No analysis found for record ${recordKey}`);
+      }
+      const analysisKey = sources[0];
+      this.logger.info({ analysisKey }, "Reading subordinated debt analysis from S3");
+      
+      const analysisFiles = await this.subordinatedDebtAnalysisFileStorageClient.getFilesByKey([analysisKey]);
+      
+      if (analysisFiles.length === 0) {
+        throw new Error(`No analysis found for record ${recordKey}`);
+      }
+
+      const analysisJson = JSON.parse(Buffer.from(analysisFiles[0].bytes).toString('utf-8'));
+      const criterios = analysisJson.criterios;
+
+      this.logger.info({ criteriaCount: criterios.length }, "Loaded criteria results");
+
+     
+      const record = await this.supervisoryRecordsRepository.getRecordById(recordKey);
+      const fileName = record.key; 
+
+      // Generar tabla markdown
+      let markdown = `# Reporte de Cumplimiento - Deuda Subordinada\n\n`;
+      markdown += `**Documento analizado:** ${fileName}\n\n`;
+      markdown += `## Tabla de Resultados de Criterios Regulatorios\n\n`;
+      markdown += `| N° | Basilea III | Resolución SBS N° 3950-2022 | Contrato | Cumplimiento |\n`;
+      markdown += `|----|-------------|----------------------------|----------|-------------|\n`;
+
+      for (const criterio of criterios) {
+        const cumplimientoText = criterio.cumplimiento === "Cumple" 
+          ? "Cumple" 
+          : `${criterio.cumplimiento}: ${criterio.justificacion}`;
+        
+        markdown += `| ${criterio.id} | ${this.escapeMarkdown(criterio.basilea)} | ${this.escapeMarkdown(criterio.resolucion_sbs)} | ${this.escapeMarkdown(criterio.contrato)} | ${cumplimientoText} |\n`;
+      }
+
+      markdown += `\n---\n\n`;
+      markdown += `**tabla de resultados**\n\n`; 
+      markdown += `Para descargar este reporte en formato Excel, haz clic en el botón "Descargar Excel" que aparece arriba.`;
+
+      // Retornar como stream
+      const responseStream = new PassThrough();
+      responseStream.write(markdown);
+      responseStream.end();
+
+      return {
+        result: responseStream,
+        fileKeys: [analysisKey],
+        isDocumentGenerated: false,
+        documentType: 'SUBORDINATED_DEBT'
+      };
+    } catch (err) {
+      this.logger.error(err, "Failed to generate subordinated debt report");
+      throw err;
+    }
+  }
+
+  private async handleSubordinatedDebtChat(
+    command: PromptRegulatoryComplianceCommand,
+  ): Promise<PromptRegComplCommandHandlerOutput> {
+    try {
+      const recordKey = command.recordKeys[0];
+      const sources = await this.subordinatedDebtSourceProcessRepository.getSources([recordKey], "SUBORDINATED_DEBT");
+      if (sources.length === 0) {
+        throw new Error(`No analysis found for record ${recordKey}`);
+      }
+      const analysisKey = sources[0];
+      
+      const analysisFiles = await this.subordinatedDebtAnalysisFileStorageClient.getFilesByKey([analysisKey]);
+      
+      const systemPrompt = `Eres un experto en análisis de cumplimiento regulatorio de instrumentos de deuda subordinada según normativa de Basilea III y la Resolución SBS Nº 3950-2022.
+
+Tienes acceso al análisis completo de cumplimiento de criterios regulatorios del contrato de deuda subordinada. Responde preguntas específicas sobre el documento, criterios de cumplimiento, y proporciona explicaciones claras.
+
+Si el usuario pide un "reporte" o "tabla de criterios", indícale que puede solicitarlo con frases como "dame el reporte de criterios" o "muestra la tabla de cumplimiento".`;
+
+      const chatResponse = await this.aiChatClient.getChatResponse(
+        systemPrompt,
+        command.question,
+        analysisFiles,
+      );
+
+      const processedResponse = new PassThrough();
+      chatResponse.pipe(this.readData(command.messageId)).pipe(this.filterNotUserMessages()).pipe(processedResponse);
+
+      return {
+        result: processedResponse,
+        fileKeys: [analysisKey],
+        isDocumentGenerated: false,
+        documentType: 'SUBORDINATED_DEBT'
+      };
+    } catch (err) {
+      this.logger.error(err, "Failed to handle subordinated debt chat");
+      throw err;
+    }
+  }
+
+  private escapeMarkdown(text: string): string {
+    // Escape pipe characters for markdown tables
+    return text.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  }
+
   async handle(command: PromptRegulatoryComplianceCommand): Promise<PromptRegComplCommandHandlerOutput> {
     switch (command.application) {
       case "LETTER":
         return this.handleLetter(command);
       case "WARRANTY":
         return this.handleWarranty(command);
+      case "SUBORDINATED_DEBT":
+        return this.handleSubordinatedDebt(command);
       case "DOCUMENT_LOAD":
       default:
         return this.handleDocumentLoad(command);

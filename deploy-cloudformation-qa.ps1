@@ -1,28 +1,19 @@
-# Despliegue directo usando AWS CloudFormation (bypass SAM CLI)
+# Despliegue directo usando AWS CloudFormation para QA (bypass SAM CLI)
 # NO requiere permisos ECR porque no reconstruye imagenes Docker
-
-param(
-    [Parameter(Mandatory=$true)]
-    [ValidateSet("dev", "qa")]
-    [string]$Environment
-)
+# Despliega los cambios de WARRANTY (conversationHistory + documentGenerator)
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "Despliegue WARRANTY usando CloudFormation CLI directamente" -ForegroundColor Cyan
-Write-Host "Entorno: $Environment" -ForegroundColor Cyan
+Write-Host "Despliegue WARRANTY a QA usando CloudFormation CLI" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 $ErrorActionPreference = "Stop"
 
-# Configuracion basada en entorno
+# Configuracion QA
 $STACK_NAME = "suptech-regulatory-compliance-prompt"
 $REGION = "us-east-1"
-$PROFILE = "protecso-$Environment"
+$PROFILE = "protecso-qa-admin"
 $TEMPLATE_FILE = ".aws-sam/build/template.yaml"
-
-Write-Host "Usando profile: $PROFILE" -ForegroundColor Magenta
-Write-Host ""
 
 # 1. Build
 Write-Host "[1/4] Construyendo funciones..." -ForegroundColor Yellow
@@ -40,7 +31,7 @@ Write-Host ""
 Write-Host "[2/4] Empaquetando y subiendo artefactos a S3..." -ForegroundColor Yellow
 
 $PACKAGED_TEMPLATE = ".aws-sam/build/packaged-template.yaml"
-$S3_BUCKET = "aws-sam-cli-managed-default-samclisourcebucket-qtgovvlujnht"
+$S3_BUCKET = "aws-sam-cli-managed-default-samclisourcebucket-g1i8vkbqprcs"
 
 aws cloudformation package `
     --template-file $TEMPLATE_FILE `
@@ -63,27 +54,29 @@ Write-Host "[3/4] Creando changeset..." -ForegroundColor Yellow
 
 $CHANGESET_NAME = "warranty-deploy-$(Get-Date -Format 'yyyyMMddHHmmss')"
 
-# Parametros del stack
+# Parametros del stack QA
 $PARAMETERS = @(
     "ParameterKey=PromptsTableName,ParameterValue=system-prompts",
     "ParameterKey=WarrantyAnalysisTableName,ParameterValue=preferred-warranty-analysis",
     "ParameterKey=LetterAnalysisTableName,ParameterValue=letter-analysis",
     "ParameterKey=BedrockModelId,ParameterValue=us.anthropic.claude-sonnet-4-20250514-v1:0",
-    "ParameterKey=RecordsBucketName,ParameterValue=supervisory-records",
-    "ParameterKey=CsvAnalysisBucketName,ParameterValue=supervisory-records-csv-analysis",
-    "ParameterKey=ProcessedRecordsBucketName,ParameterValue=processed-supervisory-records",
-    "ParameterKey=WarrantyReportsBucketName,ParameterValue=warranty-analysis-reports",
-    "ParameterKey=LetterReportsBucketName,ParameterValue=letter-analysis-reports",
+    "ParameterKey=RecordsBucketName,ParameterValue=supervisory-records-qa",
+    "ParameterKey=CsvAnalysisBucketName,ParameterValue=supervisory-records-csv-analysis-qa",
+    "ParameterKey=ProcessedRecordsBucketName,ParameterValue=processed-supervisory-records-qa",
+    "ParameterKey=WarrantyReportsBucketName,ParameterValue=warranty-analysis-reports-qa",
+    "ParameterKey=LetterReportsBucketName,ParameterValue=letter-analysis-reports-qa",
     "ParameterKey=SupervisoryRecordsTableName,ParameterValue=supervisory-records",
-    "ParameterKey=InteractionWebSocketQueueUrl,ParameterValue=https://sqs.us-east-1.amazonaws.com/891377295186/interaction-websocket-queue",
-    "ParameterKey=SupervisoryRecordsStreamArn,ParameterValue=arn:aws:dynamodb:us-east-1:891377295186:table/supervisory-records/stream/2025-08-11T07:18:45.417",
-    "ParameterKey=PdfJsLayer,ParameterValue=arn:aws:lambda:us-east-1:891377295186:layer:pdfjs-dist-layer:1",
-    "ParameterKey=StageName,ParameterValue=develop",
-    "ParameterKey=KafkaBrokers,ParameterValue=34.236.156.4:9092",
-    "ParameterKey=WarrantyRRTableName,ParameterValue=processed-warranty-regulatory-reports",
-    "ParameterKey=WarrantyITTableName,ParameterValue=processed-warranty-internal-tables",
-    "ParameterKey=LetterRRTableName,ParameterValue=processed-bank-guarantee-regulatory-reports",
-    "ParameterKey=LetterITTableName,ParameterValue=processed-bank-guarantee-internal-tables"
+    "ParameterKey=SupervisoryRecordsMetadataTableName,ParameterValue=supervisory-records-metadata",
+    "ParameterKey=InteractionWebSocketQueueUrl,ParameterValue=https://sqs.us-east-1.amazonaws.com/058264428218/interaction-websocket-queue",
+    "ParameterKey=SupervisoryRecordsStreamArn,ParameterValue=arn:aws:dynamodb:us-east-1:058264428218:table/supervisory-records/stream/2025-08-20T06:07:26.305",
+    "ParameterKey=PdfJsLayer,ParameterValue=arn:aws:lambda:us-east-1:058264428218:layer:pdfjs-dist-layer:1",
+    "ParameterKey=StageName,ParameterValue=qa",
+    "ParameterKey=KafkaBrokers,ParameterValue=98.82.186.188:9092",
+    "ParameterKey=WarrantyRRTableName,ParameterValue=warranty-regulatory-reports",
+    "ParameterKey=WarrantyITTableName,ParameterValue=warranty-internal-tables",
+    "ParameterKey=LetterRRTableName,ParameterValue=letter-regulatory-reports",
+    "ParameterKey=LetterITTableName,ParameterValue=letter-internal-tables",
+    "ParameterKey=SubordinatedDebtCriteriaTableName,ParameterValue=subordinated-debt-criteria"
 )
 
 aws cloudformation create-change-set `
@@ -134,14 +127,18 @@ aws cloudformation describe-change-set `
     --output table
 
 Write-Host ""
-Write-Host "IMPORTANTE: Verifica que ProcessDocumentsFunction NO sea DELETE" -ForegroundColor Yellow
+Write-Host "IMPORTANTE: Verifica los cambios antes de ejecutar" -ForegroundColor Yellow
+Write-Host "- RegulatoryCompliancePromptFunction: UPDATE (conversationHistory + documentGenerator)" -ForegroundColor Cyan
+Write-Host "- GenerateWarrantyDocumentFunction: Sin cambios" -ForegroundColor Cyan
+Write-Host "- ProcessDocumentsFunction: Sin cambios (usa imagen ECR existente)" -ForegroundColor Cyan
+Write-Host "- Otras funciones: Sin cambios" -ForegroundColor Cyan
 Write-Host ""
 
 # Preguntar confirmacion
-$confirmation = Read-Host "Ejecutar este changeset? (y/n)"
+$confirmation = Read-Host "Ejecutar este changeset en QA? (y/n)"
 
 if ($confirmation -ne 'y') {
-    Write-Host "[ERROR] Despliegue cancelado" -ForegroundColor Red
+    Write-Host "[SKIP] Despliegue cancelado por usuario" -ForegroundColor Yellow
     
     # Eliminar changeset
     aws cloudformation delete-change-set `
@@ -155,7 +152,7 @@ if ($confirmation -ne 'y') {
 
 # 4. Ejecutar changeset
 Write-Host ""
-Write-Host "[4/4] Ejecutando changeset..." -ForegroundColor Yellow
+Write-Host "[4/4] Ejecutando changeset en QA..." -ForegroundColor Yellow
 
 aws cloudformation execute-change-set `
     --stack-name $STACK_NAME `
@@ -181,8 +178,13 @@ aws cloudformation wait stack-update-complete `
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Green
-    Write-Host "[OK] DESPLIEGUE EXITOSO" -ForegroundColor Green
+    Write-Host "[OK] DESPLIEGUE QA EXITOSO" -ForegroundColor Green
     Write-Host "============================================================" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Cambios desplegados:" -ForegroundColor Cyan
+    Write-Host "- WARRANTY conversationHistory support" -ForegroundColor White
+    Write-Host "- WARRANTY document generator integration" -ForegroundColor White
+    Write-Host "- System prompts: warranty-chat + warranty-document-generator" -ForegroundColor White
     Write-Host ""
     
     # Obtener outputs
@@ -197,7 +199,7 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Host ""
     Write-Host "============================================================" -ForegroundColor Red
-    Write-Host "[ERROR] DESPLIEGUE FALLO" -ForegroundColor Red
+    Write-Host "[ERROR] DESPLIEGUE QA FALLO" -ForegroundColor Red
     Write-Host "============================================================" -ForegroundColor Red
     Write-Host ""
     

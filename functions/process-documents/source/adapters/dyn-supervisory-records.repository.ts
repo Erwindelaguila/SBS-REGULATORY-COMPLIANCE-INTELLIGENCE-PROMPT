@@ -37,4 +37,50 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
       throw err;
     }
   }
+
+  async updateRecord(
+    supervisedEntityId: string,
+    recordId: string,
+    updates: { analysisStarted?: string; analysisFinished?: string }
+  ): Promise<void> {
+    try {
+      const updateExpressions: string[] = [];
+      const expressionAttributeValues: Record<string, any> = {};
+      const expressionAttributeNames: Record<string, string> = {};
+
+      if (updates.analysisStarted) {
+        updateExpressions.push("#analysisStarted = :analysisStarted");
+        expressionAttributeValues[":analysisStarted"] = updates.analysisStarted;
+        expressionAttributeNames["#analysisStarted"] = "analysisStarted";
+      }
+
+      if (updates.analysisFinished) {
+        updateExpressions.push("#analysisFinished = :analysisFinished");
+        expressionAttributeValues[":analysisFinished"] = updates.analysisFinished;
+        expressionAttributeNames["#analysisFinished"] = "analysisFinished";
+      }
+
+      if (updateExpressions.length === 0) {
+        this.logger.debug("No updates to perform");
+        return;
+      }
+
+      const params: UpdateCommandInput = {
+        TableName: this.tableName,
+        Key: {
+          id: recordId,
+        },
+        UpdateExpression: `SET ${updateExpressions.join(", ")}`,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ReturnValues: "ALL_NEW",
+      };
+
+      const result = await this.dynamoDBDocumentClient.send(new UpdateCommand(params));
+      this.logger.debug({ result, updates }, "Successfully updated record analysis timestamps");
+    } catch (err) {
+      this.logger.error({ err }, `Error updating analysis timestamps for record ${recordId}`);
+      throw err;
+    }
+  }
 }
