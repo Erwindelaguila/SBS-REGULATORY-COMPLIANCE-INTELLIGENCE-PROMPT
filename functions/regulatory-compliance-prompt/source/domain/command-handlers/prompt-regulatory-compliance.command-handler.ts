@@ -592,6 +592,21 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
       const analysisJson = JSON.parse(Buffer.from(analysisFiles[0].bytes).toString('utf-8'));
       const criterios = analysisJson.criterios;
 
+      // Ordenar criterios por ID (1, 2, 2a, 2b, 3, 3a, 3b, etc.)
+      criterios.sort((a, b) => {
+        const parseId = (id: string) => {
+          const match = id.match(/^(\d+)([a-z]?)$/);
+          if (!match) return { num: 0, letter: '' };
+          return { num: parseInt(match[1]), letter: match[2] };
+        };
+        
+        const aId = parseId(a.id);
+        const bId = parseId(b.id);
+        
+        if (aId.num !== bId.num) return aId.num - bId.num;
+        return aId.letter.localeCompare(bId.letter);
+      });
+
       this.logger.info({ criteriaCount: criterios.length }, "Loaded criteria results");
 
      
@@ -610,7 +625,11 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
           ? "Cumple" 
           : `${criterio.cumplimiento}: ${criterio.justificacion}`;
         
-        markdown += `| ${criterio.id} | ${this.escapeMarkdown(criterio.basilea)} | ${this.escapeMarkdown(criterio.resolucion_sbs)} | ${this.escapeMarkdown(criterio.contrato)} | ${cumplimientoText} |\n`;
+        const basileaFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.basilea));
+        const resolucionFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.resolucion_sbs));
+        const contratoFormatted = this.boldClauseNumber(this.escapeMarkdown(criterio.contrato));
+        
+        markdown += `| ${criterio.id} | ${basileaFormatted} | ${resolucionFormatted} | ${contratoFormatted} | ${cumplimientoText} |\n`;
       }
 
       markdown += `\n---\n\n`;
@@ -691,5 +710,10 @@ Si el usuario pide un "reporte" o "tabla de criterios", indícale que puede soli
       default:
         return this.handleDocumentLoad(command);
     }
+  }
+
+  private boldClauseNumber(text: string): string {
+    // Busca "Cláusula X.XX:" y lo envuelve en negrita
+    return text.replace(/(Cláusula\s+\d+\.\d+:)/g, '**$1**');
   }
 }
