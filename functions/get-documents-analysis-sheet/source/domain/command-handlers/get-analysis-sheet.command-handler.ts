@@ -130,11 +130,10 @@ export class GetAnalysisSheetCommandHandler {
 
     this.logger.info({ criteriaCount: criterios.length }, "Generating Excel for subordinated debt analysis");
 
-    // Create Excel with ExcelJS
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Local');
+    const tipoContrato = criterios[0]?.tipo || 'Local';
+    const worksheet = workbook.addWorksheet(tipoContrato);
 
-    // Merge cells for title (A1:E1 - exactly 5 columns)
     worksheet.mergeCells('A1:E1');
     const titleCell = worksheet.getCell('A1');
     titleCell.value = 'Criterios para autorizar deuda subordinada – Contrato';
@@ -173,7 +172,8 @@ export class GetAnalysisSheetCommandHandler {
     headerRow.height = 30;
 
     // Helper function to apply bold to "Cláusula X.XX:" and "Art° X:" or "Art° X-X:" in Excel rich text
-    const applyClauseBold = (text: string) => {
+    const applyClauseBold = (text: string | undefined) => {
+      if (!text) return { richText: [{ text: '' }] };
       // Captura: "Cláusula X.Y.Z:" (múltiples niveles) o "Art° X-Y-Zc:" (con ° o Â° y letra opcional)
       const regex = /(Cláusula\s+\d+(?:\.\d+)+:|Art[°Â]\s*\d+(?:-\d+[a-z]?)*:)/g;
       const parts: Array<{ text: string; font?: { bold: boolean } }> = [];
@@ -198,29 +198,62 @@ export class GetAnalysisSheetCommandHandler {
       return parts.length > 0 ? { richText: parts } : text;
     };
 
+    // Helper: Add header prefix only for the FIRST subcriterion of criterion 2
+    const headerTexts: Record<string, string> = {
+      '2': 'Maturity:',
+    };
+    const headerApplied = new Set<string>();
+
     // Add data rows
-    criterios.forEach((criterio: any) => {
+    criterios.forEach((criterio: any, index: number) => {
+      // Check if this is a subcriterion of criterion 2 (e.g., 2a, 2b)
+      const match = criterio.id.match(/^(\d+)([a-z])$/);
+      let displayId = criterio.id;
+      let isFirstSubcriterion = false;
+      const parentId = match ? match[1] : null;
+      
+      if (match && headerTexts[parentId!] && !headerApplied.has(parentId!)) {
+        displayId = `${parentId}\n${criterio.id}`;
+        isFirstSubcriterion = true;
+        headerApplied.add(parentId!);
+      }
+
       const cumplimientoText = criterio.cumplimiento === "Cumple" 
         ? "Cumple" 
         : `${criterio.cumplimiento}: ${criterio.justificacion}`;
 
       const row = worksheet.addRow({
-        id: criterio.id,
-        basilea: criterio.basilea,
+        id: displayId,
+        basilea: criterio.basilea, // Temporary, will be replaced below
         resolucion_sbs: criterio.resolucion_sbs,
         contrato: criterio.contrato,
         cumplimiento: cumplimientoText,
       });
 
-      // Apply bold formatting to clauses
+      // Apply bold formatting to clauses or add header
       const basileaCell = row.getCell('basilea');
-      basileaCell.value = applyClauseBold(criterio.basilea);
+      if (isFirstSubcriterion && headerTexts[parentId!]) {
+        // Create richText with header + basilea text
+        basileaCell.value = {
+          richText: [
+            { text: headerTexts[parentId!] + '\n' },
+            { text: criterio.basilea || '' }
+          ]
+        };
+        basileaCell.alignment = { wrapText: true, vertical: 'top' };
+      } else if (criterio.basilea) {
+        basileaCell.value = applyClauseBold(criterio.basilea);
+      }
 
       const resolucionCell = row.getCell('resolucion_sbs');
-      resolucionCell.value = applyClauseBold(criterio.resolucion_sbs);
+      if (criterio.resolucion_sbs) {
+        resolucionCell.value = applyClauseBold(criterio.resolucion_sbs);
+      }
 
       const contratoCell = row.getCell('contrato');
-      contratoCell.value = applyClauseBold(criterio.contrato);
+      if (criterio.contrato) {
+        contratoCell.value = applyClauseBold(criterio.contrato);
+      }
     });
 
     // Style data rows

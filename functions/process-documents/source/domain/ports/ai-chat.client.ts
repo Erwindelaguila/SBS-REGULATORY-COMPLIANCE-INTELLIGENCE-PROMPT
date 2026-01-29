@@ -3,6 +3,7 @@ import { SubordinatedDebtCriterion } from "./subordinated-debt-criteria.reposito
 
 export interface AIChatClient {
   generateMetadata(systemPrompt: string, userPrompt: string, filesData: RecordFileData[]): Promise<RecordMetadata[]>;
+  detectContractLanguage(pdfBytes: Uint8Array): Promise<"Local" | "Internacional">;
   analyzeSubordinatedDebtCompliance(
     pdfBytes: Uint8Array,
     criteria: SubordinatedDebtCriterion[],
