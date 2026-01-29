@@ -625,12 +625,16 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
           ? "Cumple" 
           : `${criterio.cumplimiento}: ${criterio.justificacion}`;
         
-        // Aplicar bold ANTES de escapar, luego escapar todo excepto los ** del bold
-        const basileaFormatted = this.boldClauseNumber(criterio.basilea);
-        const resolucionFormatted = this.boldClauseNumber(criterio.resolucion_sbs);
-        const contratoFormatted = this.boldClauseNumber(criterio.contrato);
+        // Función para limpiar texto: escapar pipes y eliminar saltos de línea
+        const cleanForTable = (str: string) => str.replace(/\|/g, '\\|').replace(/\n/g, ' ');
         
-        markdown += `| ${criterio.id} | ${basileaFormatted} | ${resolucionFormatted} | ${contratoFormatted} | ${cumplimientoText} |\n`;
+        // Aplicar bold y limpiar
+        const basileaFormatted = cleanForTable(this.boldClauseNumber(criterio.basilea));
+        const resolucionFormatted = cleanForTable(this.boldClauseNumber(criterio.resolucion_sbs));
+        const contratoFormatted = cleanForTable(this.boldClauseNumber(criterio.contrato));
+        const cumplimientoFormatted = cleanForTable(cumplimientoText);
+        
+        markdown += `| ${criterio.id} | ${basileaFormatted} | ${resolucionFormatted} | ${contratoFormatted} | ${cumplimientoFormatted} |\n`;
       }
 
       markdown += `\n---\n\n`;
@@ -713,7 +717,8 @@ Si el usuario pide un "reporte" o "tabla de criterios", indícale que puede soli
     }
   }
 
-  private boldClauseNumber(text: string): string {
+  private boldClauseNumber(text: string | undefined): string {
+    if (!text) return '';
     // Busca "Cláusula X.Y.Z:" (múltiples niveles) y "Art° X-Y-Zc:" (con letra opcional) y los envuelve en negrita
     // Incluye Art°, Art░, ArtÂ para manejar diferentes codificaciones Unicode
     return text.replace(/(Cláusula\s+\d+(?:\.\d+)+:|Art[°░Â]\s*\d+(?:-\d+[a-z]?)*:)/g, '**$1**');

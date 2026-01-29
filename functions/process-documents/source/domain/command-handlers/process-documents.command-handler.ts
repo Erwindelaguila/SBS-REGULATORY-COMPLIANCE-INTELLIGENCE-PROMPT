@@ -153,29 +153,30 @@ export class ProcessDocumentsCommandHandler {
       "Processing subordinated debt compliance",
     );
 
-    // Obtener criterios regulatorios desde DynamoDB
     const allCriteria = await this.subordinatedDebtCriteriaRepository.getAllCriteria();
-    
-    // Filtrar solo criterios de tipo "Local"
-    const criteria = allCriteria.filter(c => c.tipo === "Local");
-    
-    // Ordenar criterios por campo 'orden' para mantener la secuencia correcta
-    criteria.sort((a, b) => a.orden - b.orden);
-    
-    this.logger.info(
-      { totalCriteria: allCriteria.length, localCriteria: criteria.length, criteriaOrder: criteria.map(c => c.id) }, 
-      "Loaded and sorted regulatory criteria (Local only)"
-    );
 
-    if (criteria.length === 0) {
-      this.logger.error("No Local criteria found in database. Cannot process subordinated debt compliance.");
-      return;
-    }
-
-    // Procesar cada documento
     for (const record of recordData) {
       try {
-        // Notificar inicio de análisis
+        const tipoDetectado = await this.aiChatClient.detectContractLanguage(record.file.bytes);
+
+        const criteria = allCriteria.filter(c => c.tipo === tipoDetectado);
+        criteria.sort((a, b) => a.orden - b.orden);
+
+        this.logger.info(
+          { 
+            recordId: record.recordId,
+            totalCriteria: allCriteria.length,
+            tipoDetectado,
+            criteriaCount: criteria.length,
+            criteriaOrder: criteria.map(c => c.id) 
+          }, 
+          `Using ${tipoDetectado} criteria for analysis`
+        );
+
+        if (criteria.length === 0) {
+          throw new Error(`No ${tipoDetectado} criteria found in database. Cannot process subordinated debt compliance.`);
+        }
+
         await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
           source: record.recordId,
           id: 2,
@@ -184,14 +185,12 @@ export class ProcessDocumentsCommandHandler {
           createdAt: new Date().toISOString(),
         });
 
-        // Actualizar supervisory-records con analysisStarted para que frontend vea el cambio
         await this.supervisoryRecordsRepository.updateRecord(
           record.supervisedEntityId,
           record.recordId,
           { analysisStarted: new Date().toISOString() }
         );
 
-        // Enviar notificación WebSocket de inicio
         await this.queueClient.sendMessages([
           {
             id: uuidv4(),
@@ -206,7 +205,6 @@ export class ProcessDocumentsCommandHandler {
           },
         ]);
 
-        // Analizar cumplimiento con Bedrock
         const analysisResult = await this.aiChatClient.analyzeSubordinatedDebtCompliance(
           record.file.bytes,
           criteria,
@@ -215,17 +213,16 @@ export class ProcessDocumentsCommandHandler {
         this.logger.info(
           {
             recordId: record.recordId,
+            tipoDetectado,
             criteriaAnalyzed: analysisResult.criterios.length,
           },
           "Completed subordinated debt analysis",
         );
 
-        // Guardar resultado en S3
         const analysisKey = `analysis/${record.recordId}.json`;
         const analysisBytes = Buffer.from(JSON.stringify(analysisResult, null, 2), "utf-8");
         await this.processedRecordsFileStorageClient.saveFile(analysisKey, analysisBytes, "application/json");
 
-        // Guardar resultado en DynamoDB
         await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
           source: record.recordId,
           id: 2,
@@ -234,14 +231,12 @@ export class ProcessDocumentsCommandHandler {
           createdAt: new Date().toISOString(),
         });
 
-        // Actualizar supervisory-records con analysisFinished para que frontend vea el cambio
         await this.supervisoryRecordsRepository.updateRecord(
           record.supervisedEntityId,
           record.recordId,
           { analysisFinished: new Date().toISOString() }
         );
 
-        // Enviar notificación WebSocket de finalización
         await this.queueClient.sendMessages([
           {
             id: uuidv4(),
@@ -261,7 +256,6 @@ export class ProcessDocumentsCommandHandler {
       } catch (error) {
         this.logger.error(error, `Failed to process subordinated debt compliance for ${record.recordId}`);
 
-        // Guardar estado de error
         try {
           await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
             source: record.recordId,
