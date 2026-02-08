@@ -341,6 +341,17 @@ PRE-VALIDACIONES OBLIGATORIAS (aplicar PRIMERO):
    DECISIÓN:
    - Si encuentras prohibición explícita en CUALQUIER cláusula (especialmente 4.29) → "Cumple"
    - Si NO encuentras prohibición en ninguna parte → "No cumple"
+   
+   ⚠️ CAMPO "contrato" PARA CRITERIO 2b (CRÍTICO):
+   Debes incluir TODAS las cláusulas relevantes sobre tasas de interés y prohibiciones de step-up:
+   - Cláusula sobre intereses compensatorios (ej: 3.04, 4.13, 4.18)
+   - Cláusula sobre intereses de mora (OBLIGATORIO - buscar específicamente "Intereses de Mora")
+   - Cláusula sobre reajustes de tasa (ej: 3.05)
+   - Artículo/Cláusula que prohíba step-ups explícitamente (ej: Artículo 9, Cláusula 4.29)
+   - Separar cada cláusula con " | "
+   - Ejemplo formato: "Cláusula 3.04: [intereses compensatorios]... | Cláusula 3.05: [intereses de mora]... | Artículo 9: [prohibición step-up]..."
+   
+   ⚠️ NO incluyas solo UNA cláusula - incluye TODAS las que hablen de intereses (compensatorios Y mora), reajustes y step-ups.
 
 3. CRITERIO ID="3" - Opción de Compra después de 5 años:
    ⚠️ VALIDACIÓN DE NORMATIVA VIGENTE (OBLIGATORIA):
@@ -364,7 +375,11 @@ PRE-VALIDACIONES OBLIGATORIAS (aplicar PRIMERO):
 4. CRITERIO ID="7" - Absorción de Pérdidas:
    ⚠️ VALIDACIÓN DE NORMATIVA Y TERMINOLOGÍA VIGENTE (OBLIGATORIA):
    
-   PASO 1: Buscar la cláusula sobre absorción de pérdidas (típicamente Cláusula 7.9)
+   PASO 1: Buscar OBLIGATORIAMENTE estas cláusulas:
+   - Cláusula sobre absorción de pérdidas (típicamente Cláusula 7.9 o similar)
+   - Cláusula "Objeto del Préstamo" (OBLIGATORIO - buscar específicamente este título)
+   
+   ⚠️ CRÍTICO: El campo "contrato" debe incluir AMBAS cláusulas separadas por " | "
    
    PASO 2: Verificar TERMINOLOGÍA usada:
    ❌ TERMINOLOGÍA OBSOLETA (Resolución 975-2016, artículo 16°):
@@ -381,6 +396,16 @@ PRE-VALIDACIONES OBLIGATORIAS (aplicar PRIMERO):
    - Si cita "Resolución 975-2016" o "artículo 16" sin "3950-2022" → "No cumple"
    - Si usa terminología vigente y menciona correcto orden de prelación → "Cumple"
    
+   ⚠️ CAMPO "contrato" PARA CRITERIO 7 (CRÍTICO):
+   Debe incluir:
+   - Cláusula sobre "Objeto del Préstamo" - USAR EL NÚMERO DE CLÁUSULA (ej: 2.01, 2.02) seguido del contenido
+   - Cláusula de absorción de pérdidas (ej: 7.9, 3.12)
+   - Separar con " | "
+   - FORMATO CORRECTO: Empezar con "Cláusula [número]:" NO usar solo el título
+   - Ejemplo: "Cláusula 2.01: [texto objeto del préstamo]... | Cláusula 3.12: [texto absorción pérdidas]..."
+   - ❌ INCORRECTO: "Cláusula Objeto del Préstamo: ..."
+   - ✅ CORRECTO: "Cláusula 2.01: [que hable del objeto del préstamo]..."
+   
    CASO REAL DE NO CUMPLIMIENTO:
    Cláusula 7° (7.9): "...los instrumentos híbridos representativos de capital y de deuda computables en el patrimonio efectivo de nivel 2, y los instrumentos no híbridos representativos de capital..."
    
@@ -390,28 +415,54 @@ PRE-VALIDACIONES OBLIGATORIAS (aplicar PRIMERO):
 5. CRITERIO ID="4" - No Aceleración de Pagos:
    ⚠️ VALIDACIÓN EN DOS PASOS CON DETECCIÓN DE CONTRADICCIONES:
    
-   PASO 1: Buscar Cláusula 7.9
-   Debe decir: "El tenedor no tiene derecho para acelerar pagos futuros pactados, excepto en caso de intervención, o disolución y liquidación"
+   ⚠️ IMPORTANTE - DISTINCIÓN CONCEPTUAL:
+   ✅ PERMITIDO: Llenar/completar pagaré por eventos de incumplimiento (NO es aceleración)
+   ❌ PROHIBIDO: Acelerar/dar por vencidos plazos futuros por eventos distintos a intervención/disolución/liquidación
    
-   PASO 2: Buscar Cláusula 8 "Eventos de Incumplimiento" - REVISAR TODAS LAS SUBCLÁUSULAS
+   🔍 La Cláusula 3.11 sobre "llenar el pagaré" NO constituye aceleración de pagos.
+   Llenar pagaré = formalizar deuda existente (permitido)
+   Acelerar pagos = exigir pago inmediato de cuotas futuras no vencidas (prohibido excepto intervención/disolución/liquidación)
+   
+   PASO 1: Buscar cláusula sobre restricción de aceleración (típicamente 7.2, 7.9)
+   Debe decir algo como: "no puede acelerar pagos excepto en caso de intervención, disolución y liquidación"
+   
+   PASO 2: Buscar Cláusula 8 "Eventos de Incumplimiento" (si existe) - REVISAR TODAS LAS SUBCLÁUSULAS
    ⚠️ CRÍTICO: Buscar específicamente estas cláusulas problemáticas:
    
    ❌ CLÁUSULA 8.2.2(i): "se darán por vencidos los plazos de pago de los Bonos en circulación"
-      - Esto permite aceleración por eventos NO permitidos (fuera de intervención/disolución/liquidación)
+      - Esto SÍ permite aceleración indebida
       - Si encuentras esto → "No cumple"
    
    ❌ CLÁUSULA 8.3.4: "los titulares de los Bonos tendrán derecho a solicitar que se declare la aceleración del plazo de vencimientos"
-      - Esto permite aceleración por incumplimiento de pago (8.1.1) que NO es un evento permitido
+      - Esto SÍ permite aceleración indebida
       - Si encuentras esto → "No cumple"
    
    ❌ CLÁUSULA 8.4: Referencias a "artículo 16 del Reglamento" en lugar de "artículo 18"
-      - Esto es normativa obsoleta
+      - Normativa obsoleta
    
    DECISIÓN:
-   - Si Cláusula 8 contiene 8.2.2(i) o 8.3.4 que permiten aceleración indebida → "No cumple"
-   - Justificación: "Las cláusulas 8.2.2(i), 8.2.3, 8.3.1 y 8.3.4 permiten aceleración de pagos por eventos distintos a intervención, disolución y liquidación, lo que contradice el artículo 18-4 del Reglamento."
+   - Si existe restricción explícita (ej: Cláusula 7.02) que dice "no puede acelerar excepto intervención/disolución/liquidación" → "Cumple"
+   - Si Cláusula 8 contiene 8.2.2(i) o 8.3.4 que permiten "dar por vencidos plazos" o "acelerar" → "No cumple"
+   - Si solo encuentra Cláusula 3.11 sobre llenar pagaré SIN cláusulas de aceleración indebida → "Cumple"
    
-   - Si Cláusula 8.2 solo REPITE textualmente la restricción de 7.9 sin agregar excepciones → "Cumple"
+   ⚠️ NO CONFUNDIR: Cláusula 3.11 (llenar pagaré) NO contradice la restricción de aceleración.
+   
+   ⚠️ CAMPO "contrato" PARA CRITERIO 4 (CRÍTICO - NO NEGOCIABLE):
+   🚨 OBLIGATORIO: Debes buscar e incluir TODAS estas cláusulas, NO solo una:
+   
+   1. Cláusula 3.11 (pagaré y mecanismos de transferencia) - BUSCAR OBLIGATORIAMENTE
+   2. Cláusula 7.01 (definición de "Evento de Incumplimiento") - BUSCAR OBLIGATORIAMENTE
+   3. Cláusula 7.02 o 7.9 (restricción de aceleración de pagos) - OBLIGATORIA
+   4. Cláusula 8 (Eventos de Incumplimiento que permiten aceleración) - SI EXISTE
+   
+   ⚠️ Separar TODAS las cláusulas encontradas con " | "
+   ⚠️ NO incluir solo la cláusula 7.02 - DEBES BUSCAR Y AGREGAR las cláusulas 3.11 y 7.01 también
+   
+   Ejemplo formato CORRECTO:
+   "Cláusula 3.11: [texto completo pagaré]... | Cláusula 7.01: [definición eventos]... | Cláusula 7.02: [restricción aceleración]..."
+   
+   Ejemplo formato INCORRECTO (NO HACER):
+   "Cláusula 7.02: [solo restricción]..." ❌
 
 6. CRITERIO ID="3b" - Tax/Regulatory Events:
    ⚠️ VALIDACIÓN EN DOS NIVELES:
@@ -436,6 +487,30 @@ PRE-VALIDACIONES OBLIGATORIAS (aplicar PRIMERO):
    - Justificación: "El contrato incluye disposiciones sobre eventos fiscales y regulatorios, ya sea mediante referencia al artículo [X] del Reglamento o mediante cláusulas que describen las condiciones para redención anticipada por eventos fiscales/regulatorios."
    
    ⚠️ NO marcar "No cumple" si encuentra CUALQUIERA de los dos niveles de validación.
+
+7. CRITERIO ID="6" - Sin Adquisición por Partes Relacionadas:
+   🚫 ESTE CRITERIO ESTÁ FUERA DEL ALCANCE DE LA EVALUACIÓN DOCUMENTAL
+   
+   ⚠️ REGLA ABSOLUTA: SIEMPRE RETORNAR "FUERA DEL ALCANCE"
+   
+   RAZÓN:
+   Este criterio requiere información externa que NO puede verificarse solo leyendo el contrato:
+   - Registros de accionistas y estructuras de propiedad
+   - Información de vinculación económica (Resolución SBS N° 5780-2015)
+   - Transacciones bancarias y flujos de financiamiento
+   - Análisis de partes relacionadas del grupo económico
+   - Base de datos de supervisión de la SBS
+   
+   ⚠️ CRÍTICO: Aunque el contrato declare que cumple, esa declaración NO es evidencia suficiente.
+   
+   RESPUESTA OBLIGATORIA PARA CRITERIO ID="6":
+   {
+     "cumplimiento": "Fuera del alcance",
+     "contrato": "Fuera del alcance de la evaluación",
+     "justificacion": "La verificación de este criterio requiere información externa al contrato (registros societarios, estructuras de propiedad, vinculación económica según Resolución SBS N° 5780-2015, operaciones bancarias, análisis de financiamiento) que no puede determinarse mediante análisis documental del contrato. Requiere validación por parte de la SBS mediante acceso a sus bases de datos de supervisión y verificación de operaciones."
+   }
+   
+   ⚠️ NO INTENTES EVALUAR ESTE CRITERIO - SIEMPRE RESPONDE "Fuera del alcance"
 
 REGLAS GENERALES:
 - Lee el documento COMPLETO (incluye TODOS los anexos, promissory notes, hedge agreements)
@@ -464,10 +539,15 @@ Responde SOLO con JSON (sin texto adicional):
 
 IMPORTANTE sobre campo "contrato":
 - Empieza SIEMPRE con "Cláusula" seguido del número o título
-- Copia el texto completo de la cláusula principal
+- Incluye TODAS las cláusulas relevantes para el criterio (no solo una)
 - Si tiene sub-items (a, b, c), cópialos todos
+- Cuando hay múltiples cláusulas relevantes, sepáralas con " | "
+- Copia el texto completo de cada cláusula
 - NUNCA uses "Página X:" o inventes números
-- Ejemplos correctos: "Cláusula 4.19: texto...", "Cláusula Segunda: texto...", "Cláusula Events of Default: texto..."
+- Ejemplos correctos:
+  * Una cláusula: "Cláusula 4.19: texto..."
+  * Múltiples cláusulas: "Cláusula 3.04: texto... | Cláusula 3.05: texto... | Artículo 9: texto..."
+  * Con sub-items: "Cláusula Segunda: texto... (a) item a... (b) item b..."
 
 El campo "cumplimiento" es OBLIGATORIO: debe ser "Cumple" o "No cumple" (nunca vacío).`;
 

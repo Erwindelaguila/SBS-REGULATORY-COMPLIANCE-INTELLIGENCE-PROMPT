@@ -287,7 +287,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:8ca8c8a776bd4c7b79d64b201e131be00a3011ea1197b62634f152ff7565a884"
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:b569b2875482a3b4edc484818823abaa51bf5e54b437d294f53d7304042e5f94"
       MemorySize: 1024
       Timeout: 600
       Architectures:
