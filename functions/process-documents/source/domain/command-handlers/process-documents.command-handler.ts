@@ -208,6 +208,7 @@ export class ProcessDocumentsCommandHandler {
         const analysisResult = await this.aiChatClient.analyzeSubordinatedDebtCompliance(
           record.file.bytes,
           criteria,
+          record.key, // S3 key para Textract si el PDF es grande
         );
 
         this.logger.info(
@@ -219,8 +220,15 @@ export class ProcessDocumentsCommandHandler {
           "Completed subordinated debt analysis",
         );
 
+        // Save extracted clauses for traceability
+        const clausesKey = `analysis/${record.recordId}-extracted-clauses.txt`;
+        const clausesBytes = Buffer.from(analysisResult.extractedClauses, "utf-8");
+        await this.processedRecordsFileStorageClient.saveFile(clausesKey, clausesBytes, "text/plain");
+        this.logger.info({ recordId: record.recordId, clausesKey }, "Saved extracted clauses");
+
         const analysisKey = `analysis/${record.recordId}.json`;
-        const analysisBytes = Buffer.from(JSON.stringify(analysisResult, null, 2), "utf-8");
+        const { extractedClauses: _, ...analysisToSave } = analysisResult;
+        const analysisBytes = Buffer.from(JSON.stringify(analysisToSave, null, 2), "utf-8");
         await this.processedRecordsFileStorageClient.saveFile(analysisKey, analysisBytes, "application/json");
 
         await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({

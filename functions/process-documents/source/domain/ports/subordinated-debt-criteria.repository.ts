@@ -4,6 +4,7 @@ export interface SubordinatedDebtCriterion {
   basilea: string;
   resolucion_sbs: string;
   headers: string[];
+  system_prompt?: string;
 }
 
 export interface SubordinatedDebtCriteriaRepository {

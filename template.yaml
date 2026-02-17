@@ -245,8 +245,8 @@ Resources:
       CodeUri: functions/regulatory-compliance-prompt/
       Handler: app.handler
       Runtime: nodejs22.x
-      MemorySize: 256
-      Timeout: 60
+      MemorySize: 3008
+      Timeout: 900
       Architectures:
         - x86_64
       FunctionUrlConfig:
@@ -287,9 +287,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:b569b2875482a3b4edc484818823abaa51bf5e54b437d294f53d7304042e5f94"
-      MemorySize: 1024
-      Timeout: 600
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:280173b638c909d97d1f97a93df1544f92b4ea1ebe7be8309b67c28d93754363"
+      MemorySize: 3008
+      Timeout: 900
       Architectures:
         - x86_64
       Role: !GetAtt ProcessDocumentsFunctionRole.Arn
@@ -440,6 +440,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
         - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+        - arn:aws:iam::aws:policy/AmazonTextractFullAccess
 
   ProcessCsvDocumentsFunctionRole:
     Type: AWS::IAM::Role
