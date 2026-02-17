@@ -62,7 +62,12 @@ const eventProducerClient = new KafkaProducerAdapter(
   logger,
 );
 
-const aiChatClient = new BedrockAIChatClient(bedrockRuntimeClient, process.env.BEDROCK_MODEL_ID!, logger);
+const aiChatClient = new BedrockAIChatClient(
+  bedrockRuntimeClient,
+  process.env.BEDROCK_MODEL_ID!,
+  logger,
+  process.env.S3_DOCUMENTS_BUCKET_NAME!, // Bucket for Textract
+);
 const sqsQueueClient = new SqsQueueClient(sqsClient, process.env.INTERACTION_WEBSOCKET_QUEUE_URL!, logger);
 
 const subordinatedDebtCriteriaRepository = new DynamoDBSubordinatedDebtCriteriaRepository(

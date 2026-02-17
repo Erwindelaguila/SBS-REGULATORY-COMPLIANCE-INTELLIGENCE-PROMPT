@@ -7,6 +7,7 @@ export interface AIChatClient {
   analyzeSubordinatedDebtCompliance(
     pdfBytes: Uint8Array,
     criteria: SubordinatedDebtCriterion[],
+    s3Key?: string,
   ): Promise<SubordinatedDebtComplianceAnalysis>;
 }
 
@@ -27,4 +28,5 @@ export interface CriterionComplianceResult {
 
 export interface SubordinatedDebtComplianceAnalysis {
   criterios: CriterionComplianceResult[];
+  extractedClauses: string;
 }
