@@ -287,7 +287,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:280173b638c909d97d1f97a93df1544f92b4ea1ebe7be8309b67c28d93754363"
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:ff4b2fae2c34094bca49ec321dadcb85be721da4b9da7863442f44c62d33a665"
       MemorySize: 3008
       Timeout: 900
       Architectures:
@@ -475,3 +475,21 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+
+  GatewayResponseDefault4XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_4XX
+      RestApiId: !Ref RegulatoryComplianceIntelligenceApi
+
+  GatewayResponseDefault5XX:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_5XX
+      RestApiId: !Ref RegulatoryComplianceIntelligenceApi
