@@ -63,9 +63,12 @@ export class HighlightPdfCommandHandler {
     let pdfBuffer: Buffer;
     const pdfHighlight = pdfHighlights[index];
 
+    // Use the recordKey from the URL path param (exact S3 key from the frontend/DynamoDB),
+    // not pdfHighlight.recordKey from the CSV. The LLM strips the file extension and
+    // sanitizes the document name before writing it to the CSV, making it unreliable.
     try {
-      pdfBuffer = await this.recordsFileStorageClient.getObjectByKey(pdfHighlight.recordKey as string);
-      this.logger.debug({ pdfHighlight }, "PDF downloaded, processing highlights");
+      pdfBuffer = await this.recordsFileStorageClient.getObjectByKey(recordKey);
+      this.logger.debug({ pdfHighlight, recordKey }, "PDF downloaded, processing highlights");
     } catch (error) {
       this.logger.error({ error, key: recordKey }, "Error fetching record from S3");
       throw new PdfNotFoundError(`Record not found for key ${recordKey}`);
@@ -88,8 +91,8 @@ export class HighlightPdfCommandHandler {
 
     this.logger.debug("PDF highlighted successfully");
 
-    // 4. Generar nombre de descarga
-    const originalFileName = pdfHighlight.recordKey.split("/").pop() || "document.pdf";
+    // Use command.recordKey (the exact S3 key) for the download filename
+    const originalFileName = recordKey.split("/").pop() || "document.pdf";
     const downloadName = originalFileName.replace(".pdf", "_highlighted.pdf");
 
     this.logger.debug({ downloadName }, "PDF highlight process completed successfully");
