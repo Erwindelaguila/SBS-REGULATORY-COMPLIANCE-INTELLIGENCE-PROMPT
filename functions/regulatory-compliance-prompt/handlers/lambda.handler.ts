@@ -54,9 +54,20 @@ export const handler = awslambda.streamifyResponse(
 
       logger.debug({ fullResponse, isDocumentGenerated, documentType }, "Full response");
     } catch (error) {
-      if (error instanceof Error) {
-        logger.error({ err: error }, "Error in lambda handler");
+      logger.error({ err: error }, "Error in lambda handler");
+      try {
+        responseStream.write(userFacingMessage(error));
+      } finally {
+        responseStream.end();
       }
     }
   }
 );
+
+const userFacingMessage = (error: unknown): string => {
+  const message = error instanceof Error ? error.message : "";
+  if (message.startsWith("No analysis found")) {
+    return "Este documento todavía no cuenta con un análisis disponible. Si la carga terminó con error, elimínelo y vuelva a cargarlo.";
+  }
+  return "No fue posible responder la consulta en este momento. Intente nuevamente en unos minutos.";
+};

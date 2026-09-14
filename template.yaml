@@ -58,6 +58,11 @@ Parameters:
   StageName:
     Type: String
     Default: develop
+  MaxAnalysisPages:
+    Type: Number
+    Default: 200
+    MinValue: 1
+    Description: Maximo de paginas que admite el analisis de deuda subordinada. Por encima, el documento se marca con error sin enviarse al modelo.
   SaveCSVFlag:
     Type: String
     Default: "true"
@@ -286,12 +291,11 @@ Resources:
   ProcessDocumentsFunction:
     Type: AWS::Serverless::Function
     Metadata:
-      DockerfileLocation: functions/process-documents
-      DockerContext: functions/process-documents
-      DockerTag: latest-x86_64
+      Dockerfile: Dockerfile
+      DockerContext: ./functions/process-documents
+      DockerTag: process-documents
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:78135db352548c8cf007fda26fd2dc74680a9e8c36a3dc4a83dfa70762d8198e"
       MemorySize: 3008
       Timeout: 900
       Architectures:
@@ -311,6 +315,7 @@ Resources:
           HOME: "/tmp"
           SUBORDINATED_DEBT_CRITERIA_TABLE_NAME: "SubordinatedDebtCriteriaTable"
           SUBORDINATED_DEBT_ANALYSIS_TABLE_NAME: "subordinated-debt-analysis"
+          MAX_ANALYSIS_PAGES: !Ref MaxAnalysisPages
       Events:
         DynamoDBTrigger:
           Type: DynamoDB

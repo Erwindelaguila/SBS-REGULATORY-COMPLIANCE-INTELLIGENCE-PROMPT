@@ -22,6 +22,7 @@ export class ProcessDocumentsEntryPoint {
     const records: ProcessDocumentsCommandRecord[] = processDocumentsInput.insertRecords
       .map<ProcessDocumentsCommandRecord>((insertRecord) => ({
         recordId: insertRecord.id,
+        supervisedEntityId: insertRecord.supervisedEntityId,
         key: insertRecord.key,
         metadata: insertRecord.metadata,
         sessionId: insertRecord.sessionId,

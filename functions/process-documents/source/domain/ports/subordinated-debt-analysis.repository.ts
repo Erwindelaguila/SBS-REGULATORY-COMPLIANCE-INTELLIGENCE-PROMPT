@@ -4,6 +4,8 @@ export interface SubordinatedDebtAnalysisResult {
   type: string; // estado: "subordinated-debt.analysis.started" | "subordinated-debt.analysis.finished"
   data: {
     key: string; // ruta S3 del JSON con resultados
+    code?: string;
+    message?: string;
   };
   createdAt: string; // ISO timestamp
 }

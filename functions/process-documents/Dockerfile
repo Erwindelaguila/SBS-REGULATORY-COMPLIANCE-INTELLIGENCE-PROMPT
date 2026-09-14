@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY . .
 RUN npm install
+RUN npm run type-check
 RUN npm run build
 
 

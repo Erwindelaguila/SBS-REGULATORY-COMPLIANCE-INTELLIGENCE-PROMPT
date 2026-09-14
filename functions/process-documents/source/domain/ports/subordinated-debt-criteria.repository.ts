@@ -5,6 +5,7 @@ export interface SubordinatedDebtCriterion {
   resolucion_sbs: string;
   headers: string[];
   system_prompt?: string;
+  orden?: number;
 }
 
 export interface SubordinatedDebtCriteriaRepository {

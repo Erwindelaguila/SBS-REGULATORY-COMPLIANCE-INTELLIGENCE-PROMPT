@@ -3,6 +3,7 @@ import { DocumentType } from "../model/document-type";
 
 export type ProcessDocumentsCommandRecord = {
   recordId: string;
+  supervisedEntityId: string;
   parentId: string;
   key: string;
   metadata: Record<string, any>;

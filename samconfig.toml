@@ -42,7 +42,8 @@ parameter_overrides = [
     "LetterRRTableName=bank-guarantee-regulatory-reports",
     "LetterITTableName=bank-guarantee-internal-tables",
     "SubordinatedDebtCriteriaTableName=SubordinatedDebtCriteriaTable",
-    "SupervisoryRecordsMetadataTableName=supervisory-records-metadata"
+    "SupervisoryRecordsMetadataTableName=supervisory-records-metadata",
+    "MaxAnalysisPages=200"
 ]
 image_repositories = ["ProcessDocumentsFunction=891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo"]
 

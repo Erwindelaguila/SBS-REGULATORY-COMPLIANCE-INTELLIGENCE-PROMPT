@@ -5,4 +5,5 @@ export const NotificationType = {
   InsertLetterMetadata: "regulatory-compliance-prompts.insert-letter-metadata",
   SubordinatedDebtAnalysisStarted: "regulatory-compliance-prompts.subordinated-debt-analysis-started",
   SubordinatedDebtAnalysisFinished: "regulatory-compliance-prompts.subordinated-debt-analysis-finished",
+  SubordinatedDebtAnalysisError: "regulatory-compliance-prompts.subordinated-debt-analysis-error",
 }

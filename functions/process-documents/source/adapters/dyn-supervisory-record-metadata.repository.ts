@@ -114,7 +114,7 @@ export class DynSupervisoryRecordMetadataRepository implements SupervisoryRecord
     );
 
     existingMetadataTask
-      .filter((task) => task.status === "fulfilled")
+      .filter((task): task is PromiseFulfilledResult<Metadata[]> => task.status === "fulfilled")
       .flatMap((task) => task.value)
       .forEach((metadata) => {
         const supervisoryRecordId = metadata.supervisoryRecordId;

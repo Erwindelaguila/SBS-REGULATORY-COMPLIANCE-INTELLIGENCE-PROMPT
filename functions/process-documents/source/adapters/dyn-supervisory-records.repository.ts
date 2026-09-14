@@ -1,5 +1,5 @@
 import { DynamoDBDocumentClient, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { SupervisoryRecordsRepository } from "../domain/ports/supervisory-records.repository";
+import { RecordAnalysisUpdates, SupervisoryRecordsRepository } from "../domain/ports/supervisory-records.repository";
 import { Logger } from "pino";
 import { ConditionalCheckFailedException } from "@aws-sdk/client-dynamodb";
 
@@ -41,10 +41,11 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
   async updateRecord(
     supervisedEntityId: string,
     recordId: string,
-    updates: { analysisStarted?: string; analysisFinished?: string }
+    updates: RecordAnalysisUpdates
   ): Promise<void> {
     try {
       const updateExpressions: string[] = [];
+      const removeExpressions: string[] = [];
       const expressionAttributeValues: Record<string, any> = {};
       const expressionAttributeNames: Record<string, string> = {};
 
@@ -60,18 +61,37 @@ export class DynSupervisoryRecordsRepository implements SupervisoryRecordsReposi
         expressionAttributeNames["#analysisFinished"] = "analysisFinished";
       }
 
-      if (updateExpressions.length === 0) {
+      if (updates.analysisError) {
+        updateExpressions.push("#analysisError = :analysisError");
+        expressionAttributeValues[":analysisError"] = updates.analysisError;
+        expressionAttributeNames["#analysisError"] = "analysisError";
+      }
+
+      if (updates.clearAnalysisStarted) {
+        removeExpressions.push("#analysisStarted");
+        expressionAttributeNames["#analysisStarted"] = "analysisStarted";
+      }
+
+      if (updateExpressions.length === 0 && removeExpressions.length === 0) {
         this.logger.debug("No updates to perform");
         return;
       }
+
+      const updateExpression = [
+        updateExpressions.length > 0 ? `SET ${updateExpressions.join(", ")}` : "",
+        removeExpressions.length > 0 ? `REMOVE ${removeExpressions.join(", ")}` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
 
       const params: UpdateCommandInput = {
         TableName: this.tableName,
         Key: {
           id: recordId,
         },
-        UpdateExpression: `SET ${updateExpressions.join(", ")}`,
-        ExpressionAttributeValues: expressionAttributeValues,
+        UpdateExpression: updateExpression,
+        ExpressionAttributeValues:
+          Object.keys(expressionAttributeValues).length > 0 ? expressionAttributeValues : undefined,
         ExpressionAttributeNames: expressionAttributeNames,
         ReturnValues: "ALL_NEW",
       };

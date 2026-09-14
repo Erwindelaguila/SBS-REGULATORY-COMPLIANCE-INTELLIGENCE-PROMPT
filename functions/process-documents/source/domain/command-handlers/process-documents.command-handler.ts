@@ -25,6 +25,10 @@ import { QueueClient } from "../ports/queue.client";
 import { Notification } from "../model/notification";
 import { SubordinatedDebtCriteriaRepository } from "../ports/subordinated-debt-criteria.repository";
 import { SubordinatedDebtAnalysisRepository } from "../ports/subordinated-debt-analysis.repository";
+import { countPdfPages } from "../pdf-pages";
+
+const describeError = (error: unknown): string =>
+  (error instanceof Error ? error.message : String(error)).slice(0, 500);
 
 export class ProcessDocumentsCommandHandler {
   private readonly prompt =
@@ -41,6 +45,7 @@ export class ProcessDocumentsCommandHandler {
     private readonly eventProducerClient: EventProducerClient,
     private readonly subordinatedDebtCriteriaRepository: SubordinatedDebtCriteriaRepository,
     private readonly subordinatedDebtAnalysisRepository: SubordinatedDebtAnalysisRepository,
+    private readonly maxAnalysisPages: number,
     private readonly logger: Logger,
   ) {}
 
@@ -51,6 +56,7 @@ export class ProcessDocumentsCommandHandler {
         return {
           application: record.application,
           recordId: record.recordId,
+          supervisedEntityId: record.supervisedEntityId,
           sessionId: record.sessionId,
           parentId: record.parentId,
           file,
@@ -157,10 +163,24 @@ export class ProcessDocumentsCommandHandler {
 
     for (const record of recordData) {
       try {
+        const totalPages = await countPdfPages(record.file.bytes);
+        if (totalPages > this.maxAnalysisPages) {
+          this.logger.warn(
+            { recordId: record.recordId, totalPages, maxAnalysisPages: this.maxAnalysisPages },
+            "Document exceeds the page limit for analysis",
+          );
+          await this.markAnalysisFailed(
+            record,
+            "PAGINAS_EXCEDIDAS",
+            `El documento tiene ${totalPages} páginas y el máximo admitido es ${this.maxAnalysisPages}`,
+          );
+          continue;
+        }
+
         const tipoDetectado = await this.aiChatClient.detectContractLanguage(record.file.bytes);
 
         const criteria = allCriteria.filter(c => c.tipo === tipoDetectado);
-        criteria.sort((a, b) => a.orden - b.orden);
+        criteria.sort((a, b) => (a.orden ?? 0) - (b.orden ?? 0));
 
         this.logger.info(
           { 
@@ -208,7 +228,7 @@ export class ProcessDocumentsCommandHandler {
         const analysisResult = await this.aiChatClient.analyzeSubordinatedDebtCompliance(
           record.file.bytes,
           criteria,
-          record.key, // S3 key para Textract si el PDF es grande
+          record.file.key,
         );
 
         this.logger.info(
@@ -264,20 +284,51 @@ export class ProcessDocumentsCommandHandler {
       } catch (error) {
         this.logger.error(error, `Failed to process subordinated debt compliance for ${record.recordId}`);
 
-        try {
-          await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
-            source: record.recordId,
-            id: 2,
-            type: "subordinated-debt.analysis.error",
-            data: { key: "" },
-            createdAt: new Date().toISOString(),
-          });
-        } catch (saveError) {
-          this.logger.error(saveError, "Failed to save error state");
-        }
+        await this.markAnalysisFailed(record, "ANALISIS_FALLIDO", describeError(error));
       }
     }
   }
+
+  private async markAnalysisFailed(record: RecordFileData, code: string, message: string): Promise<void> {
+    const at = new Date().toISOString();
+
+    try {
+      await this.subordinatedDebtAnalysisRepository.saveAnalysisResult({
+        source: record.recordId,
+        id: 2,
+        type: "subordinated-debt.analysis.error",
+        data: { key: "", code, message },
+        createdAt: at,
+      });
+    } catch (saveError) {
+      this.logger.error(saveError, "Failed to save error state");
+    }
+
+    try {
+      await this.supervisoryRecordsRepository.updateRecord(record.supervisedEntityId, record.recordId, {
+        analysisError: { at, code, message },
+        clearAnalysisStarted: true,
+      });
+    } catch (updateError) {
+      this.logger.error(updateError, "Failed to mark the record as failed");
+    }
+
+    try {
+      await this.queueClient.sendMessages([
+        {
+          id: uuidv4(),
+          message: {
+            sessionId: record.sessionId,
+            type: NotificationType.SubordinatedDebtAnalysisError,
+            data: { recordId: record.recordId, parentId: record.parentId, code, message },
+          },
+        },
+      ]);
+    } catch (notifyError) {
+      this.logger.error(notifyError, "Failed to notify the analysis failure");
+    }
+  }
+
   async handle(command: ProcessDocumentsCommand): Promise<void> {
     let filesRecordsMap: Map<string, RecordFileData>;
     try {

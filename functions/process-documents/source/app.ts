@@ -93,6 +93,7 @@ const processDocumentsCommandHandler = new ProcessDocumentsCommandHandler(
   eventProducerClient,
   subordinatedDebtCriteriaRepository,
   subordinatedDebtAnalysisRepository,
+  parseInt(process.env.MAX_ANALYSIS_PAGES ?? "200", 10),
   logger,
 );
 

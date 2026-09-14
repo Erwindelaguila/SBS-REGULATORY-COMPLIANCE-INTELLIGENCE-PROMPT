@@ -12,7 +12,8 @@
     "format": "prettier --write source/**/*.ts --config ./.prettierrc",
     "compile": "tsc",
     "test": "npm run compile && npm run unit",
-    "build": "node esbuild.js"
+    "build": "node esbuild.js",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.901.0",

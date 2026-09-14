@@ -9,7 +9,11 @@ import { Logger } from "pino";
 import { RecordFileData } from "../domain/model/record-file-data";
 import { SubordinatedDebtCriterion } from "../domain/ports/subordinated-debt-criteria.repository";
 import { PDFDocument } from 'pdf-lib';
-import { TextractClient, StartDocumentTextDetectionCommand, GetDocumentTextDetectionCommand } from "@aws-sdk/client-textract";
+import { Block, TextractClient, StartDocumentTextDetectionCommand, GetDocumentTextDetectionCommand } from "@aws-sdk/client-textract";
+import { chunkPages } from "../domain/pdf-pages";
+
+const TEXTRACT_PAGES_PER_CHUNK = 50;
+const TEXTRACT_OVERLAP_PAGES = 2;
 
 export class BedrockAIChatClient implements AIChatClient {
   private readonly textractClient: TextractClient;
@@ -496,7 +500,18 @@ Si una sección no existe en el contrato, escribe: "=== [NOMBRE] === No encontra
    * Extrae texto de un PDF usando AWS Textract.
    * Útil para PDFs grandes que exceden el límite de tokens de Claude.
    */
-  private async extractTextWithTextract(s3Key: string): Promise<string> {
+  private collectLines(pages: Map<number, string[]>, blocks: Block[] | undefined): void {
+    for (const block of blocks ?? []) {
+      if (block.BlockType === 'LINE' && block.Text) {
+        const page = block.Page ?? 1;
+        const lines = pages.get(page) ?? [];
+        lines.push(block.Text);
+        pages.set(page, lines);
+      }
+    }
+  }
+
+  private async extractTextWithTextract(s3Key: string): Promise<string[]> {
     try {
       this.logger.info({ s3Key, bucket: this.s3Bucket }, "Starting Textract text extraction");
 
@@ -535,18 +550,10 @@ Si una sección no existe en el contrato, escribe: "=== [NOMBRE] === No encontra
         this.logger.info({ jobId, jobStatus, attempt: attempts }, "Textract job status");
 
         if (jobStatus === 'SUCCEEDED') {
-          // Extraer todo el texto
-          let extractedText = '';
+          const pages = new Map<number, string[]>();
           let nextToken = getResponse.NextToken;
 
-          // Procesar primera página de resultados
-          if (getResponse.Blocks) {
-            for (const block of getResponse.Blocks) {
-              if (block.BlockType === 'LINE' && block.Text) {
-                extractedText += block.Text + '\n';
-              }
-            }
-          }
+          this.collectLines(pages, getResponse.Blocks);
 
           // Si hay más páginas de resultados, obtenerlas
           while (nextToken) {
@@ -556,23 +563,20 @@ Si una sección no existe en el contrato, escribe: "=== [NOMBRE] === No encontra
             });
             const nextResponse = await this.textractClient.send(nextCommand);
 
-            if (nextResponse.Blocks) {
-              for (const block of nextResponse.Blocks) {
-                if (block.BlockType === 'LINE' && block.Text) {
-                  extractedText += block.Text + '\n';
-                }
-              }
-            }
+            this.collectLines(pages, nextResponse.Blocks);
 
             nextToken = nextResponse.NextToken;
           }
 
+          const totalPages = pages.size === 0 ? 0 : Math.max(...pages.keys());
+          const texts = Array.from({ length: totalPages }, (_, index) => (pages.get(index + 1) ?? []).join('\n'));
+
           this.logger.info(
-            { textLength: extractedText.length, jobId },
+            { totalPages, textLength: texts.reduce((total, text) => total + text.length, 0), jobId },
             "Textract extraction completed successfully"
           );
 
-          return extractedText;
+          return texts;
         } else if (jobStatus === 'FAILED') {
           throw new Error(`Textract job failed with status: ${getResponse.StatusMessage || 'Unknown error'}`);
         }
@@ -606,15 +610,26 @@ Si una sección no existe en el contrato, escribe: "=== [NOMBRE] === No encontra
       );
 
       try {
-        const extractedText = await this.extractTextWithTextract(s3Key);
+        const pages = await this.extractTextWithTextract(s3Key);
         
         // Enviar texto extraído a Claude con el system prompt de extracción
         this.logger.info(
-          { textLength: extractedText.length },
+          { totalPages: pages.length },
           "Sending Textract-extracted text to Claude for clause identification"
         );
 
-        return this.extractClausesFromText(extractedText);
+        const chunks = chunkPages(pages, TEXTRACT_PAGES_PER_CHUNK, TEXTRACT_OVERLAP_PAGES);
+        const parts: string[] = [];
+        for (const [index, chunk] of chunks.entries()) {
+          this.logger.info(
+            { chunk: index + 1, chunks: chunks.length, from: chunk.from, to: chunk.to, chars: chunk.text.length },
+            "Extracting clauses from a text chunk",
+          );
+          parts.push(
+            await this.extractClausesFromText(chunk.text, `páginas ${chunk.from} a ${chunk.to} de ${pages.length}`),
+          );
+        }
+        return parts.join("\n\n");
       } catch (error) {
         this.logger.error(
           { error },
@@ -632,12 +647,12 @@ Si una sección no existe en el contrato, escribe: "=== [NOMBRE] === No encontra
    * Extrae cláusulas de un texto plano (no PDF) usando Claude.
    * Util cuando el texto fue extraído previamente con Textract.
    */
-  private async extractClausesFromText(extractedText: string): Promise<string> {
+  private async extractClausesFromText(extractedText: string, fragmento: string): Promise<string> {
     const systemPrompt = this.getExtractionSystemPrompt();
 
     const contentBlocks: ContentBlock[] = [
       {
-        text: `Contrato extraído:\n\n${extractedText}`,
+        text: `Contrato extraído (${fragmento}). Extrae únicamente las cláusulas presentes en este fragmento; si una sección no aparece aquí, omítela.\n\n${extractedText}`,
       },
     ];
 
