@@ -97,31 +97,49 @@ BUSCAR ESPECÍFICAMENTE:
   - "artículo 233° de la Ley General" / "artículo 233"
 
 EXCLUSIONES (NO relevante para este criterio):
-- ❌ NO incluir cláusulas de SUBORDINACIÓN (orden de prelación, absorción de pérdidas) — eso es otro criterio
-- ❌ NO incluir cláusulas de prelación de pagos (como 4.19 Prelación) — EXCEPTO si la cláusula de prelación es la ÚNICA evidencia de referencia al Reglamento de Deuda Subordinada
 - ❌ NO incluir Anexo C / Formato de Pagaré
 - ❌ NO incluir cláusulas sobre pagos anticipados o rescate
 - ❌ NO incluir "Cláusula Tercera" sobre "Bonos Subordinados o Valores" de Programas de Emisión — esa habla del tipo de valor, NO del pago en efectivo
 
 CAMPO "contrato" (CRÍTICO):
 
-PARA CONTRATOS LOCALES:
-- Buscar cláusula titulada: "DESEMBOLSOS" o "DESEMBOLSO" (típicamente CLÁUSULA SEXTA)
-- COPIAR COMPLETA la cláusula que explica CÓMO se desembolsará/pagará el monto del instrumento
-- Ejemplo esperado: "CLÁUSULA SEXTA: DESEMBOLSOS - Los desembolsos del Crédito Subordinado serán efectuados en moneda nacional a la cuenta de la IFIE en el Banco Central de Reserva del Perú..."
-- 🎯 PARA CONTRATOS MARCO / ACTO MARCO (PRIMERA PRIORIDAD):
+PARA CONTRATOS LOCALES - INCLUIR TODAS LAS CLÁUSULAS RELEVANTES ENCONTRADAS:
+
+⚠️ REGLA IMPORTANTE: NO elegir solo UNA cláusula. Buscar TODAS las siguientes y si existen en el contrato, INCLUIRLAS TODAS separadas por " | ". El orden de búsqueda indica la relevancia, pero TODAS las que se encuentren deben incluirse.
+
+🎯 BUSCAR 1 - CLÁUSULA OCTAVA / CLÁUSULA 8 (CONTRATOS DE PRÉSTAMO COFIDE O SIMILARES):
+  Buscar "Cláusula Octava", "CLÁUSULA OCTAVA", "Cláusula 8" o "Cláusula 8°" que defina la NATURALEZA SUBORDINADA del préstamo
+  Contenido típico:
+  - "El préstamo será subordinado a todas las demás obligaciones de la Caja"
+  - "en caso de intervención o disolución y liquidación de la IFIE, los intereses y el principal del Crédito Subordinado... serán aplicables a absorber las pérdidas"
+  - "la utilización de recursos... tiene el carácter de deuda subordinada redimible... rigiéndose por lo establecido en la Ley General y las normas reglamentarias correspondientes"
+  → COPIAR esa cláusula completa
+
+🎯 BUSCAR 2 - CLÁUSULA PRIMERA ("patrimonio efectivo nivel 2" / artículo 185):
+  Buscar "Cláusula Primera", "CLÁUSULA PRIMERA" o "CLÁUSULA PRIMERA: ANTECEDENTES" (numeral 1.3 o similar) que establezca que el préstamo será computado en el patrimonio efectivo de nivel 2 de la IFIE
+  Contenido típico:
+  - "El préstamo será computado en el patrimonio efectivo de nivel 2 de la IFIE, en los términos expuestos en el presente CONTRATO y sujeto a los límites definidos en el artículo 185 de la Ley General"
+  → COPIAR esa cláusula/numeral completo
+
+🎯 BUSCAR 3 - CLÁUSULA 2° / ACTO MARCO:
   Buscar "Cláusula 2°" o "Cláusula Segunda" que DEFINA qué es deuda subordinada con referencia al artículo 233° de la Ley General
   Ejemplo: "Cláusula 2°: Deuda subordinada es aquella que reúne las características del artículo 233° de la Ley General y del Artículo 3° y siguientes del Reglamento de Deuda Subordinada..."
-  → COPIAR esa cláusula completa (Cláusula 2°, NO "Cláusula Tercera")
-  → "Cumple" porque el artículo 233° establece el requisito de pago en efectivo
-  ⚠️ NO usar "Cláusula Tercera" sobre "Bonos Subordinados o Valores" — esa es una cláusula de TIPO DE VALOR, no de pago en efectivo
-  ⚠️ NO usar 4.19 "Prelación" — esa es una cláusula de SUBORDINACIÓN, no de pago en efectivo
-
-- 🎯 PARA PROGRAMAS DE BONOS / CONTRATO MARCO (sin Cláusula 2° ni cláusula de desembolso):
-  Si NO encuentra cláusula de desembolso NI Cláusula 2° con artículo 233°, buscar cláusula de "Orden de Prelación" (ej: 4.34, 4.19) que haga referencia al Reglamento de Deuda Subordinada y artículo 117° de la Ley de Bancos
-  Ejemplo: "4.34 Orden de Prelación: Se establece que [...] de acuerdo con el Reglamento de Deuda Subordinada, el pago del principal y de los intereses de los Bonos queda sujeto a la Absorción de Pérdidas..."
   → COPIAR esa cláusula completa
-  → "Cumple" porque la referencia al Reglamento de Deuda Subordinada (Resolución SBS N° 03950-2022) implica cumplimiento de todos sus requisitos, incluyendo pago en efectivo (artículo 2°)
+  ⚠️ NO usar "Cláusula Tercera" sobre "Bonos Subordinados o Valores" — esa es una cláusula de TIPO DE VALOR, no de pago en efectivo
+
+🎯 BUSCAR 4 - PROGRAMAS DE BONOS / CONTRATO MARCO:
+  Buscar cláusula de "Orden de Prelación" (ej: 4.34, 4.19) que haga referencia al Reglamento de Deuda Subordinada y artículo 117° de la Ley de Bancos
+  → COPIAR esa cláusula completa si existe
+
+🎯 BUSCAR 5 - CLÁUSULA DE DESEMBOLSO (SOLO como complemento):
+  SOLO incluir si NO encontró NINGUNA de las anteriores (1-4). Si ya encontró alguna de las anteriores, NO incluir la cláusula de desembolso.
+  - Buscar cláusula titulada: "DESEMBOLSOS" o "DESEMBOLSO" (típicamente CLÁUSULA SEXTA)
+  ⚠️ La Cláusula Sexta de desembolso es el ÚLTIMO recurso, NO la primera opción
+
+📋 FORMATO FINAL: Concatenar TODAS las cláusulas encontradas (de las búsquedas 1-4) separadas por " | "
+Ejemplo: "CLÁUSULA OCTAVA: SUBORDINACIÓN DEL PRÉSTAMO - En aplicación de... | Cláusula primera: El préstamo será computado en el patrimonio efectivo de nivel 2..."
+
+→ "Cumple" si al menos UNA de las cláusulas encontradas (1-4) confirma la naturaleza de deuda subordinada sujeta a la Ley General / Reglamento de Deuda Subordinada
 
 PARA CONTRATOS INTERNACIONALES:
 - 🎯 PRIMERA PRIORIDAD: Buscar Section 17.1 o similar que califique el préstamo como "Subordinated Debt" y haga referencia a la "Regulation on Subordinated Debt"
@@ -188,6 +206,14 @@ CASO B - SI NO existe Estudio Técnico:
 ❌ Redacción AMBIGUA (marca "No cumple"):
 - "mayor a un año" + "diez años" → Contradicción por ambigüedad
 - "mayor a tres años" + "diez años" → Contradicción por ambigüedad
+
+❌ CASO OPCIONAL - DELEGACIÓN A DOCUMENTOS COMPLEMENTARIOS (marca "No cumple"):
+- Si la cláusula de Bonos (ej: 4.4) dice "plazo de vencimiento mayor a un año" (permitiendo instrumentos < 5 años)
+- Y ADEMÁS las Fechas de Vencimiento se delegan a Prospectos Complementarios / Contratos Complementarios (ej: Cláusula Segunda: "Las Fechas de Vencimiento de cada una de las Emisiones serán definidas en los respectivos Prospectos Complementarios")
+- Y NO existe una cláusula que garantice que las Fechas de Vencimiento sean > 5 años
+→ "No cumple" porque la combinación de "mayor a un año" + delegación a Prospectos permite amortización antes de 5 años
+- Justificación modelo: "El hecho de que la Cláusula permita un plazo de vencimiento mayor a un año podría dar lugar a la emisión de deuda subordinada con un plazo inferior al mínimo requerido de cinco años. Además, dado que el capital puede ser amortizado en las fechas de vencimiento y no existe una cláusula que estipule que dichas fechas deben ser mayores a cinco años, es necesario especificar de forma explícita en el Contrato que no se podrá amortizar el principal antes de transcurridos cinco años."
+- campo "contrato": INCLUIR TODAS las cláusulas relevantes: 4.4 Bonos Subordinados COMPLETA (incluyendo la parte de "mayor a un año") | Cláusula Segunda (Fechas de Vencimiento) | numeral 5 (plazo original)
 
 ⚠️ IMPORTANTE: Si el contrato establece un plazo (ej: 8 años) que es >= 5 años Y NO contiene frases de ambigüedad como "mayor a un año", entonces → "Cumple".
 
@@ -327,6 +353,16 @@ DEBES buscar PRIMERO en todo el documento la siguiente cláusula:
    
    🚨 RECORDATORIO: Intereses de mora y comisiones de prepago NO son step-up
 
+   🎯 CASO OPCIONAL - CONTRATOS MARCO/BONOS CON TASA DELEGADA A PROSPECTOS (4.14 o similar):
+     Buscar SIEMPRE la cláusula de Tasa de Interés (ej: 4.14, 4.18 o similar)
+     * Si la cláusula de tasa dice "se determinará en los respectivos Prospectos Complementarios y Contratos Complementarios" (o frase equivalente que DELEGUE la definición de tasa a documentos futuros):
+       - AUNQUE exista prohibición de step-up en otra cláusula (ej: 4.4 numeral 5 dice "no podrá establecer step-up")...
+       - El Contrato Marco NO incorpora de forma explícita EN LA SECCIÓN DE TASA DE INTERÉS la prohibición de step-up
+       - Y los documentos complementarios (Prospecto Marco, Prospecto Complementario, Contrato Complementario) NO fueron remitidos
+       → ❌ "No cumple"
+       - campo "contrato": COPIAR 4.4 numeral 5 (prohibición step-up) | 4.14 Tasa de interés (delegación a Prospectos). Si no encontró step-up explícito agregar: "No se identificaron cláusulas step-up"
+       - campo "justificacion": "El Contrato Marco no incorpora de forma explícita, en la sección de tasa de interés, la prohibición de incluir cláusulas step-up, incentivos para la compra o redención anticipada, ni tampoco incluye una cláusula que disponga que, en caso de discrepancias entre este y los documentos complementarios, prevalezcan las disposiciones del Contrato Marco. Además, la Caja no ha remitido el Prospecto Marco, el Prospecto Complementario ni el Contrato Complementario, lo cual dificulta verificar la alineación de estos documentos con el Contrato Marco y el Reglamento."
+
 PARA CONTRATOS INTERNACIONALES (inglés) Y PRÉSTAMOS LOCALES SIN 4.3 NI 4.29:
 
 🎯 REGLA PARA CONTRATOS INTERNACIONALES (C2, C3 y similares):
@@ -359,11 +395,13 @@ PRE-VALIDACIÓN PARA ESTE CRITERIO - Opción de Compra/Rescate después de 5 añ
 2. ¿El contrato referencia normativa VIGENTE (no derogada)?
 
 PASO 1: BUSCAR LA CLÁUSULA DE PAGO ANTICIPADO VOLUNTARIO (a iniciativa del deudor/borrower)
-Buscar ÚNICAMENTE la cláusula sobre pago anticipado VOLUNTARIO:
+Buscar la cláusula sobre pago anticipado VOLUNTARIO en TODAS las secciones extraídas:
 - Cláusula "Voluntary Prepayment" / "Prepayment" (Section 3.5 en contratos internacionales)
 - Cláusulas sobre "rescate anticipado", "redención anticipada", "pago anticipado", "amortización anticipada", "prepago"
+- Cláusula "DÉCIMO PRIMERA" / "Cláusula 11" / "PAGOS ANTICIPADOS VOLUNTARIO" (contratos de préstamo)
 - Cláusulas que mencionen "artículo 17 del Reglamento de Deuda Subordinada"
 - Cláusulas que mencionen plazos mínimos para pagos anticipados
+- 🚨 BUSCAR EN TODAS LAS SECCIONES EXTRAÍDAS incluyendo sección "PAGOS ANTICIPADOS VOLUNTARIOS" si existe
 
 🚨 EXCLUSIONES IMPORTANTES - NO incluir estas secciones:
 - ❌ NO incluir "Events of Default" / "Eventos de Incumplimiento" (Section 8.x) → eso es criterio 4
@@ -394,10 +432,41 @@ PASO 3: VERIFICAR NORMATIVA REFERENCIADA EN LA CLÁUSULA DE RESCATE/REDENCIÓN A
 - Solo "No cumple" si la cláusula de RESCATE misma referencia ÚNICAMENTE artículos derogados sin mencionar art. 17
 
 DECISIÓN:
-- ✅ "Cumple" si: establece plazo mínimo >= 5 años para pagos anticipados Y la cláusula de rescate referencia artículo 17 vigente
-- ❌ "No cumple" si: NO establece plazo mínimo de 5 años, O la cláusula de rescate NO referencia artículo 17
+- ✅ "Cumple" si: establece plazo mínimo >= 5 años para pagos anticipados (independientemente de si referencia Art. 17)
+- ✅ "Cumple" si: período de gracia >= 5 años prohíbe prepago, lo que implica que después de 5 años sí se permite
+- ❌ "No cumple" SOLO si: el plazo mínimo es < 5 años
 
-⚠️ IMPORTANTE: "artículo 17 del Reglamento de Deuda Subordinada" ES suficiente. NO se requiere que el contrato cite explícitamente "Resolución 3950-2022" si referencia el artículo 17 vigente.
+⚠️ IMPORTANTE: Este criterio 3 evalúa SOLO el plazo mínimo de 5 años. La referencia al Artículo 17 o la autorización de la SBS son responsabilidad de criterio 3a, NO de este criterio.
+⚠️ NO rechazar un contrato por falta de referencia a Art. 17 en la cláusula de pagos anticipados — eso NO es requerido para criterio 3.
+
+⚠️ CASO OPCIONAL - CONTRATOS DE PRÉSTAMO CON PERÍODO DE GRACIA (COFIDE o similares):
+Si el contrato tiene una cláusula titulada "PAGOS ANTICIPADOS VOLUNTARIO" o "DÉCIMO PRIMERA" (Cláusula 11) que dice algo como:
+"La CMAC/IFIE no tiene derecho a pagar anticipadamente la totalidad o parte del saldo del principal durante el periodo de gracia señalado en la Cláusula Quinta"
+
+INTERPRETACIÓN CORRECTA:
+- La PROHIBICIÓN de prepago durante el período de gracia (5 años) IMPLICA que DESPUÉS del período de gracia SÍ se permite el prepago
+- Si el período de gracia es >= 5 años → el plazo mínimo de 5 años ESTÁ SATISFECHO
+
+🚨🚨🚨 INSTRUCCIÓN CRÍTICA PARA ESTE CASO:
+La Cláusula Décimo Primera tiene MÚLTIPLES PÁRRAFOS. NO evalúes basándote solo en el primer párrafo.
+Buscar en TODO el texto extraído del contrato (TODAS las secciones) si CUALQUIER parte menciona:
+  * "numeral 17.3 del artículo 17" → REFERENCIA NORMATIVA VIGENTE ✅
+  * "Resolución SBS N.° 3950-2022" o "Resolución SBS N° 03950-2022" → REFERENCIA NORMATIVA ✅
+  * "requisitos previstos en" + Reglamento de Deuda Subordinada → REFERENCIA NORMATIVA ✅
+  * "autorización previa por parte de la SBS" → APROBACIÓN SBS ✅
+  * "cancelación anticipada total o parcial de la deuda solo podrá realizarse" → CONDICIÓN NORMATIVA ✅
+
+Si encuentras CUALQUIERA de esas frases en CUALQUIER sección extraída del contrato relacionada con pagos anticipados:
+→ ✅ "Cumple" — NO marcar como "No cumple" por falta de referencia normativa
+→ Justificación modelo: "La Cláusula Décimo Primera establece que no se podrá pagar anticipadamente durante el período de gracia (5 años), lo que satisface el plazo mínimo. Además, establece que cualquier cancelación anticipada deberá cumplir los requisitos del numeral 17.3 del artículo 17 de la Resolución SBS N.° 3950-2022, confirmando el cumplimiento del criterio."
+
+→ ❌ "No cumple" SOLO SI:
+  - El período de gracia es < 5 años
+
+⚠️ TAMBIÉN buscar Cláusula 4.3 si permite prepago con penalidad → INCLUIR en campo "contrato" como evidencia adicional
+
+⚠️ ACLARACIÓN IMPORTANTE PARA CRITERIO 3:
+Este criterio 3 evalúa SOLO "puede rescatarse después de 5 años". NO evalúa si hay referencia a Art. 17 ni si requiere autorización SBS. Esos son criterios 3a y 3b.
 
 ⚠️ CAMPO "contrato" PARA ESTE CRITERIO:
 
@@ -406,6 +475,14 @@ PARA CONTRATOS LOCALES (BONOS/EMISIONES):
 - COPIAR COMPLETA la cláusula de redención anticipada
 - NO copiar 4.3 "Tipo de Instrumento" - esa cláusula pertenece a otros criterios
 - Si la cláusula de redención menciona "numeral 17.3 del artículo 17°" → INCLUIRLA
+
+PARA CONTRATOS DE PRÉSTAMO (COFIDE o similares):
+- Buscar cláusula "PAGOS ANTICIPADOS VOLUNTARIO" o "DÉCIMO PRIMERA" (Cláusula 11) en TODAS las secciones extraídas
+- COPIAR TODO el texto encontrado sobre pagos anticipados, incluyendo TODOS los párrafos
+- Si el texto sobre pagos anticipados aparece en múltiples secciones extraídas, CONCATENAR todo
+- DEBE incluir la parte sobre "numeral 17.3", "Resolución SBS", "autorización previa" si existe en CUALQUIER sección
+- Si existe Cláusula 4.3 sobre prepago con penalidad → INCLUIR también
+- 🚨 Si solo copias "La CMAC no tiene derecho a pagar anticipadamente... durante el periodo de gracia" y NO incluyes la parte de Art. 17.3, el campo "contrato" está INCOMPLETO
 
 PARA CONTRATOS INTERNACIONALES:
 - COPIAR SECTION 3.5 COMPLETA (2 PÁRRAFOS):
@@ -440,10 +517,32 @@ Si la cláusula de rescate dice "El Emisor podrá establecer o no opción de res
 → RESULTADO: "Cumple" con contrato: "No se especifica en el contrato"
 → Justificación: "El contrato marco establece que la opción de rescate se definirá en los Prospectos Complementarios, y cuando se establezca, requerirá autorización previa de la SBS. El cumplimiento específico dependerá de los términos del Prospecto Complementario."
 
+⚠️ CASO OPCIONAL - CONTRATOS DE PRÉSTAMO CON CLÁUSULA DE PAGOS ANTICIPADOS (FOCMAC/COFIDE o similares):
+Si el contrato tiene cláusula titulada "PAGOS ANTICIPADOS VOLUNTARIO" o "DÉCIMO PRIMERA" (Cláusula 11):
+
+🚨🚨🚨 INSTRUCCIÓN CRÍTICA:
+Buscar "autorización de la SBS" o "autorización previa" en TODAS las secciones extraídas del contrato, NO solo en la cláusula de pagos anticipados. Incluir:
+  * Cláusula NOVENA / EJECUCIÓN: si menciona "autorización de la SBS para contraer deuda subordinada" → ✅
+  * Cláusula PRIMERA / ANTECEDENTES: si menciona autorización SBS → ✅
+  * Cualquier cláusula que diga "previa autorización de la Superintendencia" → ✅
+  * "numeral 17.3 del artículo 17 de la Resolución SBS N.° 3950-2022" → ✅
+  * "autorización previa por parte de la SBS" o "previa autorización de la SBS" en cualquier contexto relacionado con la deuda subordinada → ✅
+
+💡 REGLA ESPECIAL PARA PRÉSTAMOS SUBORDINADOS FOCMAC/COFIDE:
+Si el contrato:
+  1. Es un préstamo subordinado FOCMAC/COFIDE (menciona "deuda subordinada redimible", "FOCMAC", "COFIDE")
+  2. Y la Cláusula NOVENA u otra cláusula de condiciones previas menciona "autorización de la SBS para contraer deuda subordinada"
+  3. Y existe una cláusula de pagos anticipados que prohíbe prepago durante el período de gracia (>= 5 años)
+
+→ ✅ "Cumple" — La autorización de la SBS para la deuda subordinada abarca las operaciones de rescate/cancelación anticipada bajo el marco regulatorio (Resolución SBS N.° 3950-2022)
+→ Justificación modelo: "El contrato establece en su Cláusula NOVENA que requiere autorización de la SBS para contraer deuda subordinada, y la Cláusula Décimo Primera regúla los pagos anticipados bajo el marco de la deuda subordinada. El marco regulatorio (Resolución SBS N.° 3950-2022 Art. 17-3c) require autorización previa de la Superintendencia para ejercer opciones de rescate, lo cual es inherente al carácter subordinado del préstamo."
+
 DECISIÓN:
 - ✅ "Cumple" si: el contrato requiere aprobación/autorización de la SBS como requisito previo para pagos anticipados/rescate/redención
 - ✅ "Cumple" si: contrato marco con rescate condicional que menciona autorización SBS (con contrato: "No se especifica en el contrato")
+- ✅ "Cumple" si: cláusula de pagos anticipados referencia numeral 17.3 del artículo 17 / autorización SBS (contratos de préstamo)
 - ❌ "No cumple" si: permite rescate/pago anticipado SIN aprobación SBS explícitamente
+- ❌ "No cumple" si: NO se menciona aprobación previa de la SBS en ninguna cláusula de prepago o redención del contrato
 
 ⚠️ CAMPO "contrato" (CRÍTICO - COPIAR SECTION 3.5 COMPLETA con 2 PÁRRAFOS):
 La Section 3.5 "Prepayment" tiene DOS párrafos obligatorios:
@@ -588,6 +687,15 @@ Buscar ESPECÍFICAMENTE estas subcláusulas:
    - 8.4 es una cláusula ADICIONAL, no una cláusula que DEROGA las anteriores
    - La CONTRADICCIÓN entre 8.4 (solo 8.1.8) y 8.2.2/8.3.4 (otros eventos) es evidencia de INCUMPLIMIENTO
 
+⚠️ CASO OPCIONAL - 8.4 PERMITE ACELERACIÓN PARA 8.1.8 (REESTRUCTURACIÓN) EN VEZ DE 8.1.9 (INTERVENCIÓN/DISOLUCIÓN):
+   - VERIFICAR qué evento habilita la aceleración en 8.4:
+     * Si 8.4 dice "únicamente ante la configuración del Evento de Incumplimiento previsto en el numeral 8.1.8" → REVISAR qué dice 8.1.8
+     * Si 8.1.8 es sobre "reestructuración o refinanciación con terceros" (NO es intervención/disolución/liquidación)
+     * Y 8.1.9 es el evento de "intervención o disolución y liquidación" (que es el ÚNICO válido según Art. 18)
+   → ❌ "No cumple" porque la aceleración se permite para un evento (8.1.8 reestructuración) que NO es intervención/disolución/liquidación
+   - Justificación modelo: "El numeral 8.1.8 define un evento de incumplimiento que consiste en la celebración, por parte del Emisor, de contratos o convenios de reestructuración o refinanciación con terceros que impliquen incumplimiento, prórroga o suspensión de alguna de las obligaciones establecidas en el Contrato Marco. Este evento de incumplimiento habilita la aceleración según 8.4, pero NO corresponde a intervención, disolución o liquidación (que es 8.1.9), contraviniendo el Art. 18 del Reglamento de Deuda Subordinada que solo permite aceleración en caso de intervención, disolución y liquidación."
+   - ⚠️ NOTA: Si 8.4 dice "numeral 8.1.9" (intervención/disolución) en vez de 8.1.8, entonces es FAVORABLE (la aceleración es SOLO para el evento permitido)
+
 🚨 REGLA FUNDAMENTAL DEL ART. 18 DEL REGLAMENTO:
 El contrato NO debe contener NINGUNA cláusula que permita al acreedor o a la Asamblea acelerar pagos por eventos distintos a intervención, disolución o liquidación.
 
@@ -612,6 +720,30 @@ DECISIÓN PARA CONTRATOS LOCALES (español):
 - Si 8.4.2 permite que la Asamblea decida aceleración pero 8.6 la limita SOLO a evento 8.1.5 (intervención/disolución) → "Cumple" (la aceleración solo aplica para eventos permitidos)
 - Si solo encuentra Cláusula 3.11 sobre llenar pagaré SIN cláusulas de aceleración indebida → "Cumple"
 ⚠️ NO CONFUNDIR: Cláusula 3.11 (llenar pagaré) NO contradice la restricción de aceleración.
+
+⚠️ CASO ESPECIAL - CONTRATOS DE PRÉSTAMO FOCMAC/COFIDE CON CLÁUSULA DÉCIMO TERCERA / RESOLUCIÓN DEL CONTRATO:
+Si el contrato tiene cláusula titulada "DÉCIMO TERCERA", "RESOLUCIÓN DEL CONTRATO" o similar que:
+  1. Permite al acreedor (FOCMAC/COFIDE) "hacer efectiva la carta mandato" ante incumplimientos ordinarios de pago (ej: plazo de 24 horas)
+  2. Permite "resolver el presente Contrato de conformidad con lo establecido en los artículos 1428° y 1429° del Código Civil" para incumplimientos ordinarios de pago
+
+❌ → "No cumple" AUNQUE la cláusula diga:
+  - "La resolución contractual no supone la aceleración de pagos futuros"
+  - "dado que solo procedería en casos de disolución y liquidación"
+  - Referencias al numeral 18.4 del artículo 18°
+
+Razón: La cláusula es CONTRADICTORIA. La primera parte permite:
+  - Uso de carta mandato para cobro inmediato de cuotas ante defaults de 24h → exigencia de pago ante incumplimientos ordinarios
+  - Resolución del contrato bajo Art. 1428/1429 Código Civil para defaults ordinarios
+Estas acciones son efectivamente equivalentes a aceleración para eventos distintos a intervención/disolución, violando el Art. 18 del Reglamento de Deuda Subordinada.
+
+Marcadores clave para identificar este caso:
+  - "carta mandato" + "24 horas" + "artículos 1428° y 1429° del Código Civil" = No cumple
+  - Aunque mencione "numeral 18.4 del artículo 18°" como excepción, el mecanismo ordinario ya permitió exigir pago inmediato
+
+Justificación modelo: "La Cláusula Décimo Tercera establece un mecanismo de carta mandato que puede hacerse efectiva dentro de las 24 horas ante el incumplimiento de pago de cualquier cuota, y permite la resolución del contrato bajo los Artículos 1428° y 1429° del Código Civil para incumplimientos ordinarios de pago. Esto es equivalente a una cláusula de aceleración de hecho para incumplimientos distintos a la intervención, disolución o liquidación de la empresa (Art. 18 del Reglamento de Deuda Subordinada)."
+
+PARA EL CAMPO "contrato" DE ESTE CASO:
+- Copiar la Cláusula Décimo Tercera / Resolución del Contrato COMPLETA
 
 DECISIÓN PARA CONTRATOS INTERNACIONALES (inglés):
 🚨 EVALUACIÓN CRÍTICA DE SECTION 8.1:
@@ -739,6 +871,16 @@ NIVEL 2: SI NO HAY CLÁUSULA EXPLÍCITA, evaluar mecanismos:
    - campo "justificacion": explicación del mecanismo encontrado
 
 ⚠️ IMPORTANTE: La evaluación debe hacerse en ORDEN (primero buscar cláusula explícita, luego evaluar mecanismos). Si la tasa es fija y no hay cláusula explícita ni mecanismo credit-sensitive, el resultado es "Cumple" con contrato "No se especifica en el contrato".
+
+⚠️ CASO OPCIONAL - TASA DE INTERÉS DELEGADA A PROSPECTOS COMPLEMENTARIOS (CONTRATOS MARCO/BONOS):
+Si NO hay cláusula explícita de prohibición (NIVEL 1) Y la cláusula de Tasa de Interés (ej: 4.14) dice "se determinará en los respectivos Prospectos Complementarios y Contratos Complementarios":
+   - El Contrato Marco NO prohíbe explícitamente, en la sección de tasa de interés, incrementos vinculados a calidad crediticia
+   - Los documentos complementarios (Prospecto Marco, Prospecto Complementario, Contrato Complementario) NO fueron remitidos
+   - No es posible verificar la alineación de estos documentos con el Contrato Marco y el Reglamento
+   → ❌ "No cumple"
+   - campo "contrato": COPIAR cláusula 4.4 numeral 5 (si existe prohibición de step-up/incentivos) | 4.14 Tasa de interés (delegación a Prospectos)
+   - campo "justificacion": "El Contrato Marco no incorpora de forma explícita, en la sección de tasa de interés, la prohibición de incluir cláusulas sobre incrementos en los pagos vinculados a la calidad crediticia del emisor o al incumplimiento de obligaciones, ni tampoco incluye una cláusula que disponga que, en caso de discrepancias entre este y los documentos complementarios, prevalezcan las disposiciones del Contrato Marco. Además, la Caja no ha remitido el Prospecto Marco, el Prospecto Complementario ni el Contrato Complementario, lo cual dificulta verificar la alineación de estos documentos con el Contrato Marco y el Reglamento."
+   - ⚠️ NOTA: Este caso SOLO aplica cuando la tasa se DELEGA a documentos complementarios. Si la tasa es FIJA y definida en el contrato (ej: "tasa fija de 8%"), este caso NO aplica.
 
 🔍 PARA CONTRATOS LOCALES (BONOS/EMISIONES) - BÚSQUEDA ESPECÍFICA:
 Buscar en cláusula 4.3 "Tipo de Instrumento" un numeral que diga algo como:

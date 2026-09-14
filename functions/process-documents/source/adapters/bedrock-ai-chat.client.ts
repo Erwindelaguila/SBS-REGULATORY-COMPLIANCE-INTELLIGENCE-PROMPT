@@ -267,6 +267,17 @@ EXTRAE OBLIGATORIAMENTE estas secciones (si existen):
    - Buscar especialmente: "valores mobiliarios representativos de deuda con plazo de vencimiento mayor a cinco (5) años"
    - 🎯 PARA CONTRATOS MARCO (Acto Marco): Buscar "Cláusula 2°" o "Cláusula Segunda" que DEFINA qué es deuda subordinada con referencia al artículo 233° de la Ley General. COPIAR COMPLETA esta cláusula.
 
+2b. CLÁUSULA PRIMERA / ANTECEDENTES (Cláusula Primera, numeral 1.3 o similar - SI EXISTE):
+   - Buscar "Cláusula Primera", "CLÁUSULA PRIMERA" o "CLÁUSULA PRIMERA: ANTECEDENTES"
+   - Si contiene mención a "patrimonio efectivo de nivel 2", "artículo 185 de la Ley General", COPIAR COMPLETA
+   - Ejemplo: "El préstamo será computado en el patrimonio efectivo de nivel 2 de la IFIE..."
+
+2c. CLÁUSULA OCTAVA / SUBORDINACIÓN DEL PRÉSTAMO (Cláusula Octava, Cláusula 8 - SI EXISTE):
+   - Buscar "Cláusula Octava", "CLÁUSULA OCTAVA", "Cláusula 8" o "Cláusula 8°" que defina la NATURALEZA SUBORDINADA del préstamo
+   - DIFERENTE a sección 9 "Eventos de Incumplimiento" — esta es específicamente sobre la naturaleza subordinada
+   - Buscar frases: "deuda subordinada redimible", "Resolución SBS", "absorber las pérdidas", "Ley General y las normas reglamentarias"
+   - COPIAR COMPLETA esta cláusula
+
 3. FORMA DE PAGO / DESEMBOLSO (Cláusula 3.01, 3.02 o similar):
    - Cómo se pagó el instrumento (efectivo, transferencia, etc.)
 
@@ -289,13 +300,18 @@ EXTRAE OBLIGATORIAMENTE estas secciones (si existen):
    - Mecanismos de llenado de pagaré
    - Condiciones de transferencia
 
-7. RESCATE/REDENCIÓN ANTICIPADA (Cláusula 4.17, 4.23, 4.29, Section 3.5 "Prepayment" o similar):
+7. RESCATE/REDENCIÓN ANTICIPADA / PAGOS ANTICIPADOS (Cláusula 4.17, 4.23, 4.29, Section 3.5 "Prepayment", Cláusula Décimo Primera, Cláusula 11 o similar):
    - Condiciones para opción de compra/rescate
    - Normativa referenciada (artículos, resoluciones SBS)
    - Prohibición de step-up
    - Aprobación SBS requerida
    - Buscar específicamente cláusula titulada "Opción de Redención Anticipada"
    - ⚠️ COPIAR TODOS los párrafos de la sección, incluyendo el párrafo de waiver que dice "Failure or delay on the part of the Lender..." (NO omitirlo)
+   - 🎯 PARA CONTRATOS DE PRÉSTAMO (COFIDE o similares): Buscar "DÉCIMO PRIMERA", "Cláusula 11", "PAGOS ANTICIPADOS VOLUNTARIO", "PAGOS ANTICIPADOS"
+     * COPIAR la cláusula COMPLETA — TODOS los párrafos, no solo el primero
+     * El primer párrafo puede ser la prohibición durante período de gracia
+     * Los párrafos siguientes pueden contener referencias cruciales a: "numeral 17.3 del artículo 17", "Resolución SBS N.° 3950-2022", "autorización previa por parte de la SBS"
+     * 🚨 NO OMITIR ningún párrafo — la referencia normativa suele estar en el SEGUNDO o TERCER párrafo
 
 8. MULTAS POR PAGOS ATRASADOS (Artículo 9 o similar):
    - Texto completo de la sección
@@ -362,6 +378,24 @@ EXTRAE OBLIGATORIAMENTE estas secciones (si existen):
     - Buscar sección que califique el préstamo como "Subordinated Debt"
     - Buscar frases: "qualifies as Subordinated Debt", "pursuant to the Regulation on Subordinated Debt"
     - COPIAR COMPLETA la sección 17.1 o equivalente
+
+20. PAGOS ANTICIPADOS VOLUNTARIOS / CLÁUSULA DÉCIMO PRIMERA (Cláusula 11, Cláusula Décimo Primera o similar - SI EXISTE en contratos de préstamo):
+    🚨🚨🚨 SECCIÓN CRÍTICA — COPIAR LA CLÁUSULA COMPLETA, TODOS LOS PÁRRAFOS 🚨🚨🚨
+    - Buscar: "DÉCIMO PRIMERA", "Cláusula 11", "PAGOS ANTICIPADOS VOLUNTARIO", "PAGOS ANTICIPADOS", "Prepago voluntario"
+    - Esta cláusula puede tener MÚLTIPLES PÁRRAFOS:
+      * Párrafo 1: Prohibición de pago anticipado durante período de gracia (ej: "La CMAC no tiene derecho a pagar anticipadamente...")
+      * Párrafo 2: Condiciones para cancelación anticipada después del período de gracia, referencia a normativa SBS
+      * Párrafo 3: Requisito de autorización previa de la SBS
+    - 🚨 COPIAR ABSOLUTAMENTE TODOS LOS PÁRRAFOS — NO DETENERSE en el primer párrafo
+    - Buscar especialmente frases como:
+      * "numeral 17.3 del artículo 17"
+      * "Resolución SBS N.° 3950-2022" o "Resolución SBS N° 03950-2022"
+      * "autorización previa por parte de la SBS"
+      * "requisitos previstos en"
+      * "Reglamento de Deuda Subordinada"
+      * "cancelación anticipada total o parcial"
+    - Si la cláusula continúa en la siguiente página del PDF, SEGUIR COPIANDO hasta completar toda la cláusula
+    - ⚠️ Si solo copias "La CMAC no tiene derecho a pagar anticipadamente... durante el periodo de gracia señalado en la Cláusula Quinta." y te detienes, la extracción está INCOMPLETA
 
 FORMATO DE SALIDA:
 Para cada sección encontrada, usa este formato:

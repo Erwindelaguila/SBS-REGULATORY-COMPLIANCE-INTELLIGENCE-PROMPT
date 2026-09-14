@@ -20,7 +20,7 @@ confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "suptech-regulatory-compliance-prompt"
 region = "us-east-1"
-profile = "protecso-dev"
+profile = "sbs-protecso-dev"
 parameter_overrides = [
     "PromptsTableName=system-prompts",
     "WarrantyAnalysisTableName=preferred-warranty-analysis",
@@ -41,10 +41,10 @@ parameter_overrides = [
     "WarrantyITTableName=internal-tables",
     "LetterRRTableName=bank-guarantee-regulatory-reports",
     "LetterITTableName=bank-guarantee-internal-tables",
-    "SubordinatedDebtCriteriaTableName=subordinated-debt-criteria"
+    "SubordinatedDebtCriteriaTableName=SubordinatedDebtCriteriaTable",
+    "SupervisoryRecordsMetadataTableName=supervisory-records-metadata"
 ]
-# Commented because ImageUri is explicitly set in template.yaml
-# image_repositories = ["ProcessDocumentsFunction=891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo"]
+image_repositories = ["ProcessDocumentsFunction=891377295186.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo"]
 
 [default.package.parameters]
 resolve_s3 = true

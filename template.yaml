@@ -285,9 +285,13 @@ Resources:
 
   ProcessDocumentsFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      DockerfileLocation: functions/process-documents
+      DockerContext: functions/process-documents
+      DockerTag: latest-x86_64
     Properties:
       PackageType: Image
-      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:ff4b2fae2c34094bca49ec321dadcb85be721da4b9da7863442f44c62d33a665"
+      ImageUri: !Sub "${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/suptechregulatorycompliancepromptdf6aa69a/processdocumentsfunctioncdc0a880repo@sha256:78135db352548c8cf007fda26fd2dc74680a9e8c36a3dc4a83dfa70762d8198e"
       MemorySize: 3008
       Timeout: 900
       Architectures:
@@ -317,7 +321,7 @@ Resources:
             FilterCriteria:
               Filters:
                 - Pattern: '{"eventName": ["INSERT"]}'
-    # Metadata removed - using existing ECR image directly, no rebuild needed
+
 
   ProcessCsvDocumentsFunction:
     Type: AWS::Serverless::Function
