@@ -266,6 +266,88 @@ export class PromptRegulatoryComplianceCommandHandler {
     }
   }
 
+  private calcularCifrasGarantias(filesData: FileData[]): string | null {
+    for (const file of filesData) {
+      let analisis: any;
+      try {
+        analisis = JSON.parse(new TextDecoder().decode(file.bytes));
+      } catch {
+        continue;
+      }
+      if (!analisis || !Array.isArray(analisis.rules_result)) {
+        continue;
+      }
+      const reglas: any[] = analisis.rules_result;
+      const internas: any[] = Array.isArray(analisis.internal_results) ? analisis.internal_results : [];
+      const regulatorias: any[] = Array.isArray(analisis.regulatory_report_results) ? analisis.regulatory_report_results : [];
+      const codigo = (fila: any) => String(fila?.origin?.codgr ?? "");
+      const unicos = (filas: any[]) => new Set(filas.map(codigo)).size;
+
+      const filasPorRegla = new Map<string, number>();
+      const codigosPorRegla = new Map<string, Set<string>>();
+      for (const fila of reglas) {
+        for (const regla of fila.rules ?? []) {
+          if (regla.rule_value !== false) continue;
+          const nombre = String(regla.rule_description ?? "");
+          filasPorRegla.set(nombre, (filasPorRegla.get(nombre) ?? 0) + 1);
+          if (!codigosPorRegla.has(nombre)) codigosPorRegla.set(nombre, new Set());
+          codigosPorRegla.get(nombre)!.add(codigo(fila));
+        }
+      }
+      const grupo = (nombre: string) => {
+        const texto = nombre.toLowerCase();
+        if (texto.includes("póliza") || texto.includes("poliza")) return "póliza";
+        if (texto.includes("inscripción") || texto.includes("inscripcion")) return "inscripción";
+        return "tasación";
+      };
+      const filasPorGrupo = { tasación: 0, inscripción: 0, póliza: 0 };
+      for (const [nombre, filas] of filasPorRegla) {
+        filasPorGrupo[grupo(nombre)] += filas;
+      }
+
+      const conDiferencias = (filas: any[]) => filas.filter((f) => (f.comparisons ?? []).some((c: any) => c.comparison_value === false));
+      const porComparacion = (filas: any[]) => {
+        const conteo = new Map<string, number>();
+        for (const fila of filas) {
+          for (const comparacion of fila.comparisons ?? []) {
+            if (comparacion.comparison_value !== false) continue;
+            const nombre = String(comparacion.comparison_description ?? "");
+            conteo.set(nombre, (conteo.get(nombre) ?? 0) + 1);
+          }
+        }
+        return conteo;
+      };
+
+      const lineas: string[] = [
+        "CIFRAS CALCULADAS POR EL SISTEMA SOBRE EL ANÁLISIS COMPLETO.",
+        "El JSON adjunto puede venir recortado; por eso los totales, el párrafo inicial, los hallazgos a), b) y c) y las tablas resumen deben usar EXACTAMENTE estos valores, sin recalcularlos ni redondearlos.",
+        "",
+        `Muestra analizada: ${reglas.length} registros de garantías en el análisis (${unicos(reglas)} códigos de garantía distintos).`,
+        `En el párrafo inicial [TOTAL_CODGR_UNICOS] = ${reglas.length}, redactado como "una muestra de ${reglas.length} registros de garantías \"preferidas\" (${unicos(reglas)} códigos de garantía distintos)".`,
+        `Hallazgo a): ${reglas.length} garantías. Tabla del hallazgo a): tasación = ${filasPorGrupo["tasación"]}, inscripción = ${filasPorGrupo["inscripción"]}, póliza = ${filasPorGrupo["póliza"]}.`,
+        "Detalle por regla (registros que no cumplen / códigos distintos que no cumplen):",
+        ...[...filasPorRegla.keys()].sort().map((nombre) => `- ${nombre}: ${filasPorRegla.get(nombre)} / ${codigosPorRegla.get(nombre)!.size}`),
+        "",
+        `Hallazgo b): ${conDiferencias(internas).length} registros con diferencias frente a la tabla interna (${unicos(conDiferencias(internas))} códigos distintos) de ${internas.length} comparados.`,
+        ...[...porComparacion(internas).entries()].sort().map(([nombre, n]) => `- ${nombre}: ${n}`),
+        "",
+        `Hallazgo c): ${conDiferencias(regulatorias).length} registros con diferencias frente al reporte regulatorio BDC03-A (${unicos(conDiferencias(regulatorias))} códigos distintos) de ${regulatorias.length} comparados.`,
+        ...[...porComparacion(regulatorias).entries()].sort().map(([nombre, n]) => `- ${nombre}: ${n}`),
+        "",
+        "Si un hallazgo tiene 0 registros con diferencias, no lo incluyas. En los anexos lista únicamente las filas presentes en el JSON adjunto e indica al inicio del anexo cuántos registros tiene el total según estas cifras.",
+      ];
+      this.logger.info({
+        registros: reglas.length,
+        codigosUnicos: unicos(reglas),
+        porGrupo: filasPorGrupo,
+        internas: conDiferencias(internas).length,
+        regulatorias: conDiferencias(regulatorias).length,
+      }, "Cifras del análisis de garantías calculadas para el informe");
+      return lineas.join("\n");
+    }
+    return null;
+  }
+
   private solveBigJsonFile(filesData: FileData[]): FileData[] {
     return filesData.map((file) => {
       try {
@@ -387,17 +469,20 @@ Por favor, modifica el documento previo según la instrucción. Mantén toda la 
         "Files data",
       );
       const reducedFilesData: FileData[] = this.solveBigJsonFile(filesData);
+      const cifras = this.calcularCifrasGarantias(filesData);
+      const systemPromptConCifras = cifras ? `${systemPrompt}\n\n${cifras}` : systemPrompt;
 
-  
+
       this.logger.info({
         totalFiles: reducedFilesData.length,
+        cifrasCalculadas: cifras !== null,
         firstFileSample: reducedFilesData[0] ? {
           key: reducedFilesData[0].key,
           contentPreview: new TextDecoder().decode(reducedFilesData[0].bytes).substring(0, 500)
         } : null
       }, "Data being sent to AI for document generation");
 
-      const chatResponse = await this.aiChatClient.getChatResponse(systemPrompt, enhancedQuestion, reducedFilesData);
+      const chatResponse = await this.aiChatClient.getChatResponse(systemPromptConCifras, enhancedQuestion, reducedFilesData);
       const processedResponse = new PassThrough();
 
 
